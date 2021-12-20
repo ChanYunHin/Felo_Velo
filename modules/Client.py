@@ -116,13 +116,12 @@ class Client:
         #                                                      epochs=args.epoch*int(args.clients_sample_ratio*args.clients_number),
         #                                                      steps_per_epoch=args.clients_training_epoch)
         
-        self.scheduler = torch.optim.lr_scheduler.StepLR(self.optimizer,
-                                                         step_size=int((args.epoch * 
-                                                                        args.clients_sample_ratio * 
-                                                                        args.clients_number * 
-                                                                        args.clients_training_epoch) * 
-                                                                        0.1),
-                                                         gamma=0.5)
+        total_epoches = args.epoch * args.clients_sample_ratio * args.clients_number * args.clients_training_epoch
+        
+        self.scheduler = torch.optim.lr_scheduler.MultiStepLR(self.optimizer,
+                                                              milestones=[int(total_epoches * 0.15),
+                                                                          int(total_epoches * 0.25)],
+                                                              gamma=0.5)
         
         self.loss_func = F.cross_entropy
         # can not use cross-entropy loss in the distillation.
