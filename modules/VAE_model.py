@@ -25,21 +25,32 @@ class ServerModel(nn.Module):
     def __init__(self, num_classes):
         super(ServerModel, self).__init__()
 
-        label_embedding_size = 128
-        classifier_features = 256
+        label_embedding_size = 256
+        classifier_features = 512
 
         self.label_embedding = nn.Embedding(num_classes, label_embedding_size)
         
         self.feature_extractor = nn.Sequential(
             nn.Linear(in_features=args.latent_size + label_embedding_size,
                       out_features=classifier_features),
-            # nn.BatchNorm1d(classifier_features),
-            # nn.ReLU(),
+            nn.BatchNorm1d(classifier_features),
+            nn.ReLU(),
             # nn.Sigmoid(),
             # nn.Linear(in_features=classifier_features,
             #           out_features=classifier_features),
             # nn.BatchNorm1d(classifier_features),
             # nn.ReLU(),
+
+            # nn.Linear(in_features=classifier_features,
+            #           out_features=classifier_features),
+            # nn.BatchNorm1d(classifier_features),
+            # nn.ReLU(),
+
+            # nn.Linear(in_features=classifier_features,
+            #           out_features=classifier_features),
+            # nn.BatchNorm1d(classifier_features),
+            # nn.ReLU(),
+            
             # nn.Sigmoid(),
             nn.Linear(in_features=classifier_features, 
                       out_features=classifier_features)
