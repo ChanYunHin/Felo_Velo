@@ -141,7 +141,7 @@ def server_extractor_training(extractor,
         return BCE + KLD
 
 
-    optimizer = optim.Adam(model.parameters(), lr=1e-3)
+    optimizer = optim.Adam(model.parameters(), lr=1e-3, weight_decay=1e-4)
 
     for epoch in range(num_epochs):
         model.train()
