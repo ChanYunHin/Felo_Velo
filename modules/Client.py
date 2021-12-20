@@ -120,7 +120,8 @@ class Client:
         
         self.scheduler = torch.optim.lr_scheduler.MultiStepLR(self.optimizer,
                                                               milestones=[int(total_epoches * 0.15),
-                                                                          int(total_epoches * 0.25)],
+                                                                          int(total_epoches * 0.25),
+                                                                          int(total_epoches * 0.40)],
                                                               gamma=0.5)
         
         self.loss_func = F.cross_entropy

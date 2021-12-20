@@ -5,3 +5,4 @@ txt_result/
 pic/
 vae_img/
 modules/__pycache__/
+__pycache__/
