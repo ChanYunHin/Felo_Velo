@@ -105,6 +105,14 @@ class Client:
         self.optimizer = torch.optim.Adam(self.model.parameters(),
                                           lr=learning_rate)
         
+        self.scheduler = torch.optim.lr_scheduler.StepLR(self.optimizer,
+                                                         step_size=int((args.epoch * 
+                                                                        args.clients_sample_ratio * 
+                                                                        args.clients_number * 
+                                                                        args.clients_training_epoch) * 
+                                                                        0.1),
+                                                         gamma=0.5)
+        
         self.loss_func = F.cross_entropy
         # can not use cross-entropy loss in the distillation.
         # because cross-entropy didn't consider the information from other classes.
@@ -207,8 +215,7 @@ class Client:
         self.optimizer.step()
         gradients = [param.grad.detach() for param in self.model.parameters()]
         self.optimizer.zero_grad()
-
-
+        self.scheduler.step()
         
         # set up the accuracy in pytorch
         if not no_record:
@@ -307,6 +314,7 @@ class Client:
         self.optimizer.step()
         gradients = [param.grad.detach() for param in self.model.parameters()]
         self.optimizer.zero_grad()
+        self.scheduler.step()
 
         self.distill_loss.append(distill_loss.item())
         self.feature_loss.append(features_loss.item())

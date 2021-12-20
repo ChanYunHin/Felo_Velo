@@ -114,16 +114,16 @@ class Server:
             client_models = {}
             if args.homo_flag or args.middle_flag:
                 if args.resnet_flag:
-                    client_models[0] = {"model_type": "resnet"}
-                    client_models[1] = {"model_type": "resnet"}
-                    client_models[2] = {"model_type": "resnet"}
-                    client_models[3] = {"model_type": "resnet"}
-                    client_models[4] = {"model_type": "resnet"}
-                    client_models[5] = {"model_type": "resnet"}
-                    client_models[6] = {"model_type": "resnet"}
-                    client_models[7] = {"model_type": "resnet"}
-                    client_models[8] = {"model_type": "resnet"}
-                    client_models[9] = {"model_type": "resnet"}
+                    client_models[0] = {"model_type": "small_resnet"}
+                    client_models[1] = {"model_type": "small_resnet"}
+                    client_models[2] = {"model_type": "small_resnet"}
+                    client_models[3] = {"model_type": "small_resnet"}
+                    client_models[4] = {"model_type": "small_resnet"}
+                    client_models[5] = {"model_type": "small_resnet"}
+                    client_models[6] = {"model_type": "small_resnet"}
+                    client_models[7] = {"model_type": "small_resnet"}
+                    client_models[8] = {"model_type": "small_resnet"}
+                    client_models[9] = {"model_type": "small_resnet"}
                 else:
                     client_models[0] = {"model_type": "3_layer_CNN", "params": {"n1": 64, "n2": 128, "n3": 192, "dropout_rate": 0.3}}
                     client_models[1] = {"model_type": "3_layer_CNN", "params": {"n1": 64, "n2": 128, "n3": 192, "dropout_rate": 0.3}}
@@ -330,7 +330,7 @@ class Server:
         # x_y_logits = torch.cat([x_features, one_hot_y], dim=1)
         features_dataset = TensorDataset(x_features, y_label) 
         features_dataloader = DataLoader(dataset=features_dataset,
-                                         batch_size = 256,
+                                         batch_size = 512,
                                          shuffle=True)
 
 

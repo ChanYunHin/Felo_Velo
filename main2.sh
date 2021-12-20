@@ -82,11 +82,12 @@ python main.py \
     --batch_size 50 \
     --clients_training_epoch 10 \
     --alpha 0.5 \
+    --beta 10 \
     --num_classes 10 \
     --dataset cifar10 \
     --y_distillation_flag \
-    --resnet_flag \
-    --latent_size 1024
+    --homo_flag \
+    --resnet_flag
 
 # python main.py \
 #     --GPU_num 3 \

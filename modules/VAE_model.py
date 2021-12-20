@@ -36,8 +36,8 @@ class ServerModel(nn.Module):
             # nn.BatchNorm1d(classifier_features),
             # nn.ReLU(),
             # nn.Sigmoid(),
-            nn.Linear(in_features=classifier_features,
-                      out_features=classifier_features),
+            # nn.Linear(in_features=classifier_features,
+            #           out_features=classifier_features),
             # nn.BatchNorm1d(classifier_features),
             # nn.ReLU(),
             # nn.Sigmoid(),
@@ -62,8 +62,8 @@ class ServerModel(nn.Module):
                       out_features=classifier_features),
             # nn.BatchNorm1d(classifier_features),
             # nn.Sigmoid(),
-            nn.Linear(in_features=classifier_features,
-                      out_features=classifier_features),
+            # nn.Linear(in_features=classifier_features,
+            #           out_features=classifier_features),
             # nn.BatchNorm1d(classifier_features),
             # nn.Sigmoid(),
             nn.Linear(in_features=classifier_features, 
@@ -141,7 +141,7 @@ def server_extractor_training(extractor,
         return BCE + KLD
 
 
-    optimizer = optim.Adam(model.parameters(), lr=1e-3, weight_decay=1e-4)
+    optimizer = optim.Adam(model.parameters(), lr=1e-3)
 
     for epoch in range(num_epochs):
         model.train()

@@ -74,7 +74,7 @@
 
 
 python main.py \
-    --GPU_num 3 \
+    --GPU_num 0 \
     --clients_number 10 \
     --clients_sample_ratio 1 \
     --epoch 100 \
@@ -82,9 +82,13 @@ python main.py \
     --batch_size 50 \
     --clients_training_epoch 10 \
     --alpha 0.5 \
+    --beta 10 \
     --num_classes 10 \
     --dataset cifar10 \
     --y_distillation_flag \
-    --latent_size 1024
+    --VAE \
+    --latent_size 1024 \
+    --homo_flag \
+    --resnet_flag
 
 
