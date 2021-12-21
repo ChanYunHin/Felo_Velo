@@ -118,7 +118,7 @@ class Client:
         #                                                       gamma=0.5)
         
         self.scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer, 'min',
-                                                                    factor=0.5, patience=int(total_epoches * 0.01))
+                                                                    factor=0.5, patience=1)
         
         self.loss_func = F.cross_entropy
         # can not use cross-entropy loss in the distillation.
@@ -222,7 +222,7 @@ class Client:
         self.optimizer.step()
         gradients = [param.grad.detach() for param in self.model.parameters()]
         self.optimizer.zero_grad()
-        self.scheduler.step(pred_loss.item())
+        # self.scheduler.step(pred_loss.item())
         
         # set up the accuracy in pytorch
         if not no_record:
@@ -305,7 +305,6 @@ class Client:
         server_generated_labels = kwargs["server_generated_labels"]
         predictions = kwargs["predictions"]
         encoded_features = kwargs["encoded_features"]
-        local_dataset_flag = kwargs["local_dataset_flag"]
 
         features_loss = self.loss_func(feature_predictions, server_generated_labels)
         feature_distill_loss = self.distill_loss_func(feature_predictions,
@@ -313,7 +312,6 @@ class Client:
         features_loss = features_loss + args.beta * feature_distill_loss
         pred_loss = pred_loss + alpha * distill_loss + features_loss
 
-        # if local_dataset_flag:
         pred_loss.backward()
         
         # torch.nn.utils.clip_grad.clip_grad_value_(self.model.parameters(), 0.1)
@@ -321,7 +319,7 @@ class Client:
         self.optimizer.step()
         gradients = [param.grad.detach() for param in self.model.parameters()]
         self.optimizer.zero_grad()
-        self.scheduler.step(pred_loss.item() - features_loss.item())
+        # self.scheduler.step(pred_loss.item() - features_loss.item())
 
         self.distill_loss.append(distill_loss.item())
         self.feature_loss.append(features_loss.item())
@@ -412,11 +410,9 @@ class Client:
         server_y_logits = kwargs["server_y_logits"]
         distillation = kwargs["distillation"]
         server_features = kwargs["server_features"]
-        local_dataset_flag = kwargs["local_dataset_flag"]
         
-        if local_dataset_flag:
-            self.mean_loss = []
-            self.accuracy = []
+        self.mean_loss = []
+        self.accuracy = []
 
         x, y, data_idx = self.dataset.next_batch(self.batch_size)
         x, y = x.to(self.device), y.to(self.device)
@@ -425,8 +421,7 @@ class Client:
         train_result = self.train_step_first(x, y, 
                                              logit_vectors=server_logit_vectors,
                                              distillation=distillation,
-                                             server_features=server_features,
-                                             local_dataset_flag=local_dataset_flag)
+                                             server_features=server_features)
 
         self.client_saved_process = {}
         self.client_saved_process["feature_predictions"] = train_result[0]
@@ -442,7 +437,6 @@ class Client:
 
         server_feature_logits = kwargs["server_feature_logits"]
         server_generated_labels = kwargs["server_generated_labels"]
-        local_dataset_flag = kwargs["local_dataset_flag"]
 
         y = self.client_saved_process["y"]
         pred_loss = self.client_saved_process["pred_loss"]
@@ -460,8 +454,7 @@ class Client:
                                                  pred_loss,
                                                  predictions=predictions,
                                                  encoded_features=encoded_features,
-                                                 server_generated_labels=server_generated_labels,
-                                                 local_dataset_flag=local_dataset_flag)
+                                                 server_generated_labels=server_generated_labels)
 
         tmp_gradients, client_logit_vectors, client_features = train_result[0], train_result[1], train_result[2]
         client_feature_logits, feature_loss = train_result[3], train_result[4]
@@ -505,7 +498,6 @@ class Client:
         server_features = kwargs["server_features"]
         server_generated_labels = kwargs["server_generated_labels"]
         server_feature_logits = kwargs["server_feature_logits"]
-        new_features_flag = kwargs["new_features_flag"]
         server_y_logits = kwargs["server_y_logits"]
 
         def list_add(a, b):
@@ -570,8 +562,7 @@ class Client:
                                             distillation=distillation,
                                             server_generated_labels=server_generated_labels,
                                             server_features=server_features,
-                                            server_feature_logits=server_feature_logits,
-                                            new_features_flag=new_features_flag)
+                                            server_feature_logits=server_feature_logits)
 
             tmp_gradients, client_logit_vectors, client_features = train_result[0], train_result[1], train_result[2]
             if distillation:

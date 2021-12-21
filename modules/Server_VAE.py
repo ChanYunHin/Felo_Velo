@@ -252,8 +252,7 @@ class Server:
                                     cid,
                                     client_y_logits,
                                     client_features_dict,
-                                    client_feature_logits=None,
-                                    new_feature_flag=False):
+                                    client_feature_logits=None):
         
         if "server_y_logits" not in res:
             res["server_y_logits"] = {}
@@ -414,8 +413,6 @@ class Server:
         clients_y_logits = {}
         res = {}
         distillation_flag = False
-        new_features_flag = False
-        local_dataset_flag = True
         max_training_epoches = int(epoch * clients_number * ratio)
         cnt_flip_flag = 1
 
@@ -447,23 +444,12 @@ class Server:
         for ep in tqdm(range(max_training_epoches)):
             # randomly choose some clients each epoch
             selected_clients = self.choose_clients()
-            
-            # training features this time, aggregate feature_logits next time, and repeat.
-            new_features_flag = not new_features_flag
-            if distillation_flag and ep % 20 <= 10:
-                if args.half_flag:
-                    local_dataset_flag = False
-                else:
-                    local_dataset_flag = True
-            else:
-                local_dataset_flag = True
+
 
             if not args.asyn_FL_flag:
                 if args.pre_train:
                     if ep == int(max_training_epoches * 0.4):
                         distillation_flag = args.y_distillation_flag
-                        if ep % 2 == 1:
-                            new_features_flag = not new_features_flag
                         #training
                         features_dataloader = self.get_server_client_features(res)
                         self.server_extractor = CVAE.server_extractor_training(self.server_extractor,
@@ -474,9 +460,6 @@ class Server:
                 else:
                     if ep >= int(max_training_epoches * 0.01) and ep % int(max_training_epoches * 0.01) == 0:
                         distillation_flag = args.y_distillation_flag
-                        if ep % 2 == 1 and cnt_flip_flag > 0:
-                            new_features_flag = not new_features_flag
-                            cnt_flip_flag -= 1
                         #training
                         features_dataloader = self.get_server_client_features(res)
                         self.server_extractor = CVAE.server_extractor_training(self.server_extractor,
@@ -558,11 +541,9 @@ class Server:
                         assert outdated_flag[cid] > 0
                         train_model = self.clients_dict[cid]
 
-                        
                         client_feature_logits = train_model.train_first_half(distillation=distillation_flag,
                                                                              server_features=server_features,
-                                                                             server_y_logits=avg_server_y_logits,
-                                                                             local_dataset_flag=local_dataset_flag)
+                                                                             server_y_logits=avg_server_y_logits)
                         server_feature_logits += client_feature_logits
                     
                     server_feature_logits /= len(completed_clients)
@@ -575,7 +556,7 @@ class Server:
                         training_result = \
                             train_model.train_second_half(server_feature_logits=server_feature_logits,
                                                           server_generated_labels=server_generated_labels,
-                                                          local_dataset_flag=local_dataset_flag)
+                                                          )
                         
                         saved_train_loss.extend(training_result["CE_loss"])
                         saved_train_distill_loss.append(training_result["distill_loss"])
@@ -583,7 +564,6 @@ class Server:
                         saved_train_acc.extend(training_result["Acc"])
                         tmp_y_logits = training_result["y_logits"]
                         client_features = training_result["features_dict"]
-                        # if new_features_flag:
                         client_feature_logits = training_result["feature_logits"]
 
                         if ep < int(max_training_epoches * 0.2):
@@ -591,8 +571,7 @@ class Server:
                                                                 cid,
                                                                 tmp_y_logits,
                                                                 client_features,
-                                                                client_feature_logits,
-                                                                new_features_flag)
+                                                                client_feature_logits)
 
                 train_loss += np.mean(np.array(saved_train_loss))
                 train_acc += np.mean(np.array(saved_train_acc))
@@ -615,7 +594,6 @@ class Server:
                                                         server_features=server_features,
                                                         server_generated_labels=server_generated_labels,
                                                         server_feature_logits=server_feature_logits,
-                                                        new_features_flag=new_features_flag,
                                                         server_y_logits=avg_server_y_logits)
 
                     # unpack the training result
@@ -626,7 +604,6 @@ class Server:
                         client_gradients = training_result["gradients"]
                         tmp_y_logits = training_result["y_logits"]
                         client_features = training_result["features_dict"]
-                        # if new_features_flag:
                         client_feature_logits = training_result["feature_logits"]
                         tmp_feature_loss = training_result["feature_loss"]
                     else:
@@ -660,8 +637,7 @@ class Server:
                                                         cid,
                                                         tmp_y_logits,
                                                         client_features,
-                                                        client_feature_logits,
-                                                        new_features_flag)
+                                                        client_feature_logits)
 
                     train_loss += tmp_label_loss
                     train_acc += tmp_train_acc
@@ -718,6 +694,10 @@ class Server:
 
                 mean_loss = np.mean(np.array(evaluate_mean_loss))
                 acc = np.mean(np.array(evaluate_mean_acc))
+                
+                for idx in range(self.clients_number):
+                    tmp_model = self.clients_dict[idx]
+                    tmp_model.scheduler.step(mean_loss)
 
                 # test_summary_writer.add_scalar("loss", mean_loss, int(ep/eval_interval))
                 # test_summary_writer.add_scalar("acc", acc, int(ep/eval_interval))
