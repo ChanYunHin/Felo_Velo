@@ -36,20 +36,20 @@ class ServerModel(nn.Module):
             nn.BatchNorm1d(classifier_features),
             nn.ReLU(),
             # nn.Sigmoid(),
-            # nn.Linear(in_features=classifier_features,
-            #           out_features=classifier_features),
-            # nn.BatchNorm1d(classifier_features),
-            # nn.ReLU(),
+            nn.Linear(in_features=classifier_features,
+                      out_features=classifier_features),
+            nn.BatchNorm1d(classifier_features),
+            nn.ReLU(),
 
-            # nn.Linear(in_features=classifier_features,
-            #           out_features=classifier_features),
-            # nn.BatchNorm1d(classifier_features),
-            # nn.ReLU(),
+            nn.Linear(in_features=classifier_features,
+                      out_features=classifier_features),
+            nn.BatchNorm1d(classifier_features),
+            nn.ReLU(),
 
-            # nn.Linear(in_features=classifier_features,
-            #           out_features=classifier_features),
-            # nn.BatchNorm1d(classifier_features),
-            # nn.ReLU(),
+            nn.Linear(in_features=classifier_features,
+                      out_features=classifier_features),
+            nn.BatchNorm1d(classifier_features),
+            nn.ReLU(),
             
             # nn.Sigmoid(),
             nn.Linear(in_features=classifier_features, 
@@ -70,14 +70,14 @@ class ServerModel(nn.Module):
 
         self.classifier = nn.Sequential(
             nn.Linear(in_features=args.latent_size + label_embedding_size,
-                      out_features=classifier_features),
-            # nn.BatchNorm1d(classifier_features),
-            # nn.Sigmoid(),
+                      out_features=args.latent_size),
+            nn.BatchNorm1d(args.latent_size),
+            nn.LeakyReLU(0.2),
             # nn.Linear(in_features=classifier_features,
             #           out_features=classifier_features),
             # nn.BatchNorm1d(classifier_features),
             # nn.Sigmoid(),
-            nn.Linear(in_features=classifier_features, 
+            nn.Linear(in_features=args.latent_size, 
                       out_features=args.latent_size),
             # nn.Sigmoid()
         )
@@ -152,7 +152,7 @@ def server_extractor_training(extractor,
         return BCE + KLD
 
 
-    optimizer = optim.Adam(model.parameters(), lr=1e-3, weight_decay=1e-4)
+    optimizer = optim.Adam(model.parameters(), lr=1e-3)
 
     for epoch in range(num_epochs):
         model.train()
