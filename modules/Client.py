@@ -129,7 +129,8 @@ class Client:
         #                                                       gamma=0.5)
         
         self.scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer, 'min',
-                                                                    factor=0.5, patience=1)
+                                                                    factor=0.5, patience=1,
+                                                                    threshold=0.005)
         
         self.loss_func = F.cross_entropy
         # can not use cross-entropy loss in the distillation.
