@@ -118,15 +118,18 @@ class Client:
         
         total_epoches = args.epoch * args.clients_sample_ratio * args.clients_number * args.clients_training_epoch
         
-        self.scheduler = torch.optim.lr_scheduler.MultiStepLR(self.optimizer,
-                                                              milestones=[int(total_epoches * 0.15),
-                                                                          int(total_epoches * 0.25),
-                                                                          int(total_epoches * 0.40),
-                                                                          int(total_epoches * 0.55),
-                                                                          int(total_epoches * 0.70),
-                                                                          int(total_epoches * 0.85),
-                                                                          int(total_epoches * 0.95)],
-                                                              gamma=0.5)
+        # self.scheduler = torch.optim.lr_scheduler.MultiStepLR(self.optimizer,
+        #                                                       milestones=[int(total_epoches * 0.15),
+        #                                                                   int(total_epoches * 0.25),
+        #                                                                   int(total_epoches * 0.40),
+        #                                                                   int(total_epoches * 0.55),
+        #                                                                   int(total_epoches * 0.70),
+        #                                                                   int(total_epoches * 0.85),
+        #                                                                   int(total_epoches * 0.95)],
+        #                                                       gamma=0.5)
+        
+        self.scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer, 'min',
+                                                                    factor=0.5, patience=int(total_epoches * 0.02))
         
         self.loss_func = F.cross_entropy
         # can not use cross-entropy loss in the distillation.
@@ -209,6 +212,7 @@ class Client:
         gradients = [copy.deepcopy(param.grad.detach()) for param in self.model.parameters()]
         self.optimizer.zero_grad()
         self.scheduler.step()
+        self.scheduler.step(pred_loss)
         
         # set up the accuracy in pytorch
         if not no_record:
