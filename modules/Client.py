@@ -211,8 +211,8 @@ class Client:
         self.optimizer.step()
         gradients = [copy.deepcopy(param.grad.detach()) for param in self.model.parameters()]
         self.optimizer.zero_grad()
-        self.scheduler.step()
-        self.scheduler.step(pred_loss)
+        # self.scheduler.step()
+        self.scheduler.step(pred_loss.item())
         
         # set up the accuracy in pytorch
         if not no_record:
