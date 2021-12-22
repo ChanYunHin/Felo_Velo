@@ -47,6 +47,8 @@ def main(device):
         num_input = 28
         distorted_data = False
         num_input_channel = 1
+    if dataset == "cifar100":
+        num_classes = 100
     parameters = parameters(clients_number,
                             clients_sample_ratio,
                             epoch,
