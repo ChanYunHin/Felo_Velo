@@ -26,7 +26,7 @@ class ServerModel(nn.Module):
         super(ServerModel, self).__init__()
 
         label_embedding_size = 256
-        classifier_features = args.latent_size
+        classifier_features = 256
 
         self.label_embedding = nn.Embedding(num_classes, label_embedding_size)
         
@@ -36,15 +36,15 @@ class ServerModel(nn.Module):
             nn.BatchNorm1d(classifier_features),
             nn.ReLU(),
             # nn.Sigmoid(),
-            nn.Linear(in_features=classifier_features,
-                      out_features=classifier_features),
-            nn.BatchNorm1d(classifier_features),
-            nn.ReLU(),
+            # nn.Linear(in_features=classifier_features,
+            #           out_features=classifier_features),
+            # nn.BatchNorm1d(classifier_features),
+            # nn.ReLU(),
 
-            nn.Linear(in_features=classifier_features,
-                      out_features=classifier_features),
-            nn.BatchNorm1d(classifier_features),
-            nn.ReLU(),
+            # nn.Linear(in_features=classifier_features,
+            #           out_features=classifier_features),
+            # nn.BatchNorm1d(classifier_features),
+            # nn.ReLU(),
 
             # nn.Linear(in_features=classifier_features,
             #           out_features=classifier_features),
@@ -71,8 +71,8 @@ class ServerModel(nn.Module):
         self.classifier = nn.Sequential(
             nn.Linear(in_features=args.latent_size + label_embedding_size,
                       out_features=args.latent_size),
-            nn.BatchNorm1d(args.latent_size),
-            nn.LeakyReLU(0.2),
+            # nn.BatchNorm1d(args.latent_size),
+            # nn.LeakyReLU(0.2),
             # nn.Linear(in_features=classifier_features,
             #           out_features=classifier_features),
             # nn.BatchNorm1d(classifier_features),

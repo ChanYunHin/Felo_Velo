@@ -221,6 +221,7 @@ class Client:
         # torch.nn.utils.clip_grad.clip_grad_value_(self.model.parameters(), 0.1)
         
         self.optimizer.step()
+        
         gradients = [param.grad.detach() for param in self.model.parameters()]
         self.optimizer.zero_grad()
         # self.scheduler.step(pred_loss.item())

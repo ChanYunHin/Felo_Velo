@@ -59,8 +59,7 @@ class Resnet50(nn.Module):
         self.tmp_layer = nn.Sequential(
             # nn.Sigmoid(),
             nn.AvgPool2d(kernel_size=(4)),
-            nn.Flatten(),
-            nn.Linear(1024, args.latent_size)
+            nn.Flatten()
         )
         
 
@@ -91,30 +90,35 @@ class Resnet50(nn.Module):
             )
         
     def forward(self,inputs):
-        out = self.stg1(inputs)
         
-        #stage 2
-        out = F.relu(self.conv2(out) + self.convShortcut2(out))
-        out = F.relu(self.ident2(out) + out)
-        out = F.relu(self.ident2(out) + out)
+        out = self.encode(inputs)
         
-        #stage3
-        out = F.relu(self.conv3(out) + (self.convShortcut3(out)))
-        out = F.relu(self.ident3(out) + out)
-        out = F.relu(self.ident3(out) + out)
-        out = F.relu(self.ident3(out) + out)
+        out = self.decode(out)
         
-        #stage4            
-        out = F.relu(self.conv4(out) + (self.convShortcut4(out)))
-        out = F.relu(self.ident4(out) + out)
-        out = F.relu(self.ident4(out) + out)
-        out = F.relu(self.ident4(out) + out)
-        out = F.relu(self.ident4(out) + out)
-        out = F.relu(self.ident4(out) + out)
+        # out = self.stg1(inputs)
+        
+        # #stage 2
+        # out = F.relu(self.conv2(out) + self.convShortcut2(out))
+        # out = F.relu(self.ident2(out) + out)
+        # out = F.relu(self.ident2(out) + out)
+        
+        # #stage3
+        # out = F.relu(self.conv3(out) + (self.convShortcut3(out)))
+        # out = F.relu(self.ident3(out) + out)
+        # out = F.relu(self.ident3(out) + out)
+        # out = F.relu(self.ident3(out) + out)
+        
+        # #stage4            
+        # out = F.relu(self.conv4(out) + (self.convShortcut4(out)))
+        # out = F.relu(self.ident4(out) + out)
+        # out = F.relu(self.ident4(out) + out)
+        # out = F.relu(self.ident4(out) + out)
+        # out = F.relu(self.ident4(out) + out)
+        # out = F.relu(self.ident4(out) + out)
 
-        out = self.tmp_layer(out)
+        # out = self.tmp_layer(out)
         
-        out = self.classifier(out)#100x1024
+        # out = self.classifier(out)#100x1024
         
         return out
 
@@ -198,12 +202,12 @@ class SmallResnet50(nn.Module):
         
         if args.one_classifer_flag:
             self.classifier = nn.Sequential(
-                nn.Linear(in_features=1024, out_features=num_classes),
+                nn.Linear(in_features=args.latent_size, out_features=num_classes),
             )
         else:
             ##Classify
             self.classifier = nn.Sequential(
-                nn.Linear(in_features=1024, out_features=classifier_features),
+                nn.Linear(in_features=args.latent_size, out_features=classifier_features),
                 # nn.BatchNorm1d(classifier_features),
                 # nn.ReLU(),
 
@@ -220,26 +224,31 @@ class SmallResnet50(nn.Module):
             )
         
     def forward(self,inputs):
-        out = self.stg1(inputs)
         
-        #stage 2
-        out = F.relu(self.conv2(out) + self.convShortcut2(out))
-        out = F.relu(self.ident2(out) + out)
-        out = F.relu(self.ident2(out) + out)
+        out = self.encode(inputs)
         
-        #stage3
-        out = F.relu(self.conv3(out) + (self.convShortcut3(out)))
-        out = F.relu(self.ident3(out) + out)
-        out = F.relu(self.ident3(out) + out)
-        out = F.relu(self.ident3(out) + out)
+        out = self.decode(out)
         
-        # small stage 4
-        out = F.relu(self.conv4(out) + (self.convShortcut4(out)))
-        out = F.relu(self.ident4(out) + out)
+        # out = self.stg1(inputs)
+        
+        # #stage 2
+        # out = F.relu(self.conv2(out) + self.convShortcut2(out))
+        # out = F.relu(self.ident2(out) + out)
+        # out = F.relu(self.ident2(out) + out)
+        
+        # #stage3
+        # out = F.relu(self.conv3(out) + (self.convShortcut3(out)))
+        # out = F.relu(self.ident3(out) + out)
+        # out = F.relu(self.ident3(out) + out)
+        # out = F.relu(self.ident3(out) + out)
+        
+        # # small stage 4
+        # out = F.relu(self.conv4(out) + (self.convShortcut4(out)))
+        # out = F.relu(self.ident4(out) + out)
 
-        out = self.tmp_layer(out)
+        # out = self.tmp_layer(out)
         
-        out = self.classifier(out)#100x1024
+        # out = self.classifier(out)#100x1024
         
         return out
 
