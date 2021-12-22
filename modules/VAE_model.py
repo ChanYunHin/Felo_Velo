@@ -71,8 +71,8 @@ class ServerModel(nn.Module):
         self.classifier = nn.Sequential(
             nn.Linear(in_features=args.latent_size + label_embedding_size,
                       out_features=args.latent_size),
-            nn.BatchNorm1d(args.latent_size),
-            nn.LeakyReLU(0.2),
+            # nn.BatchNorm1d(args.latent_size),
+            # nn.LeakyReLU(0.2),
             # nn.Linear(in_features=classifier_features,
             #           out_features=classifier_features),
             # nn.BatchNorm1d(classifier_features),
