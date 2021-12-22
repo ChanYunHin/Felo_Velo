@@ -59,7 +59,8 @@ class Resnet50(nn.Module):
         self.tmp_layer = nn.Sequential(
             # nn.Sigmoid(),
             nn.AvgPool2d(kernel_size=(4)),
-            nn.Flatten()
+            nn.Flatten(),
+            nn.Linear(1024, args.latent_size)
         )
         
 
@@ -68,12 +69,12 @@ class Resnet50(nn.Module):
 
         if args.one_classifer_flag:
             self.classifier = nn.Sequential(
-                nn.Linear(in_features=1024, out_features=num_classes),
+                nn.Linear(in_features=args.latent_size, out_features=num_classes),
             )
         else:
             ##Classify
             self.classifier = nn.Sequential(
-                nn.Linear(in_features=1024, out_features=classifier_features),
+                nn.Linear(in_features=args.latent_size, out_features=classifier_features),
                 # nn.BatchNorm1d(classifier_features),
                 # nn.ReLU(),
 
