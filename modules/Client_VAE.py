@@ -303,6 +303,7 @@ class Client:
                           **kwargs):
 
         alpha = args.alpha
+        cita = 0
 
         server_generated_labels = kwargs["server_generated_labels"]
         predictions = kwargs["predictions"]
@@ -312,7 +313,7 @@ class Client:
         feature_distill_loss = self.distill_loss_func(feature_predictions,
                                                     server_feature_logits)
         features_loss = features_loss + args.beta * feature_distill_loss
-        pred_loss = pred_loss + alpha * distill_loss + features_loss
+        pred_loss = pred_loss + alpha * distill_loss + cita * features_loss
 
         pred_loss.backward()
         
@@ -326,7 +327,7 @@ class Client:
         self.distill_loss.append(distill_loss.item())
         self.feature_loss.append(features_loss.item())
         self.accuracy.append((y.eq(predictions.max(dim=1).indices).sum() / y.shape[0]).item())
-        self.mean_loss.append(pred_loss.item() - features_loss.item())
+        self.mean_loss.append(pred_loss.item() - cita * features_loss.item())
         
         if args.softmax_flag or args.KLD_flag:
             training_result = [gradients, 
