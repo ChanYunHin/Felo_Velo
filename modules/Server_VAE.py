@@ -425,9 +425,9 @@ class Server:
         # train_summary_writer = SummaryWriter(train_log_dir)
         # test_summary_writer = SummaryWriter(test_log_dir)
         if args.homo_flag:
-            cmp_log_dir = "./tb_logs/cmp_homo/" + model_mask + "_alpha{}beta{}_lr{}/test".format(alpha, args.beta, self.learning_rate)
+            cmp_log_dir = "./tb_logs/cmp_homo/" + model_mask + "_alpha{}beta{}cita{}_lr{}/test".format(alpha, args.beta, args.cita, self.learning_rate)
         else:
-            cmp_log_dir = "./tb_logs/cmp/" + model_mask + "_alpha{}beta{}_lr{}/test".format(alpha, args.beta, self.learning_rate)
+            cmp_log_dir = "./tb_logs/cmp/" + model_mask + "_alpha{}beta{}cita{}_lr{}/test".format(alpha, args.beta, args.cita, self.learning_rate)
         
         compared_summary_writer = SummaryWriter(cmp_log_dir)
 

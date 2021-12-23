@@ -303,7 +303,7 @@ class Client:
                           **kwargs):
 
         alpha = args.alpha
-        cita = 0
+        cita = args.cita
 
         server_generated_labels = kwargs["server_generated_labels"]
         predictions = kwargs["predictions"]

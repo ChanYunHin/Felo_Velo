@@ -22,6 +22,8 @@ parser.add_argument('--alpha', type=float, default=0.5,
                     help='default: 0.5')
 parser.add_argument('--beta', type=float, default=10,
                     help='default: 10')
+parser.add_argument('--cita', type=float, default=1,
+                    help='default: 1')
 # The default setting should be changed to run this file in sh files.
 parser.add_argument('--moment_flag', action='store_true', 
                     help='Moment gradient descent or not')
