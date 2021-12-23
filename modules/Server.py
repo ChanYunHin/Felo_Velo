@@ -572,9 +572,9 @@ class Server:
                 mean_loss = np.mean(np.array(evaluate_mean_loss))
                 acc = np.mean(np.array(evaluate_mean_acc))
                 
-                for idx in range(self.clients_number):
-                    tmp_model = self.clients_dict[idx]
-                    tmp_model.scheduler.step(mean_loss)
+                # for idx in range(self.clients_number):
+                #     tmp_model = self.clients_dict[idx]
+                #     tmp_model.scheduler.step(mean_loss)
 
                 mean_loss_list.append(mean_loss)
                 acc_list.append(acc)
