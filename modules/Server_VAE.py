@@ -424,10 +424,14 @@ class Server:
         # test_summary_writer = tf.summary.create_file_writer(test_log_dir)
         # train_summary_writer = SummaryWriter(train_log_dir)
         # test_summary_writer = SummaryWriter(test_log_dir)
-        if args.homo_flag:
-            cmp_log_dir = "./tb_logs/cmp_homo/" + model_mask + "_alpha{}beta{}cita{}_lr{}/test".format(alpha, args.beta, args.cita, self.learning_rate)
+        if args.cita == 1:
+            params_string = "_alpha{}beta{}_lr{}/test".format(alpha, args.beta, self.learning_rate)
         else:
-            cmp_log_dir = "./tb_logs/cmp/" + model_mask + "_alpha{}beta{}cita{}_lr{}/test".format(alpha, args.beta, args.cita, self.learning_rate)
+            params_string = "_alpha{}beta{}cita{}_lr{}/test".format(alpha, args.beta, args.cita, self.learning_rate)
+        if args.homo_flag:
+            cmp_log_dir = "./tb_logs/cmp_homo/" + model_mask + params_string
+        else:
+            cmp_log_dir = "./tb_logs/cmp/" + model_mask + params_string
         
         compared_summary_writer = SummaryWriter(cmp_log_dir)
 
