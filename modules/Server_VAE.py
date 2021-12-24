@@ -629,7 +629,6 @@ class Server:
                                                                     outdated_flag[cid],
                                                                     cid)
                         else:
-                            
                             ready_gradient = client_gradients
                         self.server_model.server_apply_gradient(ready_gradient)
                     
