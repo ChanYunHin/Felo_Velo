@@ -69,7 +69,8 @@ parser.add_argument('--asyn_FL_flag', action='store_true',
                     help='Federated Learning or not')
 # parser.add_argument('--asyn_FL_flag', action='store_true', default=True,
                     # help='Federated Learning or not')
-
+parser.add_argument('--old_CNN', action='store_true',
+                    help='Use old CNN or not')
 
 
 
