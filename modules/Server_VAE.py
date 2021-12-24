@@ -570,12 +570,12 @@ class Server:
                         client_features = training_result["features_dict"]
                         client_feature_logits = training_result["feature_logits"]
 
-                        if ep < int(max_training_epoches * 0.2):
-                            res = self.collect_logits_features(res, 
-                                                                cid,
-                                                                tmp_y_logits,
-                                                                client_features,
-                                                                client_feature_logits)
+                        # if ep < int(max_training_epoches * 0.2):
+                        res = self.collect_logits_features(res, 
+                                                            cid,
+                                                            tmp_y_logits,
+                                                            client_features,
+                                                            client_feature_logits)
 
                 train_loss += np.mean(np.array(saved_train_loss))
                 train_acc += np.mean(np.array(saved_train_acc))
