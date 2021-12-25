@@ -3,13 +3,9 @@ import torch
 import torch.nn.functional as F
 from torch import nn
 import numpy as np
+from parameters import args
 
 
-# config = ConfigProto()
-# config.gpu_options.allow_growth = True
-# session = InteractiveSession(config=config)
-
-#### Create tf model for Client ####
 
 class ClientModel(nn.Module):
     def __init__(self, input_shape, num_classes, layer1=128, layer2=192, layer3=256, dropout_rate=0.2):
@@ -84,18 +80,22 @@ class ClientModel(nn.Module):
             nn.Dropout(dropout_rate)
         )
 
-
-        # self.sixth_layer = nn.Flatten()
+        self.sixth_layer = nn.Sequential(
+            nn.Flatten(),
+            nn.Linear(in_features=layer3*self.conv3_dim*self.conv3_dim, out_features=args.latent_size)
+        )
 
         
-        self.seventh_layer = nn.Linear(in_features=layer3*self.conv3_dim*self.conv3_dim, 
+        # self.seventh_layer = nn.Linear(in_features=layer3*self.conv3_dim*self.conv3_dim, 
+        #                                out_features=num_classes, 
+        #                                bias=False)
+        
+        self.seventh_layer = nn.Linear(in_features=args.latent_size, 
                                        out_features=num_classes, 
                                        bias=False)
 
-
-
-    def forward(self, inputs):
-        x = self.conv1(inputs)
+    def encode(self, x):
+        x = self.conv1(x)
         # if training:
         x = self.bn1(x)
             # print("in_training")
@@ -109,10 +109,46 @@ class ClientModel(nn.Module):
         x = self.conv3(x)
         # if training:
         x = self.bn3(x)
-
-        x = x.view(x.shape[0], -1)
-        x = self.seventh_layer(x)
+        
+        x = self.sixth_layer(x)
         return x
+
+    # def reparametrize(self, mu, logvar):
+    #     std = logvar.mul(0.5).exp_()
+    #     if torch.cuda.is_available():
+    #         eps = torch.cuda.FloatTensor(std.size()).normal_()
+    #     else:
+    #         eps = torch.FloatTensor(std.size()).normal_()
+    #     return eps.mul(std).add_(mu)
+
+    def decode(self, z):
+        # z = torch.cat([z, labels], dim=1)
+        return self.seventh_layer(z)
+
+    def forward(self, x):
+        z = self.encode(x)
+        # z = self.reparametrize(mean, logvar)
+        return self.decode(z)
+
+    # def forward(self, inputs):
+    #     x = self.conv1(inputs)
+    #     # if training:
+    #     x = self.bn1(x)
+    #         # print("in_training")
+    #     x = self.pooling1(x)
+
+    #     x = self.conv2(x)
+    #     # if training:
+    #     x = self.bn2(x)
+    #     x = self.pooling2(x)
+
+    #     x = self.conv3(x)
+    #     # if training:
+    #     x = self.bn3(x)
+
+    #     x = x.view(x.shape[0], -1)
+    #     x = self.seventh_layer(x)
+    #     return x
 
     def conv_output_dimension(self, input_height, kernel, padding, stride=1, dilation=1):
         height_in = input_height
@@ -182,16 +218,22 @@ class ClientModel_2CNN(nn.Module):
                                                        padding=0, 
                                                        stride=2)
 
-        self.sixth_layer = nn.Flatten()
+        self.sixth_layer = nn.Sequential(
+            nn.Flatten(),
+            nn.Linear(in_features=layer2*self.pool2_dim*self.pool2_dim, out_features=args.latent_size)
+        )
+        
 
-        self.seventh_layer = nn.Linear(in_features=layer2*self.pool2_dim*self.pool2_dim, 
+        # self.seventh_layer = nn.Linear(in_features=layer2*self.pool2_dim*self.pool2_dim, 
+        #                                out_features=num_classes, 
+        #                                bias=False)
+        
+        self.seventh_layer = nn.Linear(in_features=args.latent_size, 
                                        out_features=num_classes, 
                                        bias=False)
 
-
-
-    def forward(self, inputs):
-        x = self.conv1(inputs)
+    def encode(self, x):
+        x = self.conv1(x)
         # if training:
         x = self.bn1(x)
             # print("in_training")
@@ -203,8 +245,42 @@ class ClientModel_2CNN(nn.Module):
         x = self.pooling2(x)
 
         x = self.sixth_layer(x)
-        x = self.seventh_layer(x)
         return x
+
+    # def reparametrize(self, mu, logvar):
+    #     std = logvar.mul(0.5).exp_()
+    #     if torch.cuda.is_available():
+    #         eps = torch.cuda.FloatTensor(std.size()).normal_()
+    #     else:
+    #         eps = torch.FloatTensor(std.size()).normal_()
+    #     return eps.mul(std).add_(mu)
+
+    def decode(self, z):
+        # z = torch.cat([z, labels], dim=1)
+        return self.seventh_layer(z)
+
+    def forward(self, x):
+        z = self.encode(x)
+        # z = self.reparametrize(mean, logvar)
+        return self.decode(z)
+
+
+
+    # def forward(self, inputs):
+    #     x = self.conv1(inputs)
+    #     # if training:
+    #     x = self.bn1(x)
+    #         # print("in_training")
+    #     x = self.pooling1(x)
+
+    #     x = self.conv2(x)
+    #     # if training:
+    #     x = self.bn2(x)
+    #     x = self.pooling2(x)
+
+    #     x = self.sixth_layer(x)
+    #     x = self.seventh_layer(x)
+    #     return x
 
     def conv_output_dimension(self, input_height, kernel, padding, stride=1, dilation=1):
         height_in = input_height

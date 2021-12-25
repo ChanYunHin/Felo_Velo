@@ -428,10 +428,19 @@ class Server:
             params_string = "_alpha{}beta{}_lr{}/test".format(alpha, args.beta, self.learning_rate)
         else:
             params_string = "_alpha{}beta{}cita{}_lr{}/test".format(alpha, args.beta, args.cita, self.learning_rate)
-        if args.homo_flag:
-            cmp_log_dir = "./tb_logs/cmp_homo/" + model_mask + params_string
+            
+        based_model = "rn"
+        if args.resnet_flag:
+            based_model = "rn"
+        elif args.old_CNN:
+            based_model = "light_CNN"
         else:
-            cmp_log_dir = "./tb_logs/cmp/" + model_mask + params_string
+            based_model = "CNN"
+            
+        if args.homo_flag:
+            cmp_log_dir = "./tb_logs/cmp_homo/" + based_model + "/" + model_mask + params_string
+        else:
+            cmp_log_dir = "./tb_logs/cmp/" + based_model + "/" + model_mask + params_string
         
         compared_summary_writer = SummaryWriter(cmp_log_dir)
 
@@ -462,7 +471,7 @@ class Server:
                                                                                device=self.device)
                         
                 else:
-                    if ep >= int(max_training_epoches * 0.01) and ep % int(max_training_epoches * 0.01) == 0:
+                    if ep >= int(max_training_epoches * 0.1) and ep % int(max_training_epoches * 0.01) == 0:
                         distillation_flag = args.y_distillation_flag
                         #training
                         features_dataloader = self.get_server_client_features(res)

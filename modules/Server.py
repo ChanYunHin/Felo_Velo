@@ -383,10 +383,19 @@ class Server:
         model_mask = get_model_mask(args)
         # train_log_dir = "./tb_logs/" + model_mask + "_alpha{}_lr{}/train".format(alpha, self.learning_rate)
         # test_log_dir = "./tb_logs/" + model_mask + "_alpha{}_lr{}/test".format(alpha, self.learning_rate)
-        if args.homo_flag or args.asyn_FL_flag:
-            cmp_log_dir = "./tb_logs/cmp_homo/" + model_mask + "_alpha{}_lr{}/test".format(alpha, self.learning_rate)
+        based_model = "rn"
+        if args.resnet_flag:
+            based_model = "rn"
+        elif args.old_CNN:
+            based_model = "light_CNN"
         else:
-            cmp_log_dir = "./tb_logs/cmp/" + model_mask + "_alpha{}_lr{}/test".format(alpha, self.learning_rate)
+            based_model = "CNN"
+            
+        if args.homo_flag or args.asyn_FL_flag:
+            cmp_log_dir = "./tb_logs/cmp_homo/" + based_model + "/" + model_mask + "_alpha{}_lr{}/test".format(alpha, self.learning_rate)
+        else:
+            cmp_log_dir = "./tb_logs/cmp/" + based_model + "/" + model_mask + "_alpha{}_lr{}/test".format(alpha, self.learning_rate)
+            
         # train_summary_writer = tf.summary.create_file_writer(train_log_dir)
         # test_summary_writer = tf.summary.create_file_writer(test_log_dir)
         # train_summary_writer = SummaryWriter(train_log_dir)
@@ -407,7 +416,7 @@ class Server:
 
             if not args.asyn_FL_flag:
                 
-                if ep >= clients_number:
+                if ep >= int(max_training_epoches * 0.1):
                     distillation_flag = args.y_distillation_flag
                 # objgraph.show_growth()
                 # pdb.set_trace()

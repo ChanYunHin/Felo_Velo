@@ -10,6 +10,7 @@ import torch.nn.functional as F
 
 import matplotlib.pyplot as plt
 import matplotlib
+from parameters import args 
 if not args.old_CNN:
     from modules.Model import ClientModel
     from modules.Model import ClientModel_2CNN
@@ -17,7 +18,6 @@ else:
     from modules.old_Model import ClientModel
     from modules.old_Model import ClientModel_2CNN
 from modules.ResnetModel import Resnet50, SmallResnet50
-from parameters import args 
 import pdb
 import objgraph
 
