@@ -60,7 +60,7 @@ class Resnet50(nn.Module):
             # nn.Sigmoid(),
             nn.AvgPool2d(kernel_size=(4)),
             nn.Flatten(),
-            nn.Linear(1024, args.latent_size)
+            # nn.Linear(1024, args.latent_size)
         )
         
 
@@ -194,7 +194,7 @@ class SmallResnet50(nn.Module):
             # nn.Sigmoid(),
             nn.AvgPool2d(kernel_size=(4)),
             nn.Flatten(),
-            nn.Linear(1024, args.latent_size)
+            # nn.Linear(1024, args.latent_size)
         )
         
 

@@ -112,13 +112,13 @@ class Dataset(object):
             ])
 
 
-            train_data = datasets.CIFAR10(
+            train_data = datasets.CIFAR100(
                 root = "data",
                 train = True,
                 download = True,
                 transform = transform_train
             )
-            test_data = datasets.CIFAR10(
+            test_data = datasets.CIFAR100(
                 root = "data",
                 train = False,
                 download = True,

@@ -105,7 +105,7 @@ class ClientModel(nn.Module):
         self.flatten = nn.Sequential(
             nn.AvgPool2d(kernel_size=(4)),
             nn.Flatten(),
-            nn.Linear(1024, args.latent_size)
+            # nn.Linear(1024, args.latent_size)
         )
 
         # self.var_fc = nn.Sequential(
@@ -239,7 +239,7 @@ class ClientModel_2CNN(nn.Module):
         self.flatten = nn.Sequential(
             nn.AvgPool2d(kernel_size=(4)),
             nn.Flatten(),
-            nn.Linear(1024, args.latent_size)
+            # nn.Linear(1024, args.latent_size)
         )
         
 

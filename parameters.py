@@ -32,7 +32,7 @@ parser.add_argument('--personalized_flag', action='store_true',
 
 
 # dataset parameters
-parser.add_argument('--dataset', default="cifar10",
+parser.add_argument('--dataset', default="cifar100",
                     help='default: cifar10')
 parser.add_argument('--num_classes', type=int, default=10,
                     help='default: 10')
@@ -98,7 +98,7 @@ parser.add_argument("--Similarity", action='store_true', help='Using the similar
 # parser.add_argument("--topK", type=int, default=2, help='default: 2')
 
 
-parser.add_argument("--latent_size", type=int, default=10, help='default: 10')
+parser.add_argument("--latent_size", type=int, default=1024, help='default: 1024')
 # parser.add_argument("--one_classifer_flag", action="store_true", help="Using Linear classifier or not")
 parser.add_argument("--one_classifer_flag", action="store_true", default=True, help="Using Linear classifier or not")
 parser.add_argument("--half_flag", action="store_true", help="training in a half of the whole procedure or not")
