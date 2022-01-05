@@ -248,11 +248,11 @@ class Server:
         return ready_gradients
 
     def collect_logits_features(self, 
-                                    res,
-                                    cid,
-                                    client_y_logits,
-                                    client_features_dict,
-                                    client_feature_logits=None):
+                                res,
+                                cid,
+                                client_y_logits,
+                                client_features_dict,
+                                client_feature_logits=None):
         
         if "server_y_logits" not in res:
             res["server_y_logits"] = {}
@@ -431,12 +431,12 @@ class Server:
             
         based_model = "rn"
         if args.resnet_flag:
-            based_model = "rn{}_{}".format(self.clients_sample_ratio, self.dataset)
+            based_model = "VAE256_rn{}_{}".format(self.clients_sample_ratio, self.dataset)
                 
         elif args.old_CNN:
             based_model = "light_CNN{}_{}".format(self.clients_sample_ratio, self.dataset)
         else:
-            based_model = "CNN{}_{}".format(self.clients_sample_ratio, self.dataset)
+            based_model = "VAE256_CNN{}_{}".format(self.clients_sample_ratio, self.dataset)
             
         if args.homo_flag:
             cmp_log_dir = "./tb_logs/cmp_homo/" + based_model + "/" + model_mask + params_string

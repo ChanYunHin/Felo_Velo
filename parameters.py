@@ -32,7 +32,7 @@ parser.add_argument('--personalized_flag', action='store_true',
 
 
 # dataset parameters
-parser.add_argument('--dataset', default="cifar100",
+parser.add_argument('--dataset', default="cifar10",
                     help='default: cifar10')
 parser.add_argument('--num_classes', type=int, default=10,
                     help='default: 10')

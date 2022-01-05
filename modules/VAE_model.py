@@ -25,8 +25,9 @@ class ServerModel(nn.Module):
     def __init__(self, num_classes):
         super(ServerModel, self).__init__()
 
-        label_embedding_size = 256
-        classifier_features = 256
+        label_embedding_size = 512
+        classifier_features = 512
+        VAE_latent_size = 256
 
         self.label_embedding = nn.Embedding(num_classes, label_embedding_size)
         
@@ -59,17 +60,17 @@ class ServerModel(nn.Module):
         
 
         self.mean_fc = nn.Linear(in_features=classifier_features,
-                                 out_features=args.latent_size)
+                                 out_features=VAE_latent_size)
 
         self.var_fc = nn.Linear(in_features=classifier_features,
-                                out_features=args.latent_size)
+                                out_features=VAE_latent_size)
 
 
         # self.sixth_layer = nn.Flatten()
         
 
         self.classifier = nn.Sequential(
-            nn.Linear(in_features=args.latent_size + label_embedding_size,
+            nn.Linear(in_features=VAE_latent_size + label_embedding_size,
                       out_features=args.latent_size),
             # nn.BatchNorm1d(args.latent_size),
             # nn.LeakyReLU(0.2),

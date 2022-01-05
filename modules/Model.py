@@ -73,35 +73,6 @@ class ClientModel(nn.Module):
         #                                             padding=0,
         #                                             stride=2)
 
-
-        # self.bn2 = nn.Sequential(
-        #     nn.BatchNorm2d(layer2),
-        #     nn.ReLU(),
-        #     nn.Dropout(dropout_rate)
-        # )
-        # self.pooling2 = nn.AvgPool2d((2, 2), stride=2, padding=0)
-        # self.pool2_dim = self.avgpool_output_dimension(self.conv2_dim, 
-        #                                                kernel=2, 
-        #                                                padding=0, 
-        #                                                stride=2)
-        # # 3rd convolution layer
-        # self.conv3 = nn.Conv2d(in_channels=layer2, out_channels=layer3, kernel_size=(3, 3), stride=2,
-        #                        padding='valid')
-
-        # self.conv3_dim = self.conv_output_dimension(self.pool2_dim, 
-        #                                             kernel=3,
-        #                                             padding=0,
-        #                                             stride=2)
-
-
-        # self.bn3 = nn.Sequential(
-        #     nn.BatchNorm2d(layer3),
-        #     nn.ReLU(),
-        #     nn.Dropout(dropout_rate)
-        # )
-
-        # self.label_embedding = nn.Embedding(num_classes, label_embedding_size)
-
         self.flatten = nn.Sequential(
             nn.AvgPool2d(kernel_size=(4)),
             nn.Flatten(),

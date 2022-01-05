@@ -385,12 +385,12 @@ class Server:
         # test_log_dir = "./tb_logs/" + model_mask + "_alpha{}_lr{}/test".format(alpha, self.learning_rate)
         based_model = "rn"
         if args.resnet_flag:
-            based_model = "rn{}_{}".format(self.clients_sample_ratio, self.dataset)
+            based_model = "VAE256_rn{}_{}".format(self.clients_sample_ratio, self.dataset)
                 
         elif args.old_CNN:
             based_model = "light_CNN{}_{}".format(self.clients_sample_ratio, self.dataset)
         else:
-            based_model = "CNN{}_{}".format(self.clients_sample_ratio, self.dataset)
+            based_model = "VAE256_CNN{}_{}".format(self.clients_sample_ratio, self.dataset)
             
         if args.homo_flag or args.asyn_FL_flag:
             cmp_log_dir = "./tb_logs/cmp_homo/" + based_model + "/" + model_mask + "_alpha{}_lr{}/test".format(alpha, self.learning_rate)
