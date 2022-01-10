@@ -53,8 +53,8 @@ parser.add_argument("--public_flag", action='store_true', help='Public datasets 
 
 
 # debug parameters
-# parser.add_argument("--homo_flag", action='store_true', help='all the client models are homogeneous or not')
-parser.add_argument("--homo_flag", action='store_true', default=True, help='all the client models are homogeneous or not')
+parser.add_argument("--homo_flag", action='store_true', help='all the client models are homogeneous or not')
+# parser.add_argument("--homo_flag", action='store_true', default=True, help='all the client models are homogeneous or not')
 parser.add_argument("--VAE", action='store_true', help='Using VAE to generate features or not')
 # parser.add_argument("--VAE", action='store_true', default=True, help='Using VAE to generate features or not')
 parser.add_argument("--resnet_flag", action='store_true', 
