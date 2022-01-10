@@ -261,6 +261,7 @@ class Server:
         if "server_client_features" not in res:
             res["server_client_features"] = {}
 
+
         for key, val in client_y_logits.items():
             if key in res["server_y_logits"]:
                 res["server_labels_counts_y_logits"][key] += 1
