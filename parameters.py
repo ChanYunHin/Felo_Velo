@@ -53,8 +53,8 @@ parser.add_argument("--public_flag", action='store_true', help='Public datasets 
 
 
 # debug parameters
-parser.add_argument("--homo_flag", action='store_true', help='all the client models are homogeneous or not')
-# parser.add_argument("--homo_flag", action='store_true', default=True, help='all the client models are homogeneous or not')
+# parser.add_argument("--homo_flag", action='store_true', help='all the client models are homogeneous or not')
+parser.add_argument("--homo_flag", action='store_true', default=True, help='all the client models are homogeneous or not')
 parser.add_argument("--VAE", action='store_true', help='Using VAE to generate features or not')
 # parser.add_argument("--VAE", action='store_true', default=True, help='Using VAE to generate features or not')
 parser.add_argument("--resnet_flag", action='store_true', 
@@ -71,8 +71,8 @@ parser.add_argument('--asyn_FL_flag', action='store_true',
                     # help='Federated Learning or not')
 parser.add_argument('--old_CNN', action='store_true',
                     help='Use old CNN or not')
-
-
+parser.add_argument('--VAE_size', type=int, default=1024,
+                    help='The classifier feature size of a VAE model')
 
 
 

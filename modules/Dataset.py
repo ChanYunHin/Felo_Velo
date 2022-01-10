@@ -1,6 +1,6 @@
 import numpy as np
 import torch
-from torch._C import dtype
+# from torch._C import dtype
 import torch.nn.functional as F
 from torchvision import datasets
 import torchvision.transforms as transforms
@@ -295,16 +295,18 @@ class Dataset(object):
     def splited_batch(self, x_data, y_data, count):
         res = []
         l = len(x_data)
-        for i in range(count):
-            random_order = list(range(len(x_data)))
-            np.random.shuffle(random_order)
-            res.append(
-                BatchGenerator(x_data[random_order[:(l // count) * 5]],
-                               y_data[random_order[:(l // count) * 5]])
-            )
-        # for i in range(0, l, l//count):
-        #     res.append(
-        #         BatchGenerator(x_data[i:i + l // count],
-        #                        y_data[i:i + l // count]))
+        if args.dataset == "cifar100":
+            for i in range(count):
+                random_order = list(range(len(x_data)))
+                np.random.shuffle(random_order)
+                res.append(
+                    BatchGenerator(x_data[random_order[:(l // count) * 5]],
+                                y_data[random_order[:(l // count) * 5]])
+                )
+        else:
+            for i in range(0, l, l//count):
+                res.append(
+                    BatchGenerator(x_data[i:i + l // count],
+                                y_data[i:i + l // count]))
         return res
 

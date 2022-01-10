@@ -431,12 +431,12 @@ class Server:
             
         based_model = "rn"
         if args.resnet_flag:
-            based_model = "VAE256_rn{}_{}".format(self.clients_sample_ratio, self.dataset)
+            based_model = "VAE{}_rn{}_{}".format(args.VAE_size, self.clients_sample_ratio, self.dataset)
                 
         elif args.old_CNN:
             based_model = "light_CNN{}_{}".format(self.clients_sample_ratio, self.dataset)
         else:
-            based_model = "VAE256_CNN{}_{}".format(self.clients_sample_ratio, self.dataset)
+            based_model = "VAE{}_CNN{}_{}".format(args.VAE_size, self.clients_sample_ratio, self.dataset)
             
         if args.homo_flag:
             cmp_log_dir = "./tb_logs/cmp_homo/" + based_model + "/" + model_mask + params_string
