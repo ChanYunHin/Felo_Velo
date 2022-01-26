@@ -6,10 +6,12 @@ import torch
 from parameters import args
 
 
-if args.Var or args.second_highest or args.Similarity:
-    from modules.Server_Var import Server as server
-elif args.VAE:
+# if args.Var or args.second_highest or args.Similarity:
+    # from modules.Server_Var import Server as server
+if args.VAE:
     from modules.Server_VAE import Server as server
+elif args.op:
+    from modules.Server_op import Server as server
 else:
     from modules.Server import Server as server
 

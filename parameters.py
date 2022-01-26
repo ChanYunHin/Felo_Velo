@@ -57,6 +57,8 @@ parser.add_argument("--homo_flag", action='store_true', help='all the client mod
 # parser.add_argument("--homo_flag", action='store_true', default=True, help='all the client models are homogeneous or not')
 parser.add_argument("--VAE", action='store_true', help='Using VAE to generate features or not')
 # parser.add_argument("--VAE", action='store_true', default=True, help='Using VAE to generate features or not')
+parser.add_argument('--op', action='store_true', help='Use the second last outputs or not')
+# parser.add_argument('--op', action='store_true', default=True, help='Use the second last outputs or not')
 parser.add_argument("--resnet_flag", action='store_true', 
                     help='Using Resnet or not')
 # parser.add_argument("--resnet_flag", action='store_true', 
@@ -72,6 +74,11 @@ parser.add_argument('--asyn_FL_flag', action='store_true',
 parser.add_argument('--old_CNN', action='store_true',
                     help='Use old CNN or not')
 parser.add_argument('--VAE_size', type=int, default=1024,
+                    help='The classifier feature size of a VAE model')
+
+# debug
+parser.add_argument('--test', action='store_true')
+parser.add_argument('--data_size_fold', type=int, default=3,
                     help='The classifier feature size of a VAE model')
 
 

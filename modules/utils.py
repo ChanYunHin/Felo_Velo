@@ -1,7 +1,5 @@
 
 
-
-
 def get_model_mask(args):
 
     if args.GAN_moment_flag:
@@ -32,6 +30,9 @@ def get_model_mask(args):
 
     if args.VAE:
         model_mask += "_VAE{}".format(args.latent_size)
+        
+    if args.op:
+        model_mask += "_op"
 
     if args.second_highest:
         model_mask += "_SC"
@@ -39,8 +40,8 @@ def get_model_mask(args):
     if args.Similarity:
         model_mask += "_Sim"
     
-    if args.Var:
-        model_mask += "_Var{}".format(args.var_para)
+    # if args.Var:
+    #     model_mask += "_Var{}".format(args.var_para)
 
     if args.middle_flag:
         model_mask += "_middle"
@@ -80,3 +81,40 @@ def get_model_mask(args):
         model_mask += "_distorted"
     
     return model_mask
+
+
+
+def get_tb_logs_name(args):
+    
+    model_mask = get_model_mask(args)
+    
+    if args.test:
+        cmp_log_dir = "./tb_logs/debug_fedavg/{}/fold{}_{}".format(args.dataset, 
+                                                                   args.data_size_fold, 
+                                                                   model_mask) 
+        
+    else:
+        if args.cita == 1:
+            if args.VAE:
+                params_string = "_alpha{}beta{}_lr{}/test".format(args.alpha, args.beta, args.learning_rate)
+            else:
+                params_string = "_alpha{}_lr{}/test".format(args.alpha, args.learning_rate)
+        else:
+            params_string = "_alpha{}beta{}cita{}_lr{}/test".format(args.alpha, args.beta, args.cita, args.learning_rate)
+            
+        based_model = "rn"
+        if args.resnet_flag:
+            based_model = "rn{}_{}".format(args.clients_sample_ratio, args.dataset)
+                
+        elif args.old_CNN:
+            based_model = "light_CNN{}_{}".format(args.clients_sample_ratio, args.dataset)
+        else:
+            based_model = "CNN{}_{}".format(args.clients_sample_ratio, args.dataset)
+            
+        if args.homo_flag:
+            cmp_log_dir = "./tb_logs/cmp_homo/" + based_model + "/" + model_mask + params_string
+        else:
+            cmp_log_dir = "./tb_logs/cmp/" + based_model + "/" + model_mask + params_string
+        
+    return cmp_log_dir
+    

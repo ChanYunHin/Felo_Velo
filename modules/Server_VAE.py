@@ -24,7 +24,7 @@ from torch.utils.tensorboard import SummaryWriter
 from modules.Dataset import Dataset
 # from modules.Model import ServerModel
 from parameters import args
-from modules.utils import get_model_mask
+from modules.utils import get_model_mask, get_tb_logs_name
 
 from modules.Client_VAE import Client
 
@@ -419,30 +419,8 @@ class Server:
 
         # tensorboard parameters
         model_mask = get_model_mask(args)
-        # train_log_dir = "./tb_logs/" + model_mask + "_alpha{}_lr{}/train".format(alpha, self.learning_rate)
-        # test_log_dir = "./tb_logs/" + model_mask + "_alpha{}_lr{}/test".format(alpha, self.learning_rate)
-        # train_summary_writer = tf.summary.create_file_writer(train_log_dir)
-        # test_summary_writer = tf.summary.create_file_writer(test_log_dir)
-        # train_summary_writer = SummaryWriter(train_log_dir)
-        # test_summary_writer = SummaryWriter(test_log_dir)
-        if args.cita == 1:
-            params_string = "_alpha{}beta{}_lr{}/test".format(alpha, args.beta, self.learning_rate)
-        else:
-            params_string = "_alpha{}beta{}cita{}_lr{}/test".format(alpha, args.beta, args.cita, self.learning_rate)
-            
-        based_model = "rn"
-        if args.resnet_flag:
-            based_model = "VAE{}_rn{}_{}".format(args.VAE_size, self.clients_sample_ratio, self.dataset)
-                
-        elif args.old_CNN:
-            based_model = "light_CNN{}_{}".format(self.clients_sample_ratio, self.dataset)
-        else:
-            based_model = "VAE{}_CNN{}_{}".format(args.VAE_size, self.clients_sample_ratio, self.dataset)
-            
-        if args.homo_flag:
-            cmp_log_dir = "./tb_logs/cmp_homo/" + based_model + "/" + model_mask + params_string
-        else:
-            cmp_log_dir = "./tb_logs/cmp/" + based_model + "/" + model_mask + params_string
+        
+        cmp_log_dir = get_tb_logs_name(args)
         
         compared_summary_writer = SummaryWriter(cmp_log_dir)
 
