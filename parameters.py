@@ -78,8 +78,8 @@ parser.add_argument('--VAE_size', type=int, default=1024,
 
 # debug
 parser.add_argument('--test', action='store_true')
-parser.add_argument('--data_size_fold', type=int, default=3,
-                    help='The classifier feature size of a VAE model')
+parser.add_argument('--data_size_fold', type=int, default=1,
+                    help='the fold of the size of client original datasets')
 
 
 

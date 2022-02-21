@@ -89,9 +89,10 @@ def get_tb_logs_name(args):
     model_mask = get_model_mask(args)
     
     if args.test:
-        cmp_log_dir = "./tb_logs/debug_fedavg/{}/fold{}_{}".format(args.dataset, 
-                                                                   args.data_size_fold, 
-                                                                   model_mask) 
+        cmp_log_dir = "./tb_logs/debug_fedavg/{}_{}/fold{}_{}".format(args.dataset, 
+                                                                      args.clients_sample_ratio,
+                                                                      args.data_size_fold, 
+                                                                      model_mask) 
         
     else:
         if args.cita == 1:

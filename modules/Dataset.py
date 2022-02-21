@@ -296,7 +296,13 @@ class Dataset(object):
         res = []
         l = len(x_data)
         if args.test:
-            for i in range(count):
+            if args.data_size_fold == 1:
+                for i in range(0, l, l//count):
+                    res.append(
+                        BatchGenerator(x_data[i:i + l // count],
+                                    y_data[i:i + l // count]))
+            else:
+                for i in range(count):
                     random_order = list(range(len(x_data)))
                     np.random.shuffle(random_order)
                     res.append(
@@ -313,6 +319,13 @@ class Dataset(object):
                                     y_data[random_order[:(l // count) * 5]])
                     )
             else:
+                # for i in range(count):
+                #     random_order = list(range(len(x_data)))
+                #     np.random.shuffle(random_order)
+                #     res.append(
+                #         BatchGenerator(x_data[random_order[:(l // count) * 1]],
+                #                     y_data[random_order[:(l // count) * 1]])
+                #     )
                 for i in range(0, l, l//count):
                     res.append(
                         BatchGenerator(x_data[i:i + l // count],

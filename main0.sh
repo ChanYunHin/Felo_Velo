@@ -78,6 +78,24 @@
 # --------------------------------------------------------0.2sr--------------------------------------------------------
 # ----------------------------CNN----------------------------
 
+# Fedop
+python main.py \
+    --GPU_num 2 \
+    --clients_number 10 \
+    --clients_sample_ratio 0.2 \
+    --epoch 1000 \
+    --learning_rate 0.001 \
+    --batch_size 50 \
+    --clients_training_epoch 10 \
+    --alpha 0.5 \
+    --beta 10 \
+    --num_classes 10 \
+    --dataset cifar10 \
+    --y_distillation_flag \
+    --op \
+    --latent_size 1024 \
+
+
 # FedAE
 python main.py \
     --GPU_num 2 \
@@ -144,6 +162,26 @@ python main.py \
     --latent_size 1024 \
 
 # ----------------------------ResNet----------------------------
+
+
+# Fedop
+python main.py \
+    --GPU_num 2 \
+    --clients_number 10 \
+    --clients_sample_ratio 0.2 \
+    --epoch 1000 \
+    --learning_rate 0.001 \
+    --batch_size 50 \
+    --clients_training_epoch 10 \
+    --alpha 0.5 \
+    --beta 10 \
+    --num_classes 10 \
+    --dataset cifar10 \
+    --y_distillation_flag \
+    --op \
+    --latent_size 1024 \
+    --resnet_flag \
+
 
 # FedAE
 python main.py \
@@ -219,6 +257,24 @@ python main.py \
 
 # ----------------------------CNN----------------------------
 
+# Fedop
+python main.py \
+    --GPU_num 2 \
+    --clients_number 10 \
+    --clients_sample_ratio 1 \
+    --epoch 100 \
+    --learning_rate 0.001 \
+    --batch_size 50 \
+    --clients_training_epoch 10 \
+    --alpha 0.5 \
+    --beta 10 \
+    --num_classes 10 \
+    --dataset cifar10 \
+    --y_distillation_flag \
+    --op \
+    --latent_size 1024 \
+
+
 # FedAE
 python main.py \
     --GPU_num 2 \
@@ -285,6 +341,26 @@ python main.py \
     --latent_size 1024 \
 
 # ----------------------------ResNet----------------------------
+
+
+# Fedop
+python main.py \
+    --GPU_num 2 \
+    --clients_number 10 \
+    --clients_sample_ratio 1 \
+    --epoch 100 \
+    --learning_rate 0.001 \
+    --batch_size 50 \
+    --clients_training_epoch 10 \
+    --alpha 0.5 \
+    --beta 10 \
+    --num_classes 10 \
+    --dataset cifar10 \
+    --y_distillation_flag \
+    --op \
+    --latent_size 1024 \
+    --resnet_flag \
+
 
 # FedAE
 python main.py \
