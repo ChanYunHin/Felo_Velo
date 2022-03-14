@@ -30,6 +30,9 @@ def get_model_mask(args):
 
     if args.VAE:
         model_mask += "_VAE{}".format(args.latent_size)
+    
+    if args.NVAE:
+        model_mask += "_NoiseVAE"
         
     if args.op:
         model_mask += "_op"
@@ -106,11 +109,13 @@ def get_tb_logs_name(args):
         based_model = "rn"
         if args.resnet_flag:
             based_model = "rn{}_{}".format(args.clients_sample_ratio, args.dataset)
-                
         elif args.old_CNN:
             based_model = "light_CNN{}_{}".format(args.clients_sample_ratio, args.dataset)
         else:
             based_model = "CNN{}_{}".format(args.clients_sample_ratio, args.dataset)
+            
+        if args.KLD_flag:
+            based_model += "_KLD"
             
         if args.homo_flag:
             cmp_log_dir = "./tb_logs/cmp_homo/" + based_model + "/" + model_mask + params_string

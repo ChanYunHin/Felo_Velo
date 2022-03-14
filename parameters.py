@@ -53,6 +53,8 @@ parser.add_argument("--public_flag", action='store_true', help='Public datasets 
 
 
 # debug parameters
+parser.add_argument("--NVAE", action='store_true', help='Using noise input with VAE to generate features or not')
+# parser.add_argument("--NVAE", action='store_true', default=True, help='Using noise input with VAE to generate features or not')
 parser.add_argument("--homo_flag", action='store_true', help='all the client models are homogeneous or not')
 # parser.add_argument("--homo_flag", action='store_true', default=True, help='all the client models are homogeneous or not')
 parser.add_argument("--VAE", action='store_true', help='Using VAE to generate features or not')
@@ -66,7 +68,7 @@ parser.add_argument("--resnet_flag", action='store_true',
 parser.add_argument('--y_distillation_flag', action='store_true',
                     help='distilled y logits or not')
 # parser.add_argument('--y_distillation_flag', action='store_true', default=True,
-                    # help='distilled y logits or not')
+#                     help='distilled y logits or not')
 parser.add_argument('--asyn_FL_flag', action='store_true',
                     help='Federated Learning or not')
 # parser.add_argument('--asyn_FL_flag', action='store_true', default=True,
@@ -87,7 +89,7 @@ parser.add_argument('--data_size_fold', type=int, default=1,
 parser.add_argument("--middle_flag", action='store_true', help='get the outputs from middle layer or not')
 # parser.add_argument("--middle_flag", action='store_true', default=True, help='get the outputs from middle layer or not')
 parser.add_argument("--baseline_middle_flag", action='store_true', help='block the outputs from middle layer or not')
-parser.add_argument("--GPU_num", type=int, default=0, help='default: 1')
+parser.add_argument("--GPU_num", type=int, default=2, help='default: 2')
 parser.add_argument("--BN_features", action='store_true', help='Using bn features or not')
 parser.add_argument("--Var", action='store_true', help='Using bn features or not')
 # parser.add_argument("--Var", action='store_true', default=True, help='Using bn features or not')

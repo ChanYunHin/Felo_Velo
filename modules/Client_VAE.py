@@ -129,10 +129,12 @@ class Client:
         # can not use cross-entropy loss in the distillation.
         # because cross-entropy didn't consider the information from other classes.
         if args.KLD_flag:
-            self.distill_loss_func = F.kl_div
+            self.distill_loss_func_logits = F.kl_div
+            self.distill_loss_func_features = F.mse_loss
             # self.distill_loss = tf.keras.metrics.KLDivergence()
         else:
-            self.distill_loss_func = F.mse_loss
+            self.distill_loss_func_features = F.mse_loss
+            self.distill_loss_func_logits = self.distill_loss_func_features
             # self.distill_loss = tf.keras.metrics.MeanSquaredError()
         # self.accuracy = tf.keras.metrics.CategoricalAccuracy(name='accuracy_{}'.format(client_id))
         self.mean_loss = []
@@ -184,37 +186,39 @@ class Client:
         server_generated_labels = kwargs["server_generated_labels"]
         server_feature_logits = kwargs["server_feature_logits"]
         assert self.is_worker
+        assert distillation == False
         # alpha = args.alpha * (np.exp(current_epoches / max_epoches) - 1)
         alpha = args.alpha
         predictions = 0
         features_predictions = 0
-        if distillation:
-            # assert logit_vectors
-            if args.softmax_flag or args.KLD_flag:
-                softmax_logit_vectors = F.softmax(logit_vectors)
-                softmax_predictions = 0
+        # if distillation:
+        #     # assert logit_vectors
+        #     if args.softmax_flag or args.KLD_flag:
+        #         softmax_logit_vectors = F.softmax(logit_vectors)
+        #         log_softmax_predictions = 0
         """ one training iteration """
         
         encoded_features = self.model.encode(x)
         predictions = self.model.decode(encoded_features)
         pred_loss = self.loss_func(predictions, y)
-        if distillation:
-            if args.softmax_flag or args.KLD_flag:
-                # if args.MSE_flag:
-                #     distill_loss = self.distill_loss_func(softmax_logit_vectors, softmax_predictions)
-                # else:
-                softmax_predictions = F.softmax(predictions)
-                distill_loss = self.distill_loss_func(softmax_predictions, softmax_logit_vectors)
-            else:
-                distill_loss = self.distill_loss_func(predictions, 
-                                                      logit_vectors)
-            # update the classifier with server features
-            features_predictions = self.model.decode(server_features)
-            features_loss = self.loss_func(features_predictions, server_generated_labels)
-            feature_distill_loss = self.distill_loss_func(features_predictions,
-                                                        server_feature_logits)
-            features_loss = features_loss + feature_distill_loss
-            pred_loss = pred_loss + alpha * (features_loss + distill_loss)
+        # if distillation:
+        #     if args.softmax_flag or args.KLD_flag:
+        #         # if args.MSE_flag:
+        #         #     distill_loss = self.distill_loss_func(softmax_logit_vectors, log_softmax_predictions)
+        #         # else:
+        #         log_softmax_predictions = F.log_softmax(predictions)
+        #         distill_loss = self.distill_loss_func_logits(log_softmax_predictions, 
+        #                                                      softmax_logit_vectors)
+        #     else:
+        #         distill_loss = self.distill_loss_func_logits(predictions, 
+        #                                                      logit_vectors)
+        #     # update the classifier with server features
+        #     features_predictions = self.model.decode(server_features)
+        #     features_loss = self.loss_func(features_predictions, server_generated_labels)
+        #     feature_distill_loss = self.distill_loss_func_features(features_predictions,
+        #                                                            server_feature_logits)
+        #     features_loss = features_loss + feature_distill_loss
+        #     pred_loss = pred_loss + alpha * (features_loss + distill_loss)
         #     pred_loss = pred_loss + alpha * distill_loss
 
         # a = [torch.mean(mod.bn_feature_mean) for mod in self.bn_feature_layers]
@@ -233,26 +237,18 @@ class Client:
         # set up the accuracy in pytorch
         if not no_record:
             self.accuracy.append((y.eq(predictions.max(dim=1).indices).sum() / y.shape[0]).item())
-            # self.accuracy.update_state(y, F.softmax(predictions))
             self.mean_loss.append(pred_loss.item())
-        if distillation:
-            self.distill_loss.append(distill_loss.item())
-            self.feature_loss.append(features_loss.item())
-        
-            if args.softmax_flag or args.KLD_flag:
-                training_result = [gradients, 
-                                    F.softmax(predictions).detach(), 
-                                    encoded_features.detach(),
-                                    F.softmax(features_predictions).detach()]
-            else:
-                training_result = [gradients, 
-                                    predictions.detach(), 
-                                    encoded_features.detach(),
-                                    features_predictions.detach()]
-        else:
-            training_result = [gradients, 
-                                predictions.detach(), 
-                                encoded_features.detach()]
+        # if distillation:
+        #     self.distill_loss.append(distill_loss.item())
+        #     self.feature_loss.append(features_loss.item())
+        #     training_result = [gradients, 
+        #                        predictions.detach(), 
+        #                        encoded_features.detach(),
+        #                        features_predictions.detach()]
+        # else:
+        training_result = [gradients, 
+                           predictions.detach(), 
+                           encoded_features.detach()]
         return training_result
 
     def train_step_first(self, x, y,
@@ -272,21 +268,19 @@ class Client:
             # assert logit_vectors
             if args.softmax_flag or args.KLD_flag:
                 softmax_logit_vectors = F.softmax(logit_vectors)
-                softmax_predictions = 0
+                log_softmax_predictions = 0
         """ one training iteration """
         
         encoded_features = self.model.encode(x)
         predictions = self.model.decode(encoded_features)
         pred_loss = self.loss_func(predictions, y)
         if args.softmax_flag or args.KLD_flag:
-            # if args.MSE_flag:
-            #     distill_loss = self.distill_loss_func(softmax_logit_vectors, softmax_predictions)
-            # else:
-            softmax_predictions = F.softmax(predictions)
-            distill_loss = self.distill_loss_func(softmax_predictions, softmax_logit_vectors)
+            log_softmax_predictions = F.log_softmax(predictions)
+            distill_loss = self.distill_loss_func_logits(log_softmax_predictions, 
+                                                         softmax_logit_vectors)
         else:
-            distill_loss = self.distill_loss_func(predictions, 
-                                                    logit_vectors)
+            distill_loss = self.distill_loss_func_logits(predictions, 
+                                                         logit_vectors)
         # update the classifier with server features
         features_predictions = self.model.decode(server_features)
         return [features_predictions, 
@@ -314,10 +308,18 @@ class Client:
         encoded_features = kwargs["encoded_features"]
 
         features_loss = self.loss_func(feature_predictions, server_generated_labels)
-        feature_distill_loss = self.distill_loss_func(feature_predictions,
-                                                    server_feature_logits)
+        
+        if args.softmax_flag or args.KLD_flag:
+            softmax_server_feature_logits = F.softmax(server_feature_logits)
+            log_softmax_features_predictions = F.log_softmax(feature_predictions)
+            feature_distill_loss = self.distill_loss_func_logits(log_softmax_features_predictions, 
+                                                                 softmax_server_feature_logits)
+        else:
+            feature_distill_loss = self.distill_loss_func_logits(feature_predictions,
+                                                                 server_feature_logits)
+        
         features_loss = features_loss + args.beta * feature_distill_loss
-        pred_loss = pred_loss + alpha * distill_loss + cita * features_loss
+        pred_loss = pred_loss + alpha * (distill_loss + features_loss)
 
         pred_loss.backward()
         
@@ -333,18 +335,11 @@ class Client:
         self.accuracy.append((y.eq(predictions.max(dim=1).indices).sum() / y.shape[0]).item())
         self.mean_loss.append(pred_loss.item() - cita * features_loss.item())
         
-        if args.softmax_flag or args.KLD_flag:
-            training_result = [gradients, 
-                                F.softmax(predictions).detach(), 
-                                encoded_features.detach(),
-                                F.softmax(feature_predictions).detach(),
-                                features_loss.item()]
-        else:
-            training_result = [gradients, 
-                                predictions.detach(), 
-                                encoded_features.detach(),
-                                feature_predictions.detach(),
-                                features_loss.item()]
+        training_result = [gradients, 
+                           predictions.detach(), 
+                           encoded_features.detach(),
+                           feature_predictions.detach(),
+                           features_loss.item()]
         return training_result
         
         

@@ -183,7 +183,7 @@ class Client:
             # assert logit_vectors
             if args.softmax_flag or args.KLD_flag:
                 softmax_logit_vectors = F.softmax(logit_vectors)
-                softmax_predictions = 0
+                log_softmax_predictions = 0
         """ one training iteration """
         
         predictions = self.model(x)
@@ -195,10 +195,10 @@ class Client:
         if distillation:
             if args.softmax_flag or args.KLD_flag:
                 # if args.MSE_flag:
-                #     distill_loss = self.distill_loss_func(softmax_logit_vectors, softmax_predictions)
+                #     distill_loss = self.distill_loss_func(softmax_logit_vectors, log_softmax_predictions)
                 # else:
-                softmax_predictions = F.softmax(predictions)
-                distill_loss = self.distill_loss_func(softmax_predictions, softmax_logit_vectors)
+                log_softmax_predictions = F.log_softmax(predictions)
+                distill_loss = self.distill_loss_func(log_softmax_predictions, softmax_logit_vectors)
             else:
                 distill_loss = self.distill_loss_func(predictions, 
                                                       torch.from_numpy(logit_vectors).to(self.device))
@@ -227,14 +227,14 @@ class Client:
             self.distill_loss.append(distill_loss.item())
             self.bn_mean_loss.append(0)
             self.bn_var_loss.append(0)
-        if args.softmax_flag or args.KLD_flag:
-            return gradients, \
-                   F.softmax(predictions).detach(), \
-                   [bn_mean.detach(), bn_var.detach()]
-        else:
-            return gradients, \
-                   predictions.detach(), \
-                   [bn_mean.detach(), bn_var.detach()]
+        # if args.softmax_flag or args.KLD_flag:
+        #     return gradients, \
+        #            F.softmax(predictions).detach(), \
+        #            [bn_mean.detach(), bn_var.detach()]
+        # else:
+        return gradients, \
+               predictions.detach(), \
+               [bn_mean.detach(), bn_var.detach()]
 
     # def get_class_labels(self, one_hot_y):
     #     labels = [np.argmax(yi) for yi in one_hot_y]
@@ -276,9 +276,9 @@ class Client:
         server_logit_vectors = []
         # match logit vectors for each label
         for idx, label in enumerate(labels):
-            server_logit_vectors.append(np.array(server_y_logits[label.item()].cpu()))
+            server_logit_vectors.append(server_y_logits[label.item()])
         # a = np.array(server_logit_vectors)
-        return np.array(server_logit_vectors)
+        return torch.stack(server_logit_vectors, dim=0)
 
 
     def sort_logits(self, 
