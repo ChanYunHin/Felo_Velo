@@ -19,9 +19,6 @@ def get_model_mask(args):
     if args.public_flag:
         model_mask += "_public"
 
-    if args.BN_features:
-        model_mask += "_BN"
-
     if args.half_flag:
         model_mask += "_half"
         
@@ -33,6 +30,12 @@ def get_model_mask(args):
     
     if args.NVAE:
         model_mask += "_NoiseVAE"
+        
+    if args.new_VAE:
+        model_mask += "_new_VAE"
+        
+    if args.VAE_op:
+        model_mask += "_VAE_op"
         
     if args.op:
         model_mask += "_op"
@@ -74,7 +77,7 @@ def get_model_mask(args):
     if args.asyn_FL_flag:
         model_mask += "_asynFL"
 
-    if args.y_distillation_flag:
+    if args.y_distillation_flag and not args.no_logits_flag:
         model_mask += "_y_logits"
 
     if args.personalized_flag:
@@ -114,8 +117,8 @@ def get_tb_logs_name(args):
         else:
             based_model = "CNN{}_{}".format(args.clients_sample_ratio, args.dataset)
             
-        if args.KLD_flag:
-            based_model += "_KLD"
+        # if args.KLD_flag:
+        #     based_model += "_KLD"
             
         if args.homo_flag:
             cmp_log_dir = "./tb_logs/cmp_homo/" + based_model + "/" + model_mask + params_string

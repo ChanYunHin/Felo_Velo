@@ -14,6 +14,10 @@ elif args.op:
     from modules.Server_op import Server as server
 elif args.NVAE:
     from modules.Server_NVAE import Server as server
+elif args.VAE_op:
+    from modules.Server_VAE_op import Server as server
+elif args.new_VAE:
+    from modules.Server_new_VAE import Server as server
 else:
     from modules.Server import Server as server
 

@@ -309,17 +309,20 @@ class Client:
 
         features_loss = self.loss_func(feature_predictions, server_generated_labels)
         
-        if args.softmax_flag or args.KLD_flag:
-            softmax_server_feature_logits = F.softmax(server_feature_logits)
-            log_softmax_features_predictions = F.log_softmax(feature_predictions)
-            feature_distill_loss = self.distill_loss_func_logits(log_softmax_features_predictions, 
-                                                                 softmax_server_feature_logits)
-        else:
-            feature_distill_loss = self.distill_loss_func_logits(feature_predictions,
-                                                                 server_feature_logits)
+        # if args.softmax_flag or args.KLD_flag:
+        #     softmax_server_feature_logits = F.softmax(server_feature_logits)
+        #     log_softmax_features_predictions = F.log_softmax(feature_predictions)
+        #     feature_distill_loss = self.distill_loss_func_logits(log_softmax_features_predictions, 
+        #                                                          softmax_server_feature_logits)
+        # else:
+        #     feature_distill_loss = self.distill_loss_func_logits(feature_predictions,
+        #                                                          server_feature_logits)
         
-        features_loss = features_loss + args.beta * feature_distill_loss
-        pred_loss = pred_loss + alpha * (distill_loss + features_loss)
+        # features_loss = features_loss + args.beta * feature_distill_loss
+        if args.no_logits_flag:
+            pred_loss = (1 - alpha) * pred_loss + alpha * (features_loss)
+        else:
+            pred_loss = (1 - alpha) * pred_loss + alpha * (features_loss + distill_loss)
 
         pred_loss.backward()
         

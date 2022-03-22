@@ -211,7 +211,7 @@ class Server:
                 a[k] += b[k]
             return a
 
-    def evaluate(self, dataset, batch_size):
+    def evaluate(self, dataset, batch_size, eval_model):
         # batch_size = batch_size * 10
         epoch = math.ceil(dataset.size // batch_size)
         accuracy = []
@@ -222,7 +222,7 @@ class Server:
                 x, y = dataset.next_test_batch(batch_size)
                 x, y = x.to(self.device), y.to(self.device)
                 
-                predictions = self.server_model.model(x)
+                predictions = eval_model.model(x)
                 # pdb.set_trace()
                 pred_loss = loss_func(predictions, y)
                 accuracy.append((y.eq(predictions.max(dim=1).indices).sum() / y.shape[0]).item())
@@ -444,6 +444,8 @@ class Server:
                     else:
                         avg_server_y_logits = self.average_logits(res,
                                                                   clients_y_logits[cid])
+                # new_weights = [param.detach() for param in train_model.get_weights()]
+                
                 training_result = train_model.training(server_bn_mean, 
                                                        server_bn_var, 
                                                        avg_server_y_logits,
@@ -532,35 +534,36 @@ class Server:
                 evaluate_mean_acc = []
                 evaluate_num = 0
                 
-                if args.asyn_FL_flag:
-                    mean_loss, acc = self.evaluate(self.dataset_server.test,
-                                                    batch_size * 10)
+                # if args.asyn_FL_flag:
+                #     mean_loss, acc = self.evaluate(self.dataset_server.test,
+                #                                     batch_size * 10)
                         
+                #     evaluate_mean_loss.append(mean_loss)
+                #     evaluate_mean_acc.append(acc)
+                # else:
+                if self.clients_number <= 20:
+                    evaluate_num = self.clients_number
+                else:
+                    evaluate_num = int(self.clients_number * 0.1)
+                for idx in range(evaluate_num):
+                    if self.clients_number >= 20:
+                        selected_idx = np.random.choice(self.clients_number)
+                    else:
+                        selected_idx = idx
+                    # self.server_model = self.clients_dict[selected_idx]
+                    # self.server_model.set_weights(
+                    #     self.clients_dict[selected_idx].get_trainable_weights()
+                    # )
+
+                    mean_loss, acc = self.evaluate(self.dataset_server.test,
+                                                   batch_size * 10,
+                                                   self.clients_dict[selected_idx])
+                    # if selected_idx not in evaluate_client_acc:
+                    #     evaluate_client_acc[selected_idx] = []
+
+                    # evaluate_client_acc[selected_idx].append(acc)
                     evaluate_mean_loss.append(mean_loss)
                     evaluate_mean_acc.append(acc)
-                else:
-                    if self.clients_number <= 20:
-                        evaluate_num = self.clients_number
-                    else:
-                        evaluate_num = int(self.clients_number * 0.1)
-                    for idx in range(evaluate_num):
-                        if self.clients_number >= 20:
-                            selected_idx = np.random.choice(self.clients_number)
-                        else:
-                            selected_idx = idx
-                        self.server_model = self.clients_dict[selected_idx]
-                        # self.server_model.set_weights(
-                        #     self.clients_dict[selected_idx].get_trainable_weights()
-                        # )
-
-                        mean_loss, acc = self.evaluate(self.dataset_server.test,
-                                                    batch_size * 10)
-                        # if selected_idx not in evaluate_client_acc:
-                        #     evaluate_client_acc[selected_idx] = []
-
-                        # evaluate_client_acc[selected_idx].append(acc)
-                        evaluate_mean_loss.append(mean_loss)
-                        evaluate_mean_acc.append(acc)
 
                 mean_loss = np.mean(np.array(evaluate_mean_loss))
                 acc = np.mean(np.array(evaluate_mean_acc))
@@ -606,7 +609,7 @@ class Server:
                     train_bn_mean_loss, train_bn_var_loss = 0, 0
                     cnt_distill = 0
                 
-                print("training: loss={} | accuracy={}".format(train_loss,
+                print("\ntraining: loss={} | accuracy={}".format(train_loss,
                                                             train_acc))
                 print("evaluating: loss={} | accuracy={} | GPU: {}".format(mean_loss, acc, args.GPU_num))
                 print("model_mask: {}".format(model_mask))

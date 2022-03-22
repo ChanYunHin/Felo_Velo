@@ -6,7 +6,7 @@ parser = argparse.ArgumentParser(description='parameters')
 # -- Model parameters --
 parser.add_argument('--clients_number', type=int, default=10,
                     help='default: 10 clients')
-parser.add_argument('--clients_sample_ratio', type=float, default=1,
+parser.add_argument('--clients_sample_ratio', type=float, default=0.2,
                     help='default: 0.1')
 parser.add_argument('--epoch', type=int, default=100,
                     help='default: 500')
@@ -53,6 +53,12 @@ parser.add_argument("--public_flag", action='store_true', help='Public datasets 
 
 
 # debug parameters
+# parser.add_argument("--no_logits_flag", action='store_true', help='Do not use logits or not')
+parser.add_argument("--no_logits_flag", action='store_true', default=True, help='Do not use logits or not')
+# parser.add_argument("--new_VAE", action='store_true', help='Using a new VAE mode or not')
+parser.add_argument("--new_VAE", action='store_true', default=True, help='Using a new VAE mode or not')
+parser.add_argument("--VAE_op", action='store_true', help='Using output and VAE or not')
+# parser.add_argument("--VAE_op", action='store_true', default=True, help='Using output and VAE or not')
 parser.add_argument("--NVAE", action='store_true', help='Using noise input with VAE to generate features or not')
 # parser.add_argument("--NVAE", action='store_true', default=True, help='Using noise input with VAE to generate features or not')
 parser.add_argument("--homo_flag", action='store_true', help='all the client models are homogeneous or not')
@@ -65,10 +71,10 @@ parser.add_argument("--resnet_flag", action='store_true',
                     help='Using Resnet or not')
 # parser.add_argument("--resnet_flag", action='store_true', 
                     # default=True, help='Using Resnet or not')
-parser.add_argument('--y_distillation_flag', action='store_true',
-                    help='distilled y logits or not')
-# parser.add_argument('--y_distillation_flag', action='store_true', default=True,
+# parser.add_argument('--y_distillation_flag', action='store_true',
 #                     help='distilled y logits or not')
+parser.add_argument('--y_distillation_flag', action='store_true', default=True,
+                    help='distilled y logits or not')
 parser.add_argument('--asyn_FL_flag', action='store_true',
                     help='Federated Learning or not')
 # parser.add_argument('--asyn_FL_flag', action='store_true', default=True,

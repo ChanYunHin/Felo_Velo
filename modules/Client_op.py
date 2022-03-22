@@ -214,7 +214,10 @@ class Client:
             # features_predictions = self.model.decode(server_features)
             features_loss = self.distill_loss_func_features(encoded_features, server_features)
             # features_loss = features_loss + feature_distill_loss
-            pred_loss = pred_loss + alpha * (features_loss + distill_loss)
+            if args.no_logits_flag:
+                pred_loss = (1 - alpha) * pred_loss + alpha * (features_loss)
+            else:
+                pred_loss = (1 - alpha) * pred_loss + alpha * (features_loss + distill_loss)
         #     pred_loss = pred_loss + alpha * distill_loss
 
         # a = [torch.mean(mod.bn_feature_mean) for mod in self.bn_feature_layers]
@@ -267,18 +270,16 @@ class Client:
                 features_dict[label].append(client_features[idx])
         return logit_vectors, count_for_labels, features_dict
 
-    def match_labels_to_logits_features(self, server_y_logits, 
-                                        server_features, 
-                                        labels):
+    def match_labels_to_vectors(self, 
+                                server_vectors, 
+                                labels):
         # labels = self.get_class_labels(one_hot_y)
-        server_logit_vectors = []
-        server_feature_vectors = []
+        server_labeled_vectors = []
         # match logit vectors for each label
         for idx, label in enumerate(labels):
-            server_logit_vectors.append(server_y_logits[label.item()])
-            server_feature_vectors.append(server_features[label.item()])
-        # a = np.array(server_logit_vectors)
-        return torch.stack(server_logit_vectors, dim=0), torch.stack(server_feature_vectors, dim=0)
+            server_labeled_vectors.append(server_vectors[label.item()])
+        # a = np.array(server_labeled_vectors)
+        return torch.stack(server_labeled_vectors, dim=0)
 
 
     # def get_logits_from_generator(self, generator, batch_size, y):
@@ -329,7 +330,7 @@ class Client:
 
     #     x, y, data_idx = self.dataset.next_batch(self.batch_size)
     #     x, y = x.to(self.device), y.to(self.device)
-    #     server_logit_vectors = self.match_labels_to_logits_features(server_y_logits, y)
+    #     server_logit_vectors = self.match_labels_to_vectors(server_y_logits, y)
         
     #     train_result = self.train_step_first(x, y, 
     #                                          logit_vectors=server_logit_vectors,
@@ -436,7 +437,7 @@ class Client:
 
         # split x and y at the beginning of each training iteration.
         accumulate_gradients = []
-        server_logit_vectors = None
+        server_logit_vectors, server_features_vectors = None, None
         client_y_logits = {}
         count_for_labels = {}
         self.mean_loss = []
@@ -456,10 +457,12 @@ class Client:
             x, y, data_idx = self.dataset.next_batch(self.batch_size)
             x, y = x.to(self.device), y.to(self.device)
             if distillation:
-                server_logit_vectors, server_features = \
-                    self.match_labels_to_logits_features(server_y_logits, 
-                                                         server_features, 
-                                                         y)
+                server_logit_vectors = \
+                    self.match_labels_to_vectors(server_y_logits, 
+                                                 y)
+                server_features_vectors = \
+                    self.match_labels_to_vectors(server_features, 
+                                                 y)
                 # server_logit_vectors = self.get_logits_from_generator(server_generator, 
                 #                                                       self.batch_size, 
                 #                                                       y)
@@ -476,7 +479,7 @@ class Client:
                                             logit_vectors=server_logit_vectors,
                                             distillation=distillation,
                                             # server_generated_labels=server_generated_labels,
-                                            server_features=server_features,)
+                                            server_features=server_features_vectors,)
                                             # server_feature_logits=server_feature_logits)
 
             tmp_gradients, client_logit_vectors, client_features = train_result[0], train_result[1], train_result[2]
