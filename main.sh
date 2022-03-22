@@ -231,7 +231,7 @@ python main.py \
     --learning_rate 0.001 \
     --batch_size 50 \
     --clients_training_epoch 10 \
-    --alpha 0.7 \
+    --alpha 0.25 \
     --num_classes 10 \
     --dataset cifar10 \
     --y_distillation_flag \
@@ -250,7 +250,7 @@ python main.py \
     --learning_rate 0.001 \
     --batch_size 50 \
     --clients_training_epoch 10 \
-    --alpha 0.7 \
+    --alpha 0.25 \
     --num_classes 10 \
     --dataset cifar10 \
     --y_distillation_flag \
@@ -270,7 +270,7 @@ python main.py \
     --learning_rate 0.001 \
     --batch_size 50 \
     --clients_training_epoch 10 \
-    --alpha 0.7 \
+    --alpha 0.25 \
     --num_classes 10 \
     --dataset cifar10 \
     --y_distillation_flag \
@@ -290,7 +290,7 @@ python main.py \
     --learning_rate 0.001 \
     --batch_size 50 \
     --clients_training_epoch 10 \
-    --alpha 0.7 \
+    --alpha 0.25 \
     --num_classes 10 \
     --dataset cifar10 \
     --y_distillation_flag \
@@ -309,7 +309,7 @@ python main.py \
     --learning_rate 0.001 \
     --batch_size 50 \
     --clients_training_epoch 10 \
-    --alpha 0.7 \
+    --alpha 0.25 \
     --num_classes 10 \
     --dataset cifar10 \
     --y_distillation_flag \
@@ -327,7 +327,7 @@ python main.py \
     --learning_rate 0.001 \
     --batch_size 50 \
     --clients_training_epoch 10 \
-    --alpha 0.7 \
+    --alpha 0.25 \
     --num_classes 10 \
     --dataset cifar10 \
     --y_distillation_flag \
@@ -345,7 +345,7 @@ python main.py \
     --learning_rate 0.001 \
     --batch_size 50 \
     --clients_training_epoch 10 \
-    --alpha 0.7 \
+    --alpha 0.25 \
     --num_classes 10 \
     --dataset cifar10 \
     --y_distillation_flag \
@@ -365,7 +365,7 @@ python main.py \
     --learning_rate 0.001 \
     --batch_size 50 \
     --clients_training_epoch 10 \
-    --alpha 0.7 \
+    --alpha 0.25 \
     --num_classes 10 \
     --dataset cifar10 \
     --y_distillation_flag \
@@ -384,7 +384,7 @@ python main.py \
     --learning_rate 0.001 \
     --batch_size 50 \
     --clients_training_epoch 10 \
-    --alpha 0.7 \
+    --alpha 0.25 \
     --num_classes 10 \
     --dataset cifar10 \
     --y_distillation_flag \
@@ -402,7 +402,7 @@ python main.py \
     --learning_rate 0.001 \
     --batch_size 50 \
     --clients_training_epoch 10 \
-    --alpha 0.7 \
+    --alpha 0.25 \
     --num_classes 10 \
     --dataset cifar10 \
     --y_distillation_flag \
