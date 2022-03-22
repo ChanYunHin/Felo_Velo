@@ -216,11 +216,11 @@ python main.py \
     --GPU_num 0 \
     --clients_number 10 \
     --clients_sample_ratio 0.2 \
-    --epoch 1000 \
+    --epoch 2000 \
     --learning_rate 0.001 \
     --batch_size 50 \
     --clients_training_epoch 10 \
-    --alpha 0.25 \
+    --alpha 0.5 \
     --num_classes 10 \
     --dataset cifar10 \
     --y_distillation_flag \
@@ -234,11 +234,11 @@ python main.py \
     --GPU_num 0 \
     --clients_number 10 \
     --clients_sample_ratio 0.2 \
-    --epoch 1000 \
+    --epoch 2000 \
     --learning_rate 0.001 \
     --batch_size 50 \
     --clients_training_epoch 10 \
-    --alpha 0.25 \
+    --alpha 0.5 \
     --num_classes 10 \
     --dataset cifar10 \
     --y_distillation_flag \
@@ -253,11 +253,11 @@ python main.py \
     --GPU_num 0 \
     --clients_number 10 \
     --clients_sample_ratio 0.2 \
-    --epoch 1000 \
+    --epoch 2000 \
     --learning_rate 0.001 \
     --batch_size 50 \
     --clients_training_epoch 10 \
-    --alpha 0.25 \
+    --alpha 0.5 \
     --num_classes 10 \
     --dataset cifar10 \
     --y_distillation_flag \
@@ -272,11 +272,11 @@ python main.py \
     --GPU_num 0 \
     --clients_number 10 \
     --clients_sample_ratio 0.2 \
-    --epoch 1000 \
+    --epoch 2000 \
     --learning_rate 0.001 \
     --batch_size 50 \
     --clients_training_epoch 10 \
-    --alpha 0.25 \
+    --alpha 0.5 \
     --num_classes 10 \
     --dataset cifar10 \
     --y_distillation_flag \
@@ -290,11 +290,11 @@ python main.py \
     --GPU_num 0 \
     --clients_number 10 \
     --clients_sample_ratio 0.2 \
-    --epoch 1000 \
+    --epoch 2000 \
     --learning_rate 0.001 \
     --batch_size 50 \
     --clients_training_epoch 10 \
-    --alpha 0.25 \
+    --alpha 0.5 \
     --num_classes 10 \
     --dataset cifar10 \
     --y_distillation_flag \
@@ -307,11 +307,11 @@ python main.py \
     --GPU_num 0 \
     --clients_number 10 \
     --clients_sample_ratio 0.2 \
-    --epoch 1000 \
+    --epoch 2000 \
     --learning_rate 0.001 \
     --batch_size 50 \
     --clients_training_epoch 10 \
-    --alpha 0.25 \
+    --alpha 0.5 \
     --num_classes 10 \
     --dataset cifar10 \
     --y_distillation_flag \
@@ -324,11 +324,11 @@ python main.py \
     --GPU_num 0 \
     --clients_number 10 \
     --clients_sample_ratio 0.2 \
-    --epoch 1000 \
+    --epoch 2000 \
     --learning_rate 0.001 \
     --batch_size 50 \
     --clients_training_epoch 10 \
-    --alpha 0.25 \
+    --alpha 0.5 \
     --num_classes 10 \
     --dataset cifar10 \
     --y_distillation_flag \
@@ -343,11 +343,11 @@ python main.py \
     --GPU_num 0 \
     --clients_number 10 \
     --clients_sample_ratio 0.2 \
-    --epoch 1000 \
+    --epoch 2000 \
     --learning_rate 0.001 \
     --batch_size 50 \
     --clients_training_epoch 10 \
-    --alpha 0.25 \
+    --alpha 0.5 \
     --num_classes 10 \
     --dataset cifar10 \
     --y_distillation_flag \
@@ -361,11 +361,11 @@ python main.py \
     --GPU_num 0 \
     --clients_number 10 \
     --clients_sample_ratio 0.2 \
-    --epoch 1000 \
+    --epoch 2000 \
     --learning_rate 0.001 \
     --batch_size 50 \
     --clients_training_epoch 10 \
-    --alpha 0.25 \
+    --alpha 0.5 \
     --num_classes 10 \
     --dataset cifar10 \
     --y_distillation_flag \
@@ -378,11 +378,11 @@ python main.py \
     --GPU_num 0 \
     --clients_number 10 \
     --clients_sample_ratio 0.2 \
-    --epoch 1000 \
+    --epoch 2000 \
     --learning_rate 0.001 \
     --batch_size 50 \
     --clients_training_epoch 10 \
-    --alpha 0.25 \
+    --alpha 0.5 \
     --num_classes 10 \
     --dataset cifar10 \
     --y_distillation_flag \
