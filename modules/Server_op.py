@@ -206,7 +206,7 @@ class Server:
         accuracy = []
         mean_loss = []
         loss_func = F.cross_entropy
-        # self.server_model.model.eval()
+        self.server_model.model.eval()
         with torch.no_grad():
             for i in range(epoch):
                 x, y = dataset.next_test_batch(batch_size)

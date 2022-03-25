@@ -197,7 +197,7 @@ class Client:
         #         softmax_logit_vectors = F.softmax(logit_vectors)
         #         log_softmax_predictions = 0
         """ one training iteration """
-        
+        self.model.train()
         encoded_features = self.model.encode(x)
         predictions = self.model.decode(encoded_features)
         pred_loss = self.loss_func(predictions, y)
@@ -271,6 +271,7 @@ class Client:
                 log_softmax_predictions = 0
         """ one training iteration """
         
+        self.model.train()
         encoded_features = self.model.encode(x)
         predictions = self.model.decode(encoded_features)
         pred_loss = self.loss_func(predictions, y)

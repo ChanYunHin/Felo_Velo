@@ -217,6 +217,7 @@ class Server:
         accuracy = []
         mean_loss = []
         loss_func = F.cross_entropy
+        eval_model.model.eval()
         with torch.no_grad():
             for i in range(epoch):
                 x, y = dataset.next_test_batch(batch_size)
@@ -228,7 +229,7 @@ class Server:
                 accuracy.append((y.eq(predictions.max(dim=1).indices).sum() / y.shape[0]).item())
                 mean_loss.append(pred_loss.item())
                 # x, y = x.to("cpu"), y.to("cpu")
-
+        # eval_model.model.train()
 
         mean_loss = np.mean(np.array(mean_loss))
         acc = np.mean(np.array(accuracy))
@@ -556,8 +557,8 @@ class Server:
                     # )
 
                     mean_loss, acc = self.evaluate(self.dataset_server.test,
-                                                   batch_size * 10,
-                                                   self.clients_dict[selected_idx])
+                                                batch_size * 10,
+                                                self.clients_dict[selected_idx])
                     # if selected_idx not in evaluate_client_acc:
                     #     evaluate_client_acc[selected_idx] = []
 

@@ -186,6 +186,7 @@ class Client:
                 log_softmax_predictions = 0
         """ one training iteration """
         
+        self.model.train()
         predictions = self.model(x)
         bn_mean = torch.tensor([torch.mean(mod.bn_feature_mean) for mod in self.bn_feature_layers],
                                 device=self.device)
