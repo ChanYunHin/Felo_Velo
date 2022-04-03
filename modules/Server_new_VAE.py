@@ -445,7 +445,7 @@ class Server:
                                                                                device=self.device)
                         
                 else:
-                    if ep >= int(max_training_epoches * 0.1) and ep % int(max_training_epoches * 0.01) == 0:
+                    if ep >= int(max_training_epoches * 0.05) and ep % int(max_training_epoches * 0.01) == 0:
                         distillation_flag = args.y_distillation_flag
                         #training
                         features_dataloader = self.get_server_client_features(res)
@@ -635,7 +635,7 @@ class Server:
 
             eval_interval = 0
             if max_training_epoches <= 500:
-                eval_interval = 100
+                eval_interval = int(max_training_epoches / 100)
             else:
                 eval_interval = int(max_training_epoches / 100)
 

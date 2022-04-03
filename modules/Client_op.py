@@ -17,7 +17,7 @@ if not args.old_CNN:
 else:
     from modules.old_Model import ClientModel
     from modules.old_Model import ClientModel_2CNN
-from modules.ResnetModel import Resnet50, SmallResnet50
+from modules.ResnetModel import Resnet34, Resnet18, Resnet50, SmallResnet50
 
 # import modules.GAN_model as CGAN
 
@@ -95,9 +95,11 @@ class Client:
                                          layer3 = neural_network_shape["params"]["n3"],
                                          dropout_rate = neural_network_shape["params"]["dropout_rate"])
             elif neural_network_shape["model_type"] == "resnet":
+                # self.model = Resnet34(num_classes=num_classes)
                 self.model = Resnet50(in_channels=input_shape[1], 
                                       num_classes=num_classes)
             elif neural_network_shape["model_type"] == "small_resnet":
+                # self.model = Resnet18(num_classes=num_classes)
                 self.model = SmallResnet50(in_channels=input_shape[1], 
                                            num_classes=num_classes)
 

@@ -24,6 +24,9 @@ def get_model_mask(args):
         
     if args.resnet_flag:
         model_mask += "_rn"
+    
+    if args.old_CNN:
+        model_mask += "_oldCNN"
 
     if args.VAE:
         model_mask += "_VAE{}".format(args.latent_size)
@@ -36,6 +39,12 @@ def get_model_mask(args):
         
     if args.VAE_op:
         model_mask += "_VAE_op"
+        
+    if args.new_VAE_ft:
+        model_mask += "_VAE_ft"
+        
+    if args.GKT:
+        model_mask += "_GKT"
         
     if args.op:
         model_mask += "_op"
@@ -63,6 +72,9 @@ def get_model_mask(args):
 
     if args.KLD_flag:
         model_mask += "_KLD"
+        
+    
+        
 
     # if not args.aggregate_flag:
     #     model_mask += "_noAgg"

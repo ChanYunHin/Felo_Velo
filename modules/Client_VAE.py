@@ -17,7 +17,7 @@ if not args.old_CNN:
 else:
     from modules.old_Model import ClientModel
     from modules.old_Model import ClientModel_2CNN
-from modules.ResnetModel import Resnet50, SmallResnet50
+from modules.ResnetModel import Resnet34, Resnet18, Resnet50, SmallResnet50
 
 import modules.GAN_model as CGAN
 
@@ -95,9 +95,11 @@ class Client:
                                          layer3 = neural_network_shape["params"]["n3"],
                                          dropout_rate = neural_network_shape["params"]["dropout_rate"])
             elif neural_network_shape["model_type"] == "resnet":
+                # self.model = Resnet34(num_classes=num_classes)
                 self.model = Resnet50(in_channels=input_shape[1], 
                                       num_classes=num_classes)
             elif neural_network_shape["model_type"] == "small_resnet":
+                # self.model = Resnet18(num_classes=num_classes)
                 self.model = SmallResnet50(in_channels=input_shape[1], 
                                            num_classes=num_classes)
 
@@ -310,16 +312,16 @@ class Client:
 
         features_loss = self.loss_func(feature_predictions, server_generated_labels)
         
-        # if args.softmax_flag or args.KLD_flag:
-        #     softmax_server_feature_logits = F.softmax(server_feature_logits)
-        #     log_softmax_features_predictions = F.log_softmax(feature_predictions)
-        #     feature_distill_loss = self.distill_loss_func_logits(log_softmax_features_predictions, 
-        #                                                          softmax_server_feature_logits)
-        # else:
-        #     feature_distill_loss = self.distill_loss_func_logits(feature_predictions,
-        #                                                          server_feature_logits)
+        if args.softmax_flag or args.KLD_flag:
+            softmax_server_feature_logits = F.softmax(server_feature_logits)
+            log_softmax_features_predictions = F.log_softmax(feature_predictions)
+            feature_distill_loss = self.distill_loss_func_logits(log_softmax_features_predictions, 
+                                                                 softmax_server_feature_logits)
+        else:
+            feature_distill_loss = self.distill_loss_func_logits(feature_predictions,
+                                                                 server_feature_logits)
         
-        # features_loss = features_loss + args.beta * feature_distill_loss
+        features_loss = features_loss + args.beta * feature_distill_loss
         if args.no_logits_flag:
             pred_loss = (1 - alpha) * pred_loss + alpha * (features_loss)
         else:
