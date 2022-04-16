@@ -212,12 +212,12 @@ class Client:
                 distill_loss = self.distill_loss_func_logits(predictions, 
                                                              logit_vectors)
             # update the classifier with server features
-            features_predictions = self.model.decode(server_features)
-            features_classifier_loss = self.loss_func(features_predictions, y)
+            # features_predictions = self.model.decode(server_features)
+            # features_classifier_loss = self.loss_func(features_predictions, y)
             feature_extractor_loss = self.distill_loss_func_features(encoded_features,
                                                                      server_features)
-            features_loss = features_classifier_loss + feature_extractor_loss
-            # features_loss = feature_extractor_loss
+            # features_loss = features_classifier_loss + feature_extractor_loss
+            features_loss = feature_extractor_loss
             if args.no_logits_flag:
                 pred_loss = pred_loss + alpha * (features_loss)
             else:
