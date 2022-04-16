@@ -125,7 +125,7 @@ class Client:
         
         # self.scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer, 'min',
         #                                                             factor=0.5, patience=1,
-        #                                                             threshold=0.005)
+        #                                                             threshold=0.01)
         
         self.loss_func = F.cross_entropy
         # can not use cross-entropy loss in the distillation.
@@ -219,9 +219,9 @@ class Client:
             features_loss = features_classifier_loss + feature_extractor_loss
             # features_loss = feature_extractor_loss
             if args.no_logits_flag:
-                pred_loss = (1 - alpha) * pred_loss + alpha * (features_loss)
+                pred_loss = pred_loss + alpha * (features_loss)
             else:
-                pred_loss = (1 - alpha) * pred_loss + alpha * (features_loss + distill_loss)
+                pred_loss = pred_loss + alpha * (features_loss + distill_loss)
             
             # pred_loss = pred_loss + alpha * distill_loss
 

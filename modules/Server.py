@@ -401,7 +401,7 @@ class Server:
 
             if not args.asyn_FL_flag:
                 
-                if ep >= int(max_training_epoches * 0.1):
+                if ep >= int(max_training_epoches * 0.05):
                     distillation_flag = args.y_distillation_flag
                 # objgraph.show_growth()
                 # pdb.set_trace()
@@ -604,13 +604,13 @@ class Server:
 
                     
                     print("\nDistillation: loss={}".format(train_distill_loss))
-                    print("BN_mean: loss={}".format(train_bn_mean_loss))
-                    print("BN_var: loss={}".format(train_bn_var_loss))
+                    # print("BN_mean: loss={}".format(train_bn_mean_loss))
+                    # print("BN_var: loss={}".format(train_bn_var_loss))
                     train_distill_loss = 0
                     train_bn_mean_loss, train_bn_var_loss = 0, 0
                     cnt_distill = 0
                 
-                print("\ntraining: loss={} | accuracy={}".format(train_loss,
+                print("training: loss={} | accuracy={}".format(train_loss,
                                                             train_acc))
                 print("evaluating: loss={} | accuracy={} | GPU: {}".format(mean_loss, acc, args.GPU_num))
                 print("model_mask: {}".format(model_mask))

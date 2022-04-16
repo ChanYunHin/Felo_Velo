@@ -85,13 +85,13 @@ class Dataset(object):
             ])
 
 
-            train_data = datasets.CIFAR10(
+            self.train_data = datasets.CIFAR10(
                 root = "data",
                 train = True,
                 download = True,
                 transform = transform_train
             )
-            test_data = datasets.CIFAR10(
+            self.test_data = datasets.CIFAR10(
                 root = "data",
                 train = False,
                 download = True,
@@ -112,13 +112,13 @@ class Dataset(object):
             ])
 
 
-            train_data = datasets.CIFAR100(
+            self.train_data = datasets.CIFAR100(
                 root = "data",
                 train = True,
                 download = True,
                 transform = transform_train
             )
-            test_data = datasets.CIFAR100(
+            self.test_data = datasets.CIFAR100(
                 root = "data",
                 train = False,
                 download = True,
@@ -126,20 +126,20 @@ class Dataset(object):
             )
 
         else:
-            train_data = datasets.MNIST (
+            self.train_data = datasets.MNIST (
                 root = "data",
                 train = True,
                 download = True,
                 transform = transforms.ToTensor()
             )
-            test_data = datasets.MNIST(
+            self.test_data = datasets.MNIST(
                 root = "data",
                 train = False,
                 download = True,
                 transform = transforms.ToTensor()
             )
 
-        x_train, y_train, x_test, y_test = self.seperate_data(train_data, test_data)
+        x_train, y_train, x_test, y_test = self.seperate_data(self.train_data, self.test_data)
         print("Dataset: train-%d, test-%d" % (len(x_train), len(x_test)))
 
         # if one_hot:
@@ -331,4 +331,119 @@ class Dataset(object):
                         BatchGenerator(x_data[i:i + l // count],
                                     y_data[i:i + l // count]))
         return res
+
+
+class Dataset_MD(Dataset):
+    def __init__(self, dataset_name, one_hot=True, split=10, distorted_data=False):
+        if dataset_name == "cifar10":
+    
+            transform_train = transforms.Compose([
+                # transforms.RandomCrop(32, padding=4),
+                # transforms.RandomHorizontalFlip(),
+                transforms.ToTensor(),
+                transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
+            ])
+
+            transform_test = transforms.Compose([
+                transforms.ToTensor(),
+                transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
+            ])
+
+
+            self.train_data = datasets.CIFAR10(
+                root = "data",
+                train = True,
+                download = True,
+                transform = transform_train
+            )
+            self.test_data = datasets.CIFAR10(
+                root = "data",
+                train = False,
+                download = True,
+                transform = transform_test
+            )
+        elif dataset_name == "cifar100":
+            stats = ((0.5074,0.4867,0.4411),(0.2011,0.1987,0.2025))
+            transform_train = transforms.Compose([
+                # transforms.RandomCrop(32,padding=4,padding_mode="reflect"),
+                # transforms.RandomHorizontalFlip(),
+                transforms.ToTensor(),
+                transforms.Normalize(*stats),
+            ])
+
+            transform_test = transforms.Compose([
+                transforms.ToTensor(),
+                transforms.Normalize(*stats),
+            ])
+
+
+            self.train_data = datasets.CIFAR100(
+                root = "data",
+                train = True,
+                download = True,
+                transform = transform_train
+            )
+            self.test_data = datasets.CIFAR100(
+                root = "data",
+                train = False,
+                download = True,
+                transform = transform_test
+            )
+
+        else:
+            self.train_data = datasets.MNIST (
+                root = "data",
+                train = True,
+                download = True,
+                transform = transforms.ToTensor()
+            )
+            self.test_data = datasets.MNIST(
+                root = "data",
+                train = False,
+                download = True,
+                transform = transforms.ToTensor()
+            )
+        
+        public_dataset, private_dataset = \
+            self.get_public_private_dataset(self.train_data, 0.1)
+        
+        public_x, public_y = self.seperate_data(public_dataset)
+        private_x_train, private_y_train = self.seperate_data(private_dataset)
+        x_test, y_test = self.seperate_data(self.test_data)
+        
+        public_x, public_y = \
+            public_x.astype('float32'), public_y.astype('float32')
+        private_x_train, private_y_train = \
+            private_x_train.astype('float32'), private_y_train.astype('float32')
+        
+        
+        self.public_dataset = BatchGenerator(public_x, public_y)
+        
+        self.train = self.splited_batch(private_x_train, private_y_train, split)
+
+        self.test = BatchGenerator(x_test, y_test)
+    
+    
+    def seperate_data(self, target_dataset):
+        x_data, y_data= [], []
+
+        for data_point in target_dataset:
+            x_data.append(data_point[0].numpy())
+            y_data.append(data_point[1])
+
+        return np.array(x_data), np.array(y_data)
+    
+    def get_public_private_dataset(self, train_data, ratio):
+        public_dataset = []
+        private_dataset = []
+        train_dataset_size = len(train_data)
+        public_dataset_size = int(train_dataset_size * ratio)
+        private_dataset_size = int(train_dataset_size * (1 - ratio))
+        for public_idx in range(public_dataset_size):
+            public_dataset.append(train_data[public_idx])
+        for private_idx in range(private_dataset_size):
+            private_dataset.append(train_data[public_dataset_size + private_idx])
+        
+        return public_dataset, private_dataset
+        
 

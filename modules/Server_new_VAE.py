@@ -317,7 +317,7 @@ class Server:
         # x_y_logits = torch.cat([x_features, one_hot_y], dim=1)
         features_dataset = TensorDataset(x_features, y_label) 
         features_dataloader = DataLoader(dataset=features_dataset,
-                                         batch_size = 512,
+                                         batch_size = self.batch_size,
                                          shuffle=True)
 
 
@@ -440,7 +440,7 @@ class Server:
                         #training
                         features_dataloader = self.get_server_client_features(res)
                         self.server_extractor = CVAE.server_extractor_training(self.server_extractor,
-                                                                               num_epochs=5,
+                                                                               num_epochs=10,
                                                                                dataloader=features_dataloader,
                                                                                device=self.device)
                         
@@ -450,7 +450,7 @@ class Server:
                         #training
                         features_dataloader = self.get_server_client_features(res)
                         self.server_extractor = CVAE.server_extractor_training(self.server_extractor,
-                                                                               num_epochs=5,
+                                                                               num_epochs=10,
                                                                                dataloader=features_dataloader,
                                                                                device=self.device)
                         

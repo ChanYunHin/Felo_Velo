@@ -209,32 +209,129 @@
 #     --resnet_flag \
 
 
+# # # Fedop
+
+# python main.py \
+#     --GPU_num 2 \
+#     --clients_number 10 \
+#     --clients_sample_ratio 0.2 \
+#     --epoch 2000 \
+#     --learning_rate 0.001 \
+#     --batch_size 50 \
+#     --clients_training_epoch 10 \
+#     --alpha 0.5 \
+#     --num_classes 10 \
+#     --dataset cifar10 \
+#     --y_distillation_flag \
+#     --op \
+#     --latent_size 1024 \
+#     --resnet_flag \
+#     --KLD_flag 
+
+# python main.py \
+#     --GPU_num 2 \
+#     --clients_number 10 \
+#     --clients_sample_ratio 0.2 \
+#     --epoch 2000 \
+#     --learning_rate 0.001 \
+#     --batch_size 50 \
+#     --clients_training_epoch 10 \
+#     --alpha 0.5 \
+#     --num_classes 10 \
+#     --dataset cifar10 \
+#     --y_distillation_flag \
+#     --op \
+#     --latent_size 1024 \
+#     --resnet_flag \
+#     --KLD_flag \
+#     --no_logits_flag
+
+
+# # FedGKT
+
+# python main.py \
+#     --GPU_num 2 \
+#     --clients_number 10 \
+#     --clients_sample_ratio 0.2 \
+#     --epoch 2000 \
+#     --learning_rate 0.001 \
+#     --batch_size 128 \
+#     --clients_training_epoch 10 \
+#     --alpha 0.5 \
+#     --num_classes 10 \
+#     --dataset cifar10 \
+#     --y_distillation_flag \
+#     --latent_size 1024 \
+#     --resnet_flag \
+#     --KLD_flag \
+#     --GKT
+
+
+# # # FedAE
+# python main.py \
+#     --GPU_num 2 \
+#     --clients_number 10 \
+#     --clients_sample_ratio 0.2 \
+#     --epoch 2000 \
+#     --learning_rate 0.001 \
+#     --batch_size 50 \
+#     --clients_training_epoch 10 \
+#     --alpha 0.5 \
+#     --num_classes 10 \
+#     --dataset cifar10 \
+#     --y_distillation_flag \
+#     --new_VAE \
+#     --latent_size 1024 \
+#     --resnet_flag \
+#     --KLD_flag \
+#     --no_logits_flag
+
+
+# python main.py \
+#     --GPU_num 2 \
+#     --clients_number 10 \
+#     --clients_sample_ratio 0.2 \
+#     --epoch 2000 \
+#     --learning_rate 0.001 \
+#     --batch_size 50 \
+#     --clients_training_epoch 10 \
+#     --alpha 0.5 \
+#     --num_classes 10 \
+#     --dataset cifar10 \
+#     --y_distillation_flag \
+#     --new_VAE \
+#     --latent_size 1024 \
+#     --resnet_flag \
+#     --KLD_flag \
+
+
+# # FedMD
+
+# python main.py \
+#     --GPU_num 3 \
+#     --clients_number 10 \
+#     --clients_sample_ratio 0.2 \
+#     --epoch 2000 \
+#     --learning_rate 0.001 \
+#     --batch_size 128 \
+#     --clients_training_epoch 10 \
+#     --alpha 0.5 \
+#     --num_classes 10 \
+#     --dataset cifar10 \
+#     --latent_size 1024 \
+#     --resnet_flag \
+#     --MD
+
+
+############################################################## 50 ##############################################################
+
 # Fedop
 
-
 python main.py \
-    --GPU_num 0 \
+    --GPU_num 3 \
     --clients_number 10 \
     --clients_sample_ratio 0.2 \
-    --epoch 2000 \
-    --learning_rate 0.001 \
-    --batch_size 50 \
-    --clients_training_epoch 10 \
-    --alpha 0.5 \
-    --num_classes 10 \
-    --dataset cifar10 \
-    --y_distillation_flag \
-    --op \
-    --latent_size 1024 \
-    --resnet_flag \
-    --KLD_flag \
-    --no_logits_flag
-
-python main.py \
-    --GPU_num 0 \
-    --clients_number 10 \
-    --clients_sample_ratio 0.2 \
-    --epoch 2000 \
+    --epoch 1000 \
     --learning_rate 0.001 \
     --batch_size 50 \
     --clients_training_epoch 10 \
@@ -248,49 +345,54 @@ python main.py \
     --KLD_flag 
 
 
+# FedMD
+
+python main.py \
+    --GPU_num 3 \
+    --clients_number 10 \
+    --clients_sample_ratio 0.2 \
+    --epoch 1000 \
+    --learning_rate 0.001 \
+    --batch_size 50 \
+    --clients_training_epoch 10 \
+    --alpha 0.5 \
+    --num_classes 10 \
+    --dataset cifar10 \
+    --latent_size 1024 \
+    --resnet_flag \
+    --MD
+
+
+# FedGKT
+
+python main.py \
+    --GPU_num 3 \
+    --clients_number 10 \
+    --clients_sample_ratio 0.2 \
+    --epoch 1000 \
+    --learning_rate 0.001 \
+    --batch_size 50 \
+    --clients_training_epoch 10 \
+    --alpha 0.5 \
+    --num_classes 10 \
+    --dataset cifar10 \
+    --y_distillation_flag \
+    --latent_size 1024 \
+    --resnet_flag \
+    --KLD_flag \
+    --GKT
+
+
+
+
+
 # FedAE
-python main.py \
-    --GPU_num 0 \
-    --clients_number 10 \
-    --clients_sample_ratio 0.2 \
-    --epoch 2000 \
-    --learning_rate 0.001 \
-    --batch_size 50 \
-    --clients_training_epoch 10 \
-    --alpha 0.5 \
-    --num_classes 10 \
-    --dataset cifar10 \
-    --y_distillation_flag \
-    --new_VAE \
-    --latent_size 1024 \
-    --resnet_flag \
-    --KLD_flag \
-    --no_logits_flag
-
 
 python main.py \
-    --GPU_num 0 \
+    --GPU_num 3 \
     --clients_number 10 \
     --clients_sample_ratio 0.2 \
-    --epoch 2000 \
-    --learning_rate 0.001 \
-    --batch_size 50 \
-    --clients_training_epoch 10 \
-    --alpha 0.5 \
-    --num_classes 10 \
-    --dataset cifar10 \
-    --y_distillation_flag \
-    --new_VAE \
-    --latent_size 1024 \
-    --resnet_flag \
-    --no_logits_flag
-
-
-python main.py \
-    --GPU_num 0 \
-    --clients_number 10 \
-    --clients_sample_ratio 0.2 \
-    --epoch 2000 \
+    --epoch 1000 \
     --learning_rate 0.001 \
     --batch_size 50 \
     --clients_training_epoch 10 \
@@ -303,82 +405,33 @@ python main.py \
     --resnet_flag \
     --KLD_flag \
 
+
+
+
+# Private (FedHe)
 python main.py \
-    --GPU_num 0 \
+    --GPU_num 3 \
     --clients_number 10 \
     --clients_sample_ratio 0.2 \
-    --epoch 2000 \
+    --epoch 1000 \
     --learning_rate 0.001 \
     --batch_size 50 \
     --clients_training_epoch 10 \
-    --alpha 0.5 \
+    --alpha 0 \
     --num_classes 10 \
     --dataset cifar10 \
     --y_distillation_flag \
-    --new_VAE \
-    --latent_size 1024 \
-    --resnet_flag \
-
-
-python main.py \
-    --GPU_num 0 \
-    --clients_number 10 \
-    --clients_sample_ratio 0.2 \
-    --epoch 2000 \
-    --learning_rate 0.001 \
-    --batch_size 50 \
-    --clients_training_epoch 10 \
-    --alpha 0.5 \
-    --num_classes 10 \
-    --dataset cifar10 \
-    --y_distillation_flag \
-    --VAE \
-    --latent_size 1024 \
-    --resnet_flag \
-    --KLD_flag \
-    --no_logits_flag
-
-
-python main.py \
-    --GPU_num 0 \
-    --clients_number 10 \
-    --clients_sample_ratio 0.2 \
-    --epoch 2000 \
-    --learning_rate 0.001 \
-    --batch_size 50 \
-    --clients_training_epoch 10 \
-    --alpha 0.5 \
-    --num_classes 10 \
-    --dataset cifar10 \
-    --y_distillation_flag \
-    --VAE \
-    --latent_size 1024 \
-    --resnet_flag \
-    --no_logits_flag 
-
-
-python main.py \
-    --GPU_num 0 \
-    --clients_number 10 \
-    --clients_sample_ratio 0.2 \
-    --epoch 2000 \
-    --learning_rate 0.001 \
-    --batch_size 50 \
-    --clients_training_epoch 10 \
-    --alpha 0.5 \
-    --num_classes 10 \
-    --dataset cifar10 \
-    --y_distillation_flag \
-    --VAE \
     --latent_size 1024 \
     --resnet_flag \
     --KLD_flag \
 
+
+# FedHe
 python main.py \
-    --GPU_num 0 \
+    --GPU_num 3 \
     --clients_number 10 \
     --clients_sample_ratio 0.2 \
-    --epoch 2000 \
+    --epoch 1000 \
     --learning_rate 0.001 \
     --batch_size 50 \
     --clients_training_epoch 10 \
@@ -386,54 +439,181 @@ python main.py \
     --num_classes 10 \
     --dataset cifar10 \
     --y_distillation_flag \
-    --VAE \
     --latent_size 1024 \
     --resnet_flag \
+    --KLD_flag \
 
 
-# # Private (FedAE)
+############################################################## 64 ##############################################################
+
+# Fedop
+
 # python main.py \
-#     --GPU_num 2 \
+#     --GPU_num 3 \
 #     --clients_number 10 \
 #     --clients_sample_ratio 0.2 \
 #     --epoch 1000 \
 #     --learning_rate 0.001 \
-#     --batch_size 50 \
+#     --batch_size 64 \
 #     --clients_training_epoch 10 \
-#     --alpha 0 \
-#     --beta 0 \
-#     --cita 0 \
+#     --alpha 0.5 \
 #     --num_classes 10 \
 #     --dataset cifar10 \
-#     --VAE \
-#     --latent_size 1024 \
 #     --y_distillation_flag \
+#     --op \
+#     --latent_size 1024 \
 #     --resnet_flag \
 #     --KLD_flag \
+#     --no_logits_flag
 
-# # Private (FedHe)
+
+python main.py \
+    --GPU_num 3 \
+    --clients_number 10 \
+    --clients_sample_ratio 0.2 \
+    --epoch 1000 \
+    --learning_rate 0.001 \
+    --batch_size 64 \
+    --clients_training_epoch 10 \
+    --alpha 0.5 \
+    --num_classes 10 \
+    --dataset cifar10 \
+    --y_distillation_flag \
+    --op \
+    --latent_size 1024 \
+    --resnet_flag \
+    --KLD_flag 
+
+
+# FedMD
+
+python main.py \
+    --GPU_num 3 \
+    --clients_number 10 \
+    --clients_sample_ratio 0.2 \
+    --epoch 1000 \
+    --learning_rate 0.001 \
+    --batch_size 64 \
+    --clients_training_epoch 10 \
+    --alpha 0.5 \
+    --num_classes 10 \
+    --dataset cifar10 \
+    --latent_size 1024 \
+    --resnet_flag \
+    --MD
+
+
+# FedGKT
+
+python main.py \
+    --GPU_num 3 \
+    --clients_number 10 \
+    --clients_sample_ratio 0.2 \
+    --epoch 1000 \
+    --learning_rate 0.001 \
+    --batch_size 64 \
+    --clients_training_epoch 10 \
+    --alpha 0.5 \
+    --num_classes 10 \
+    --dataset cifar10 \
+    --y_distillation_flag \
+    --latent_size 1024 \
+    --resnet_flag \
+    --KLD_flag \
+    --GKT
+
+
+
+
+
+# FedAE
+
 # python main.py \
-#     --GPU_num 2 \
+#     --GPU_num 3 \
 #     --clients_number 10 \
 #     --clients_sample_ratio 0.2 \
 #     --epoch 1000 \
 #     --learning_rate 0.001 \
-#     --batch_size 50 \
+#     --batch_size 64 \
 #     --clients_training_epoch 10 \
-#     --alpha 0 \
+#     --alpha 0.5 \
 #     --num_classes 10 \
 #     --dataset cifar10 \
 #     --y_distillation_flag \
+#     --new_VAE \
 #     --latent_size 1024 \
 #     --resnet_flag \
 #     --KLD_flag \
+#     --no_logits_flag
 
-# # FedHe
+
+python main.py \
+    --GPU_num 3 \
+    --clients_number 10 \
+    --clients_sample_ratio 0.2 \
+    --epoch 1000 \
+    --learning_rate 0.001 \
+    --batch_size 64 \
+    --clients_training_epoch 10 \
+    --alpha 0.5 \
+    --num_classes 10 \
+    --dataset cifar10 \
+    --y_distillation_flag \
+    --new_VAE \
+    --latent_size 1024 \
+    --resnet_flag \
+    --KLD_flag \
+
+
+
+
+# Private (FedHe)
+python main.py \
+    --GPU_num 3 \
+    --clients_number 10 \
+    --clients_sample_ratio 0.2 \
+    --epoch 1000 \
+    --learning_rate 0.001 \
+    --batch_size 64 \
+    --clients_training_epoch 10 \
+    --alpha 0 \
+    --num_classes 10 \
+    --dataset cifar10 \
+    --y_distillation_flag \
+    --latent_size 1024 \
+    --resnet_flag \
+    --KLD_flag \
+
+
+# FedHe
+python main.py \
+    --GPU_num 3 \
+    --clients_number 10 \
+    --clients_sample_ratio 0.2 \
+    --epoch 1000 \
+    --learning_rate 0.001 \
+    --batch_size 64 \
+    --clients_training_epoch 10 \
+    --alpha 0.5 \
+    --num_classes 10 \
+    --dataset cifar10 \
+    --y_distillation_flag \
+    --latent_size 1024 \
+    --resnet_flag \
+    --KLD_flag \
+
+
+
+
+
+
+
+# # FedAE_ft
 # python main.py \
 #     --GPU_num 2 \
 #     --clients_number 10 \
 #     --clients_sample_ratio 0.2 \
-#     --epoch 1000 \
+#     --epoch 2000 \
 #     --learning_rate 0.001 \
 #     --batch_size 50 \
 #     --clients_training_epoch 10 \
@@ -441,10 +621,63 @@ python main.py \
 #     --num_classes 10 \
 #     --dataset cifar10 \
 #     --y_distillation_flag \
+#     --new_VAE_ft \
+#     --latent_size 1024\
+#     --resnet_flag \
+#     --KLD_flag \
+#     --no_logits_flag
+
+
+# python main.py \
+#     --GPU_num 2 \
+#     --clients_number 10 \
+#     --clients_sample_ratio 0.2 \
+#     --epoch 2000 \
+#     --learning_rate 0.001 \
+#     --batch_size 50 \
+#     --clients_training_epoch 10 \
+#     --alpha 0.5 \
+#     --num_classes 10 \
+#     --dataset cifar10 \
+#     --y_distillation_flag \
+#     --new_VAE_ft \
+#     --latent_size 1024 \
+#     --resnet_flag \
+#     --no_logits_flag
+
+
+# python main.py \
+#     --GPU_num 2 \
+#     --clients_number 10 \
+#     --clients_sample_ratio 0.2 \
+#     --epoch 2000 \
+#     --learning_rate 0.001 \
+#     --batch_size 50 \
+#     --clients_training_epoch 10 \
+#     --alpha 0.5 \
+#     --num_classes 10 \
+#     --dataset cifar10 \
+#     --y_distillation_flag \
+#     --new_VAE_ft \
 #     --latent_size 1024 \
 #     --resnet_flag \
 #     --KLD_flag \
 
+# python main.py \
+#     --GPU_num 2 \
+#     --clients_number 10 \
+#     --clients_sample_ratio 0.2 \
+#     --epoch 2000 \
+#     --learning_rate 0.001 \
+#     --batch_size 50 \
+#     --clients_training_epoch 10 \
+#     --alpha 0.5 \
+#     --num_classes 10 \
+#     --dataset cifar10 \
+#     --y_distillation_flag \
+#     --new_VAE_ft \
+#     --latent_size 1024 \
+#     --resnet_flag \
 
 # # --------------------------------------------------------1sr--------------------------------------------------------
 

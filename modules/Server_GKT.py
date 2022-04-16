@@ -288,48 +288,48 @@ class Server:
 
 
 
-    # def get_server_client_features(self, res):
-    #     x_features, y_label = [], []
-    #     # draw_logits = {}
-    #     '''Use mean and var to generate features
-    #        features as dataset to train the server VAE model
-    #        Not use mean and var vector to be the training dataset'''
-    #     for key, client_features in res["server_client_features"].items():
-    #         x_features.extend(client_features)
-    #         # y_size = len(client_features)
-    #         y_size = len(client_features)
-    #         y_label.extend([key for i in range(y_size)])
-    #         y_logits.extend(res["server_y_logits"][key])
+    def get_server_client_features(self, res):
+        x_features, y_label = [], []
+        # draw_logits = {}
+        '''Use mean and var to generate features
+           features as dataset to train the server VAE model
+           Not use mean and var vector to be the training dataset'''
+        for key, client_features in res["server_client_features"].items():
+            x_features.extend(client_features)
+            # y_size = len(client_features)
+            y_size = len(client_features)
+            y_label.extend([key for i in range(y_size)])
+            y_logits.extend(res["server_y_logits"][key])
             
-    #         # draw the training data for GAN
-    #         # if key not in draw_logits:
-    #             # draw_logits[key] = list(logit)
+            # draw the training data for GAN
+            # if key not in draw_logits:
+                # draw_logits[key] = list(logit)
 
-    #     x_features = torch.stack(x_features, dim=0)
-    #     y_logits = torch.stack(y_logits, dim=0)
-    #     y_label = torch.tensor(y_label, device=self.device)
-    #     # one_hot_y = F.one_hot(y_label, num_classes=10)
-    #     # x_y_logits = torch.cat([x_features, one_hot_y], dim=1)
-    #     features_dataset = TensorDataset(x_features, y_logits, y_label) 
-    #     features_dataloader = DataLoader(dataset=features_dataset,
-    #                                      batch_size = 512,
-    #                                      shuffle=True)
+        x_features = torch.stack(x_features, dim=0)
+        y_logits = torch.stack(y_logits, dim=0)
+        y_label = torch.tensor(y_label, device=self.device)
+        # one_hot_y = F.one_hot(y_label, num_classes=10)
+        # x_y_logits = torch.cat([x_features, one_hot_y], dim=1)
+        features_dataset = TensorDataset(x_features, y_logits, y_label) 
+        features_dataloader = DataLoader(dataset=features_dataset,
+                                         batch_size = 512,
+                                         shuffle=True)
 
 
-    #     # for key, logit in draw_logits.items():
-    #     #     for idx, logit_val in enumerate(logit):
-    #     #         if idx == 10:
-    #     #             break
-    #     #         plt.plot(logit_val.cpu(), label=str(key))
-    #     #     plt.title("Real samples for classes {}".format(key))
-    #     #     plt.legend()
-    #     #     model_mask = get_model_mask(args)
-    #     #     pic_save_path = "pic/{}/{}/alpha{}_lr{}/".format(args.dataset, model_mask, args.alpha, args.learning_rate)
-    #     #     makedirs(pic_save_path)
-    #     #     plt.savefig("{}real_samples_classes_{}.png".format(pic_save_path, key))
-    #     #     plt.close()
+        # for key, logit in draw_logits.items():
+        #     for idx, logit_val in enumerate(logit):
+        #         if idx == 10:
+        #             break
+        #         plt.plot(logit_val.cpu(), label=str(key))
+        #     plt.title("Real samples for classes {}".format(key))
+        #     plt.legend()
+        #     model_mask = get_model_mask(args)
+        #     pic_save_path = "pic/{}/{}/alpha{}_lr{}/".format(args.dataset, model_mask, args.alpha, args.learning_rate)
+        #     makedirs(pic_save_path)
+        #     plt.savefig("{}real_samples_classes_{}.png".format(pic_save_path, key))
+        #     plt.close()
 
-    #     return features_dataloader
+        return features_dataloader
 
     def get_server_y_logits(self, res):
         server_y_logits_dict = {}

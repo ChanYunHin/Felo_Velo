@@ -128,7 +128,7 @@ class Client:
         
         # self.scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer, 'min',
         #                                                             factor=0.5, patience=1,
-        #                                                             threshold=0.005)
+        #                                                             threshold=0.01)
         
         self.loss_func = F.cross_entropy
         # can not use cross-entropy loss in the distillation.
@@ -232,8 +232,6 @@ class Client:
         pred_loss.backward()
         
         # torch.nn.utils.clip_grad.clip_grad_value_(self.model.parameters(), 0.1)
-        
-        self.optimizer.step()
         
         gradients = [param.grad.detach() for param in self.model.parameters()]
         self.optimizer.zero_grad()

@@ -15,6 +15,7 @@ if args.VAE:
     assert not args.new_VAE
     assert not args.new_VAE_ft
     assert not args.GKT
+    assert not args.MD
     from modules.Server_VAE import Server as server
 elif args.op:
     assert not args.VAE
@@ -23,6 +24,7 @@ elif args.op:
     assert not args.new_VAE
     assert not args.new_VAE_ft
     assert not args.GKT
+    assert not args.MD
     from modules.Server_op import Server as server
 elif args.NVAE:
     assert not args.op
@@ -31,6 +33,7 @@ elif args.NVAE:
     assert not args.new_VAE
     assert not args.new_VAE_ft
     assert not args.GKT
+    assert not args.MD
     from modules.Server_NVAE import Server as server
 elif args.VAE_op:
     assert not args.op
@@ -39,6 +42,7 @@ elif args.VAE_op:
     assert not args.new_VAE
     assert not args.new_VAE_ft
     assert not args.GKT
+    assert not args.MD
     from modules.Server_VAE_op import Server as server
 elif args.new_VAE:
     assert not args.op
@@ -47,6 +51,7 @@ elif args.new_VAE:
     assert not args.VAE
     assert not args.new_VAE_ft
     assert not args.GKT
+    assert not args.MD
     from modules.Server_new_VAE import Server as server
 elif args.new_VAE_ft:
     assert not args.op
@@ -55,6 +60,7 @@ elif args.new_VAE_ft:
     assert not args.VAE
     assert not args.new_VAE
     assert not args.GKT
+    assert not args.MD
     from modules.Server_new_VAE_ft import Server as server
 elif args.GKT:
     assert not args.op
@@ -63,7 +69,19 @@ elif args.GKT:
     assert not args.VAE
     assert not args.new_VAE
     assert not args.new_VAE_ft
+    assert not args.MD
     from modules.Server_GKT import Server as server
+elif args.MD:
+    assert not args.op
+    assert not args.NVAE
+    assert not args.VAE_op
+    assert not args.VAE
+    assert not args.new_VAE
+    assert not args.new_VAE_ft
+    assert not args.GKT
+    assert not args.y_distillation_flag
+    assert not args.KLD_flag
+    from modules.Server_MD import Server as server
 else:
     from modules.Server import Server as server
 

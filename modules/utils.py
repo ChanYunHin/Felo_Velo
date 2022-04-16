@@ -45,6 +45,9 @@ def get_model_mask(args):
         
     if args.GKT:
         model_mask += "_GKT"
+    
+    if args.MD:
+        model_mask += "_MD"
         
     if args.op:
         model_mask += "_op"
@@ -123,11 +126,11 @@ def get_tb_logs_name(args):
             
         based_model = "rn"
         if args.resnet_flag:
-            based_model = "rn{}_{}".format(args.clients_sample_ratio, args.dataset)
+            based_model = "rn{}_{}_{}".format(args.clients_sample_ratio, args.dataset, args.batch_size)
         elif args.old_CNN:
-            based_model = "light_CNN{}_{}".format(args.clients_sample_ratio, args.dataset)
+            based_model = "light_CNN{}_{}_{}".format(args.clients_sample_ratio, args.dataset, args.batch_size)
         else:
-            based_model = "CNN{}_{}".format(args.clients_sample_ratio, args.dataset)
+            based_model = "CNN{}_{}_{}".format(args.clients_sample_ratio, args.dataset, args.batch_size)
             
         # if args.KLD_flag:
         #     based_model += "_KLD"

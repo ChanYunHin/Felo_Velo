@@ -136,7 +136,7 @@ class Client:
         
         # self.scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer, 'min',
         #                                                             factor=0.5, patience=1,
-        #                                                             threshold=0.005)
+        #                                                             threshold=0.01)
         
         self.loss_func = F.cross_entropy
         # can not use cross-entropy loss in the distillation.
@@ -207,7 +207,7 @@ class Client:
                 distill_loss = self.distill_loss_func(predictions, 
                                                       torch.from_numpy(logit_vectors).to(self.device))
 
-            pred_loss = (1 - alpha) * pred_loss + alpha * distill_loss
+            pred_loss = pred_loss + alpha * distill_loss
 
         # a = [torch.mean(mod.bn_feature_mean) for mod in self.bn_feature_layers]
         # debug_item = torch.tensor(a, device=self.device)
@@ -420,6 +420,7 @@ class Client:
 
 
         mean_loss = np.mean(np.array(self.mean_loss))
+        # self.scheduler.step(mean_loss)
         acc = np.mean(np.array(self.accuracy))
 
         # updated_gradients = list_divided_int(accumulate_gradients, self.clients_training_epoch)

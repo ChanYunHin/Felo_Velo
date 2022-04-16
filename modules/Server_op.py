@@ -449,7 +449,7 @@ class Server:
                         distillation_flag = args.y_distillation_flag
                         
                 else:
-                    if ep >= int(max_training_epoches * 0.1):
+                    if ep >= int(max_training_epoches * 0.05):
                         distillation_flag = args.y_distillation_flag
 
 

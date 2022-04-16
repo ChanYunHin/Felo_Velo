@@ -8,7 +8,7 @@ parser.add_argument('--clients_number', type=int, default=10,
                     help='default: 10 clients')
 parser.add_argument('--clients_sample_ratio', type=float, default=0.2,
                     help='default: 0.1')
-parser.add_argument('--epoch', type=int, default=100,
+parser.add_argument('--epoch', type=int, default=1000,
                     help='default: 500')
 parser.add_argument('--learning_rate', type=float, default=0.001,
                     help='default: 0.001')
@@ -53,6 +53,12 @@ parser.add_argument("--public_flag", action='store_true', help='Public datasets 
 
 
 # debug parameters
+parser.add_argument("--MD", action='store_true', help='Use MD or not')
+# parser.add_argument("--MD", action='store_true', default=True, help='Use MD or not')
+parser.add_argument("--GKT", action='store_true', help='Use GKT or not')
+# parser.add_argument("--GKT", action='store_true', default=True, help='Use GKT or not')
+parser.add_argument("--new_VAE_ft", action='store_true', help='Use new features or not')
+# parser.add_argument("--new_VAE_ft", action='store_true', default=True, help='Use new features or not')
 parser.add_argument("--no_logits_flag", action='store_true', help='Do not use logits or not')
 # parser.add_argument("--no_logits_flag", action='store_true', default=True, help='Do not use logits or not')
 parser.add_argument("--new_VAE", action='store_true', help='Using a new VAE mode or not')
@@ -95,7 +101,7 @@ parser.add_argument('--data_size_fold', type=int, default=1,
 parser.add_argument("--middle_flag", action='store_true', help='get the outputs from middle layer or not')
 # parser.add_argument("--middle_flag", action='store_true', default=True, help='get the outputs from middle layer or not')
 parser.add_argument("--baseline_middle_flag", action='store_true', help='block the outputs from middle layer or not')
-parser.add_argument("--GPU_num", type=int, default=2, help='default: 2')
+parser.add_argument("--GPU_num", type=int, default=0, help='default: 2')
 parser.add_argument("--BN_features", action='store_true', help='Using bn features or not')
 parser.add_argument("--Var", action='store_true', help='Using bn features or not')
 # parser.add_argument("--Var", action='store_true', default=True, help='Using bn features or not')
