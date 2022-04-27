@@ -205,7 +205,7 @@ class Client:
                 distill_loss = self.distill_loss_func(log_softmax_predictions, softmax_logit_vectors)
             else:
                 distill_loss = self.distill_loss_func(predictions, 
-                                                      torch.from_numpy(logit_vectors).to(self.device))
+                                                      logit_vectors)
 
             pred_loss = pred_loss + alpha * distill_loss
 

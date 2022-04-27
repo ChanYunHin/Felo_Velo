@@ -116,11 +116,17 @@ def main(device):
     else:
         num_input = 32
     if dataset == "mnist":
-        num_input = 28
         distorted_data = False
         num_input_channel = 1
     if dataset == "cifar100":
         num_classes = 100
+    if dataset == "Fmnist":
+        num_classes = 10
+        num_input_channel = 1
+    if dataset == "emnist_bl":
+        num_classes = 47
+        num_input_channel = 1
+        
     parameters = parameters(clients_number,
                             clients_sample_ratio,
                             epoch,

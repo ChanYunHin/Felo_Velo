@@ -124,19 +124,66 @@ class Dataset(object):
                 download = True,
                 transform = transform_test
             )
+        
+        elif dataset_name == "emnist_bl": 
+            
+            transform_format = transforms.Compose([
+                transforms.ToTensor(),
+                transforms.Resize(32),
+            ])
+            
+            self.train_data = datasets.EMNIST (
+                root = "data",
+                train = True,
+                download = True,
+                transform = transform_format,
+                split = "balanced"
+            )
+            self.test_data = datasets.EMNIST(
+                root = "data",
+                train = False,
+                download = True,
+                transform = transform_format,
+                split = "balanced"
+            )
+
+        elif dataset_name == "Fmnist": 
+            
+            transform_format = transforms.Compose([
+                transforms.ToTensor(),
+                transforms.Resize(32),
+            ])
+            
+            self.train_data = datasets.FashionMNIST (
+                root = "data",
+                train = True,
+                download = True,
+                transform = transform_format
+            )
+            self.test_data = datasets.FashionMNIST(
+                root = "data",
+                train = False,
+                download = True,
+                transform = transform_format
+            )
 
         else:
+            transform_format = transforms.Compose([
+                transforms.ToTensor(),
+                transforms.Resize(32),
+            ])
+            
             self.train_data = datasets.MNIST (
                 root = "data",
                 train = True,
                 download = True,
-                transform = transforms.ToTensor()
+                transform = transform_format
             )
             self.test_data = datasets.MNIST(
                 root = "data",
                 train = False,
                 download = True,
-                transform = transforms.ToTensor()
+                transform = transform_format
             )
 
         x_train, y_train, x_test, y_test = self.seperate_data(self.train_data, self.test_data)
@@ -150,9 +197,9 @@ class Dataset(object):
         x_test = x_test.astype('float32')
 
         # pdb.set_trace()
-        if dataset_name == "mnist":
-            x_train = np.expand_dims(x_train, -1)
-            x_test = np.expand_dims(x_test, -1)
+        # if dataset_name == "mnist" or dataset_name == "emnist":
+        #     x_train = np.expand_dims(x_train, -1)
+        #     x_test = np.expand_dims(x_test, -1)
 
         
         # if not distorted_data:
@@ -390,6 +437,49 @@ class Dataset_MD(Dataset):
                 transform = transform_test
             )
 
+
+        elif dataset_name == "emnist_bl": 
+            
+            transform_format = transforms.Compose([
+                transforms.ToTensor(),
+                transforms.Resize(32),
+            ])
+            
+            self.train_data = datasets.EMNIST (
+                root = "data",
+                train = True,
+                download = True,
+                transform = transform_format,
+                split = "balanced"
+            )
+            self.test_data = datasets.EMNIST(
+                root = "data",
+                train = False,
+                download = True,
+                transform = transform_format,
+                split = "balanced"
+            )
+
+        elif dataset_name == "Fmnist": 
+            
+            transform_format = transforms.Compose([
+                transforms.ToTensor(),
+                transforms.Resize(32),
+            ])
+            
+            self.train_data = datasets.FashionMNIST (
+                root = "data",
+                train = True,
+                download = True,
+                transform = transform_format
+            )
+            self.test_data = datasets.FashionMNIST(
+                root = "data",
+                train = False,
+                download = True,
+                transform = transform_format
+            )
+
         else:
             self.train_data = datasets.MNIST (
                 root = "data",
@@ -405,7 +495,7 @@ class Dataset_MD(Dataset):
             )
         
         public_dataset, private_dataset = \
-            self.get_public_private_dataset(self.train_data, 0.1)
+            self.get_public_private_dataset(self.train_data)
         
         public_x, public_y = self.seperate_data(public_dataset)
         private_x_train, private_y_train = self.seperate_data(private_dataset)
@@ -433,12 +523,12 @@ class Dataset_MD(Dataset):
 
         return np.array(x_data), np.array(y_data)
     
-    def get_public_private_dataset(self, train_data, ratio):
+    def get_public_private_dataset(self, train_data):
         public_dataset = []
         private_dataset = []
         train_dataset_size = len(train_data)
-        public_dataset_size = int(train_dataset_size * ratio)
-        private_dataset_size = int(train_dataset_size * (1 - ratio))
+        public_dataset_size = int(5000)
+        private_dataset_size = int(train_dataset_size - 5000)
         for public_idx in range(public_dataset_size):
             public_dataset.append(train_data[public_idx])
         for private_idx in range(private_dataset_size):

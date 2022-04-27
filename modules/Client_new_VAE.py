@@ -250,14 +250,13 @@ class Client:
         if distillation:
             self.distill_loss.append(distill_loss.item())
             self.feature_loss.append(features_loss.item())
-            training_result = [gradients, 
-                               predictions.detach(), 
-                               encoded_features.detach(),
-                               features_predictions.detach()]
-        else:
-            training_result = [gradients, 
-                               predictions.detach(), 
-                               encoded_features.detach()]
+        #     training_result = [gradients, 
+        #                        predictions.detach(), 
+        #                        encoded_features.detach()]
+        # else:
+        training_result = [gradients, 
+                            predictions.detach(), 
+                            encoded_features.detach()]
         return training_result
 
     # def train_step_first(self, x, y,
@@ -571,8 +570,7 @@ class Client:
                                            server_features=server_feature_vectors)
 
             tmp_gradients, client_logit_vectors, client_features = train_result[0], train_result[1], train_result[2]
-            if distillation:
-                client_feature_logits = train_result[3]
+
                             
             accumulate_gradients = list_add(accumulate_gradients,
                                             tmp_gradients)
@@ -644,8 +642,7 @@ class Client:
                     "Acc": acc,
                     "gradients": list_divided_int(accumulate_gradients, self.clients_training_epoch),
                     "y_logits": client_y_logits,
-                    "features_dict": features_dict,
-                    "feature_logits": client_feature_logits}
+                    "features_dict": features_dict}
         else:
             return {"CE_loss": mean_loss,
                     "Acc": acc,

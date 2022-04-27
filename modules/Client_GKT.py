@@ -208,7 +208,7 @@ class Client:
             
             server_logit_vectors = server_extractor.training_for_server_model(encoded_features.detach(),
                                                                               predictions.detach(),
-                                                                              y, num_epochs = 5)
+                                                                              y, num_epochs = 10)
             
             
             if args.softmax_flag or args.KLD_flag:
@@ -231,8 +231,9 @@ class Client:
 
         pred_loss.backward()
         
-        # torch.nn.utils.clip_grad.clip_grad_value_(self.model.parameters(), 0.1)
         
+        # torch.nn.utils.clip_grad.clip_grad_value_(self.model.parameters(), 0.1)
+        self.optimizer.step()
         gradients = [param.grad.detach() for param in self.model.parameters()]
         self.optimizer.zero_grad()
         # self.scheduler.step(pred_loss.item())
@@ -323,6 +324,8 @@ class Client:
         
         assert not self.is_worker
 
+        self.model.train()
+        
         for _ in range(num_epochs):
             
             server_ft_predictions = self.model.decode(x_data)

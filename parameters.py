@@ -32,6 +32,8 @@ parser.add_argument('--personalized_flag', action='store_true',
 
 
 # dataset parameters
+# parser.add_argument('--dataset', default="emnist",
+#                     help='default: cifar10')
 parser.add_argument('--dataset', default="cifar10",
                     help='default: cifar10')
 parser.add_argument('--num_classes', type=int, default=10,
@@ -76,11 +78,11 @@ parser.add_argument('--op', action='store_true', help='Use the second last outpu
 parser.add_argument("--resnet_flag", action='store_true', 
                     help='Using Resnet or not')
 # parser.add_argument("--resnet_flag", action='store_true', 
-                    # default=True, help='Using Resnet or not')
+#                     default=True, help='Using Resnet or not')
 parser.add_argument('--y_distillation_flag', action='store_true',
                     help='distilled y logits or not')
 # parser.add_argument('--y_distillation_flag', action='store_true', default=True,
-                    # help='distilled y logits or not')
+#                     help='distilled y logits or not')
 parser.add_argument('--asyn_FL_flag', action='store_true',
                     help='Federated Learning or not')
 # parser.add_argument('--asyn_FL_flag', action='store_true', default=True,

@@ -199,19 +199,19 @@ class Server:
             a[k] /= b
         return a
 
-    def evaluate(self, dataset, batch_size):
+    def evaluate(self, dataset, batch_size, eval_model):
         # batch_size = batch_size * 10
         epoch = math.ceil(dataset.size // batch_size)
         accuracy = []
         mean_loss = []
         loss_func = F.cross_entropy
-        self.server_model.model.eval()
+        eval_model.model.eval()
         with torch.no_grad():
             for i in range(epoch):
                 x, y = dataset.next_test_batch(batch_size)
                 x, y = x.to(self.device), y.to(self.device)
                 
-                predictions = self.server_model.model(x)
+                predictions = eval_model.model(x)
                 # pdb.set_trace()
                 pred_loss = loss_func(predictions, y)
                 accuracy.append((y.eq(predictions.max(dim=1).indices).sum() / y.shape[0]).item())
@@ -589,7 +589,6 @@ class Server:
                     client_gradients = training_result["gradients"]
                     tmp_y_logits = training_result["y_logits"]
                     client_features = training_result["features_dict"]
-                    client_feature_logits = training_result["feature_logits"]
                     tmp_feature_loss = training_result["feature_loss"]
                 else:
                     tmp_label_loss = training_result["CE_loss"]
@@ -621,8 +620,7 @@ class Server:
                     res = self.collect_logits_features(res, 
                                                         cid,
                                                         tmp_y_logits,
-                                                        client_features,
-                                                        client_feature_logits)
+                                                        client_features)
 
                 train_loss += tmp_label_loss
                 train_acc += tmp_train_acc
@@ -663,13 +661,14 @@ class Server:
                             selected_idx = np.random.choice(self.clients_number)
                         else:
                             selected_idx = idx
-                        self.server_model = self.clients_dict[selected_idx]
+                        # self.server_model = self.clients_dict[selected_idx]
                         # self.server_model.set_weights(
                         #     self.clients_dict[selected_idx].get_weights()
                         # )
 
                         mean_loss, acc = self.evaluate(self.dataset_server.test,
-                                                    batch_size * 10)
+                                                       batch_size * 10,
+                                                       self.clients_dict[selected_idx])
                         # if selected_idx not in evaluate_client_acc:
                         #     evaluate_client_acc[selected_idx] = []
 
