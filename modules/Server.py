@@ -5,6 +5,7 @@ import sys
 import os
 import datetime
 from numpy.lib.function_base import select
+from pytest import param
 
 from tqdm import tqdm
 import psutil
@@ -348,6 +349,26 @@ class Server:
 
         return res
 
+
+    def set_avg_weights(self, completed_clients):
+        with torch.no_grad():
+            weights_list = []
+            for idx, cid in enumerate(completed_clients):
+                train_model = self.clients_dict[cid]
+                if idx == 0:
+                    weights_list = [param.detach() for param in train_model.get_weights()]
+                else:
+                    tmp_weights_list = [param.detach() for param in train_model.get_weights()]
+                    weights_list = [weights_list[ii] + tmp_weights_list[ii] for ii, val in enumerate(tmp_weights_list)]
+                    # weights_list += tmp_weights_list
+                # named_weights_list = [i for i in train_model.get_named_weights()]
+                # weight += weights_list[-2]
+                # bias += weights_list[-1]
+            weights_list = [torch.nn.Parameter(weights_list[ii] / len(completed_clients))
+                            for ii, val in enumerate(weights_list)]
+            self.server_model.set_weights(weights_list)
+
+
     def asynchronous_training(self):
         epoch = self.epoch
         decay_rate = self.decay_rate
@@ -471,17 +492,17 @@ class Server:
                 clients_y_logits[cid] = tmp_y_logits
 
                 # Can we make any criteria to check the efficiency of gradients?
-                if args.asyn_FL_flag:
-                    if args.delayed_gradients_divided_flag:
-                        ready_gradient += self.list_divided_int(client_gradients,
-                                                               outdated_flag[cid])
-                    # elif args.delayed_gradients_flag:
-                    #     ready_gradient = self.delay_compensation(client_gradients,
-                    #                                              clients_parameters_dict,
-                    #                                              outdated_flag[cid],
-                    #                                              cid)
-                    else:
-                        ready_gradient = self.list_add(ready_gradient, client_gradients)
+                # if args.asyn_FL_flag:
+                #     if args.delayed_gradients_divided_flag:
+                #         ready_gradient += self.list_divided_int(client_gradients,
+                #                                                outdated_flag[cid])
+                #     # elif args.delayed_gradients_flag:
+                #     #     ready_gradient = self.delay_compensation(client_gradients,
+                #     #                                              clients_parameters_dict,
+                #     #                                              outdated_flag[cid],
+                #     #                                              cid)
+                #     else:
+                #         ready_gradient = self.list_add(ready_gradient, client_gradients)
                     
                 
 
@@ -518,12 +539,13 @@ class Server:
                 #         tf.summary.scalar("BN_var_loss", tmp_bn_var_loss, step=ep)
 
             if args.asyn_FL_flag:
-                self.server_model.server_apply_gradient(self.list_divided_int(ready_gradient,
-                                                                              len(completed_clients)))
+                self.set_avg_weights(completed_clients)
+                # self.server_model.server_apply_gradient(self.list_divided_int(ready_gradient,
+                #                                                               len(completed_clients)))
 
             eval_interval = 0
             if max_training_epoches <= 500:
-                eval_interval = 100
+                eval_interval = int(max_training_epoches / 100)
             else:
                 eval_interval = int(max_training_epoches / 100)
 

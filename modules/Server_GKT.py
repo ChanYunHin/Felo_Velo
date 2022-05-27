@@ -544,7 +544,7 @@ class Server:
 
             eval_interval = 0
             if max_training_epoches <= 500:
-                eval_interval = 100
+                eval_interval = int(max_training_epoches / 100)
             else:
                 eval_interval = int(max_training_epoches / 100)
 

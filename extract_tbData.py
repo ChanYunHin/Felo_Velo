@@ -87,8 +87,8 @@ def get_file_path(dpath, tag):
 if __name__ == '__main__':
     # path = "tb_logs/cmp_homo/rn0.2_Fmnist_50/homo_Adamsr0.2_rn_GKT_KLD_y_logits_alpha1.0_lr0.001/test/accuracy_beta10_acc"
     # path = "fed_distill_pytorch/tb_logs/cmp_homo/rn0.2_Fmnist_50/homo_Adamsr0.2_rn_GKT_KLD_y_logits_alpha1.0_lr0.001/test/accuracy_beta10_acc"
-    path = "tb_logs/cmp/rn0.2_Fmnist_128"
-    # path = "fed_distill_pytorch/tb_logs/cmp/rn0.2_cifar10_50"
+    path = "tb_logs/cmp/rn0.2_cifar10_32"
+    # path = "fed_distill_pytorch/tb_logs/cmp/rn0.2_Fmnist_16"
     methods = os.listdir(path)
     for method_name in methods:
         method_path = "{}/{}/test/".format(path, method_name)
@@ -97,6 +97,8 @@ if __name__ == '__main__':
             if fname[0:3] == 'acc':
                 # print(fname)
                 method_path = method_path + fname
+                # if method_path == 'tb_logs/cmp/rn0.2_Fmnist_16/Adamsr0.2_rn_MD_alpha1.0_lr0.001/test/accuracy_FedHe_acc':
+                #     continue
                 to_csv(method_path)
                 
         # print(folder_name)

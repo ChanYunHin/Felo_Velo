@@ -46,6 +46,12 @@ def get_model_mask(args):
     if args.GKT:
         model_mask += "_GKT"
     
+    if args.VAE_fa:
+        model_mask += "_VAE_fa"
+        
+    if args.op_agg:
+        model_mask += "_op_agg"
+        
     if args.MD:
         model_mask += "_MD"
         

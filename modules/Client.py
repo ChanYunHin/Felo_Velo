@@ -347,75 +347,77 @@ class Client:
         count_for_bn_features = {}
 
         for i in range(self.clients_training_epoch):
-            x, y, _ = self.dataset.next_batch(self.batch_size)
-            x, y = x.to(self.device), y.to(self.device)
-            if distillation:
-                server_logit_vectors = self.match_labels_to_logits(server_y_logits, y)
+            training_epoches = math.ceil(self.dataset.size // self.batch_size)
+            for _ in range(training_epoches):
+                x, y, _ = self.dataset.next_batch(self.batch_size)
+                x, y = x.to(self.device), y.to(self.device)
+                if distillation:
+                    server_logit_vectors = self.match_labels_to_logits(server_y_logits, y)
 
 
-            if i == 0:
-                accumulate_gradients, client_logit_vectors, bn_features = self.train_step(x,
-                                                                                          y,
-                                                                                          server_bn_mean,
-                                                                                          server_bn_var,
-                                                                                          logit_vectors=server_logit_vectors,
-                                                                                          distillation=distillation)
-            else:
-                tmp_gradients, client_logit_vectors, bn_features = self.train_step(x,
-                                                                                   y,
-                                                                                   server_bn_mean,
-                                                                                   server_bn_var,
-                                                                                   logit_vectors=server_logit_vectors,
-                                                                                   distillation=distillation)
-                accumulate_gradients = list_add(accumulate_gradients,
-                                                tmp_gradients)
-            # x, y = x.to("cpu"), y.to("cpu")
-            # # draw logits and class probabilities
-            # if abs(current_epoches / max_epoches % 0.1 - 0) <= 0.00001:
-            #     select_label = 1
-            #     # draw class probabilities
-            #     for idx, class_label_y in enumerate(y):
-            #         if class_label_y == select_label:
-            #             tmp_logits = F.softmax(client_logit_vectors[idx])
-            #             select_record_client_class_prob.append(tmp_logits)
-            #             select_record_client_logits.append(client_logit_vectors[idx])
-            #             plt.plot(tmp_logits)
-            #     np.savetxt("txt_result/tmpres/class_pb_{}.txt".format(current_epoches / max_epoches), np.array(select_record_client_class_prob))
-            #     plt.title("class_pb")
-            #     plt.ylabel("probability")
-            #     plt.xlabel("class")
-            #     # plt.legend()
-            #     # plt.savefig("pic/asyn/loss_no_decay.eps")
-            #     plt.savefig("pic/tmpres/class_pb_{}.png".format(current_epoches / max_epoches))
-            #     plt.close()
-                
-            #     # draw logits
-            #     for idx, class_label_y in enumerate(y):
-            #         if class_label_y == select_label:
-            #             plt.plot(client_logit_vectors[idx])
+                if i == 0:
+                    accumulate_gradients, client_logit_vectors, bn_features = self.train_step(x,
+                                                                                            y,
+                                                                                            server_bn_mean,
+                                                                                            server_bn_var,
+                                                                                            logit_vectors=server_logit_vectors,
+                                                                                            distillation=distillation)
+                else:
+                    tmp_gradients, client_logit_vectors, bn_features = self.train_step(x,
+                                                                                    y,
+                                                                                    server_bn_mean,
+                                                                                    server_bn_var,
+                                                                                    logit_vectors=server_logit_vectors,
+                                                                                    distillation=distillation)
+                    accumulate_gradients = list_add(accumulate_gradients,
+                                                    tmp_gradients)
+                # x, y = x.to("cpu"), y.to("cpu")
+                # # draw logits and class probabilities
+                # if abs(current_epoches / max_epoches % 0.1 - 0) <= 0.00001:
+                #     select_label = 1
+                #     # draw class probabilities
+                #     for idx, class_label_y in enumerate(y):
+                #         if class_label_y == select_label:
+                #             tmp_logits = F.softmax(client_logit_vectors[idx])
+                #             select_record_client_class_prob.append(tmp_logits)
+                #             select_record_client_logits.append(client_logit_vectors[idx])
+                #             plt.plot(tmp_logits)
+                #     np.savetxt("txt_result/tmpres/class_pb_{}.txt".format(current_epoches / max_epoches), np.array(select_record_client_class_prob))
+                #     plt.title("class_pb")
+                #     plt.ylabel("probability")
+                #     plt.xlabel("class")
+                #     # plt.legend()
+                #     # plt.savefig("pic/asyn/loss_no_decay.eps")
+                #     plt.savefig("pic/tmpres/class_pb_{}.png".format(current_epoches / max_epoches))
+                #     plt.close()
+                    
+                #     # draw logits
+                #     for idx, class_label_y in enumerate(y):
+                #         if class_label_y == select_label:
+                #             plt.plot(client_logit_vectors[idx])
 
-            #     np.savetxt("txt_result/tmpres/logits_{}.txt".format(current_epoches / max_epoches), np.array(select_record_client_logits))
-            #     plt.title("logits")
-            #     plt.ylabel("logits")
-            #     plt.xlabel("class")
-            #     # plt.legend()
-            #     # plt.savefig("pic/asyn/loss_no_decay.eps")
-            #     plt.savefig("pic/tmpres/logits_{}.png".format(current_epoches / max_epoches))
-            #     plt.close()
+                #     np.savetxt("txt_result/tmpres/logits_{}.txt".format(current_epoches / max_epoches), np.array(select_record_client_logits))
+                #     plt.title("logits")
+                #     plt.ylabel("logits")
+                #     plt.xlabel("class")
+                #     # plt.legend()
+                #     # plt.savefig("pic/asyn/loss_no_decay.eps")
+                #     plt.savefig("pic/tmpres/logits_{}.png".format(current_epoches / max_epoches))
+                #     plt.close()
 
-                    # select_label_list.append(idx)
-            # select_record_client_class_prob.append(client_logit_vectors[select_label_list])
-
-
+                        # select_label_list.append(idx)
+                # select_record_client_class_prob.append(client_logit_vectors[select_label_list])
 
 
-            client_y_logits, count_for_labels = self.collect_logits(client_logit_vectors,
-                                                                    y,
-                                                                    client_y_logits,
-                                                                    count_for_labels)
-            client_bn_features, count_for_bn_features = self.collect_bn(client_bn_features,
-                                                                        bn_features,
-                                                                        count_for_bn_features)
+
+
+                client_y_logits, count_for_labels = self.collect_logits(client_logit_vectors,
+                                                                        y,
+                                                                        client_y_logits,
+                                                                        count_for_labels)
+                client_bn_features, count_for_bn_features = self.collect_bn(client_bn_features,
+                                                                            bn_features,
+                                                                            count_for_bn_features)
 
 
 
@@ -486,7 +488,8 @@ class Client:
         return mean_loss, acc
 
     def get_weights(self):
-        return self.model.parameters()
+        with torch.no_grad():
+            return self.model.parameters()
 
     def get_client_id(self):
         """ Return the client id """

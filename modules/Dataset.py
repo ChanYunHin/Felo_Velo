@@ -27,10 +27,10 @@ class BatchGenerator:
             overflow = (self.start + batch_size) - len(self.random_order)
             perm0 = self.random_order[self.start:] +\
                  self.random_order[:overflow]
-            self.start = overflow
+            # self.start = overflow
             # retraining this dataset
-            # np.random.shuffle(self.random_order)
-            # self.start = 0
+            np.random.shuffle(self.random_order)
+            self.start = 0
         else:
             perm0 = self.random_order[self.start:self.start + batch_size]
             self.start += batch_size
@@ -41,26 +41,26 @@ class BatchGenerator:
 
 
     def next_batch(self, batch_size):
-        np.random.shuffle(self.random_order)
-        perm0 = self.random_order[self.start:self.start + batch_size]
+        # np.random.shuffle(self.random_order)
+        # perm0 = self.random_order[self.start:self.start + batch_size]
+        # return torch.tensor(self.x[perm0]), torch.tensor(self.y[perm0], dtype=torch.long), perm0
+
+
+        if self.start + batch_size >= len(self.random_order):
+            overflow = (self.start + batch_size) - len(self.random_order)
+            perm0 = self.random_order[self.start:] +\
+                 self.random_order[:overflow]
+            # self.start = overflow
+            # retraining this dataset
+            np.random.shuffle(self.random_order)
+            self.start = 0
+        else:
+            perm0 = self.random_order[self.start:self.start + batch_size]
+            self.start += batch_size
+
+        assert len(perm0) == batch_size
+        
         return torch.tensor(self.x[perm0]), torch.tensor(self.y[perm0], dtype=torch.long), perm0
-
-
-        # if self.start + batch_size >= len(self.random_order):
-        #     overflow = (self.start + batch_size) - len(self.random_order)
-        #     perm0 = self.random_order[self.start:] +\
-        #          self.random_order[:overflow]
-        #     self.start = overflow
-        #     # retraining this dataset
-        #     # np.random.shuffle(self.random_order)
-        #     # self.start = 0
-        # else:
-        #     perm0 = self.random_order[self.start:self.start + batch_size]
-        #     self.start += batch_size
-
-        # assert len(perm0) == batch_size
-        #
-        # return self.x[perm0], self.y[perm0]
 
     # support slice
     def __getitem__(self, val):

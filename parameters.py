@@ -8,7 +8,7 @@ parser.add_argument('--clients_number', type=int, default=10,
                     help='default: 10 clients')
 parser.add_argument('--clients_sample_ratio', type=float, default=0.2,
                     help='default: 0.1')
-parser.add_argument('--epoch', type=int, default=1000,
+parser.add_argument('--epoch', type=int, default=100,
                     help='default: 500')
 parser.add_argument('--learning_rate', type=float, default=0.001,
                     help='default: 0.001')
@@ -55,6 +55,10 @@ parser.add_argument("--public_flag", action='store_true', help='Public datasets 
 
 
 # debug parameters
+parser.add_argument("--op_agg", action='store_true', help='Use new features or not')
+# parser.add_argument("--op_agg", action='store_true', default=True, help='Use op_agg or not')
+parser.add_argument("--VAE_fa", action='store_true', help='Use new features or not')
+# parser.add_argument("--VAE_fa", action='store_true', default=True, help='Use VAE_fa or not')
 parser.add_argument("--MD", action='store_true', help='Use MD or not')
 # parser.add_argument("--MD", action='store_true', default=True, help='Use MD or not')
 parser.add_argument("--GKT", action='store_true', help='Use GKT or not')
@@ -78,11 +82,11 @@ parser.add_argument('--op', action='store_true', help='Use the second last outpu
 parser.add_argument("--resnet_flag", action='store_true', 
                     help='Using Resnet or not')
 # parser.add_argument("--resnet_flag", action='store_true', 
-#                     default=True, help='Using Resnet or not')
+                    # default=True, help='Using Resnet or not')
 parser.add_argument('--y_distillation_flag', action='store_true',
                     help='distilled y logits or not')
 # parser.add_argument('--y_distillation_flag', action='store_true', default=True,
-#                     help='distilled y logits or not')
+                    # help='distilled y logits or not')
 parser.add_argument('--asyn_FL_flag', action='store_true',
                     help='Federated Learning or not')
 # parser.add_argument('--asyn_FL_flag', action='store_true', default=True,
