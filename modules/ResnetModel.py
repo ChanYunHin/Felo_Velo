@@ -367,11 +367,12 @@ class Resnet50_ft(Resnet50):
         
     def forward(self,inputs):
         
-        out = self.encode(inputs)
+        encoded_feature_inputs = self.encode(inputs)
         
-        out = self.decode(out)
+        encoded_features = self.decode(encoded_feature_inputs)
         
-        return self.classifier(out)
+        # return self.classifier(encoded_features), encoded_feature_inputs, encoded_features
+        return self.classifier(encoded_features)
 
     def encode(self, inputs):
         out = self.stg1(inputs)
@@ -402,6 +403,9 @@ class Resnet50_ft(Resnet50):
         
         
         return out
+    
+    def fc_layers(self, out):
+        return self.classifier(out)
 
 
 class SmallResnet50(nn.Module):
@@ -514,11 +518,12 @@ class SmallResnet50_ft(SmallResnet50):
         
     def forward(self,inputs):
         
-        out = self.encode(inputs)
+        encoded_feature_inputs = self.encode(inputs)
         
-        out = self.decode(out)
+        encoded_features = self.decode(encoded_feature_inputs)
         
-        return self.classifier(out)
+        # return self.classifier(encoded_features), encoded_feature_inputs, encoded_features
+        return self.classifier(encoded_features)
 
     def encode(self, inputs):
         out = self.stg1(inputs)
@@ -546,6 +551,9 @@ class SmallResnet50_ft(SmallResnet50):
         out = self.tmp_layer(out)
         
         return out
+    
+    def fc_layers(self, out):
+        return self.classifier(out)
 
 
 # class ServerResnet(nn.Module):

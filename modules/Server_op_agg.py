@@ -1,5 +1,6 @@
 import math
 import numpy as np
+import random
 import matplotlib.pyplot as plt
 import sys
 import os
@@ -259,7 +260,8 @@ class Server:
                                 res,
                                 cid,
                                 client_y_logits,
-                                client_features_dict):
+                                client_features_dict,
+                                client_features_dataset):
         
         if "server_y_logits" not in res:
             res["server_y_logits"] = {}
@@ -267,6 +269,8 @@ class Server:
             res["server_labels_counts_y_logits"] = {}
         if "server_client_features" not in res:
             res["server_client_features"] = {}
+        if "client_features_dataset" not in res:
+            res["client_features_dataset"] = []
 
         for key, val in client_y_logits.items():
             if key in res["server_y_logits"]:
@@ -289,7 +293,12 @@ class Server:
             else:
                 res["server_client_features"][key] = val
 
-                
+        # for item_val in client_features_dataset:
+        res["client_features_dataset"].extend(client_features_dataset)
+        # a = len(res["client_features_dataset"])
+        while len(res["client_features_dataset"]) >= 5000:
+            a = res["client_features_dataset"].pop(0)
+            del a
         return res
 
 
@@ -379,6 +388,21 @@ class Server:
         for key, val in res["server_client_features"].items():
             server_features_dict[key] = torch.mean(torch.stack(val, dim=0), dim=0)
         return server_features_dict
+    
+    def get_client_features_dataset(self, res):
+        """Randomly sample 1000 data from the features dataset"""
+        length_dataset = len(res["client_features_dataset"])
+        idx_list = list(range(length_dataset))
+        random_list = None
+        if length_dataset < 1000:
+            random_list = random.sample(idx_list, length_dataset)
+        else:
+            random_list = random.sample(idx_list, 1000)
+        client_features_dataset = \
+            [data_val for data_idx, data_val in enumerate(res["client_features_dataset"]) if data_idx in random_list]
+        # client_features_dataset = res["client_features_dataset"][[0, 1, 2]]
+        # client_features_dataset = res["client_features_dataset"][np.array(random_list, dtype=np.int), :]
+        return client_features_dataset
 
     def set_avg_weights(self, completed_clients):
         with torch.no_grad():
@@ -438,7 +462,7 @@ class Server:
         server_features, server_generated_labels = 0, 0
         alpha = args.alpha
         avg_server_y_logits, avg_server_client_features = 0, 0
-        server_feature_logits = 0
+        client_features_dataset = None
         clients_y_logits = {}
         res = {}
         distillation_flag = False
@@ -473,7 +497,7 @@ class Server:
                         distillation_flag = args.y_distillation_flag
                         
                 else:
-                    if ep >= int(max_training_epoches * 0.05):
+                    if ep >= int(max_training_epoches * 0.01):
                         distillation_flag = args.y_distillation_flag
 
 
@@ -545,19 +569,20 @@ class Server:
             if distillation_flag:
                 avg_server_y_logits = self.get_server_y_logits(res)
                 avg_server_client_features = self.get_server_client_features(res)
+                client_features_dataset = self.get_client_features_dataset(res)
 
             for idx, cid in enumerate(completed_clients):
                 assert outdated_flag[cid] > 0
                 train_model = self.clients_dict[cid]
 
-                
                 training_result = train_model.training(distillation=distillation_flag,
                                                        random_seed=rand_seed,
                                                        latent_size=args.latent_size,
                                                        server_features=avg_server_client_features,
                                                        # server_generated_labels=server_generated_labels,
                                                        # server_feature_logits=server_feature_logits,
-                                                       server_y_logits=avg_server_y_logits)
+                                                       server_y_logits=avg_server_y_logits,
+                                                       client_features_dataset = client_features_dataset)
 
                 # unpack the training result
                 if distillation_flag:
@@ -568,12 +593,14 @@ class Server:
                     tmp_y_logits = training_result["y_logits"]
                     client_features = training_result["features_dict"]
                     tmp_feature_loss = training_result["feature_loss"]
+                    client_features_dataset = training_result["client_features_dataset"]
                 else:
                     tmp_label_loss = training_result["CE_loss"]
                     tmp_train_acc = training_result["Acc"]
                     client_gradients = training_result["gradients"]
                     tmp_y_logits = training_result["y_logits"]
                     client_features = training_result["features_dict"]
+                    client_features_dataset = training_result["client_features_dataset"]
                 clients_y_logits[cid] = tmp_y_logits
 
                 outdated_flag[cid] = 0
@@ -582,7 +609,8 @@ class Server:
                     res = self.collect_logits_features(res, 
                                                        cid,
                                                        tmp_y_logits,
-                                                       client_features)
+                                                       client_features,
+                                                       client_features_dataset)
 
                 train_loss += tmp_label_loss
                 train_acc += tmp_train_acc
@@ -644,9 +672,11 @@ class Server:
                 mean_loss = np.mean(np.array(evaluate_mean_loss))
                 acc = np.mean(np.array(evaluate_mean_acc))
                 
-                # for idx in range(self.clients_number):
-                #     tmp_model = self.clients_dict[idx]
-                #     tmp_model.scheduler.step(mean_loss)
+                if args.enable_scheduler:
+                    for idx in range(self.clients_number):
+                        tmp_model = self.clients_dict[idx]
+                        tmp_model.scheduler.step()
+                        # tmp_model.scheduler.step(mean_loss)
 
                 # test_summary_writer.add_scalar("loss", mean_loss, int(ep/eval_interval))
                 # test_summary_writer.add_scalar("acc", acc, int(ep/eval_interval))

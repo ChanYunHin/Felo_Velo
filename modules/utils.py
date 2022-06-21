@@ -12,6 +12,9 @@ def get_model_mask(args):
 
     if args.homo_flag:
         model_mask = "homo_" + model_mask
+        
+    if args.enable_scheduler:
+        model_mask += "_sf{}".format(args.scheduler_factor)
 
     if args.softmax_flag:
         model_mask += "_softmaxLg"
@@ -51,6 +54,9 @@ def get_model_mask(args):
         
     if args.op_agg:
         model_mask += "_op_agg"
+    
+    if args.op_agg_step:
+        model_mask += "_op_agg_step"
         
     if args.MD:
         model_mask += "_MD"
@@ -63,6 +69,8 @@ def get_model_mask(args):
     
     if args.Similarity:
         model_mask += "_Sim"
+        
+    
     
     # if args.Var:
     #     model_mask += "_Var{}".format(args.var_para)
@@ -138,8 +146,8 @@ def get_tb_logs_name(args):
         else:
             based_model = "CNN{}_{}_{}".format(args.clients_sample_ratio, args.dataset, args.batch_size)
             
-        # if args.KLD_flag:
-        #     based_model += "_KLD"
+        if args.enable_scheduler:
+            based_model += "_schd"
             
         if args.homo_flag:
             cmp_log_dir = "./tb_logs/cmp_homo/" + based_model + "/" + model_mask + params_string

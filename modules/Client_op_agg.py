@@ -1,5 +1,6 @@
 
 import math
+import random
 import numpy as np
 import copy
 from collections import namedtuple
@@ -17,7 +18,7 @@ if not args.old_CNN:
 else:
     from modules.old_Model import ClientModel
     from modules.old_Model import ClientModel_2CNN
-from modules.ResnetModel import Resnet34, Resnet18, Resnet50, SmallResnet50
+from modules.ResnetModel import Resnet34, Resnet18, Resnet50_ft, SmallResnet50_ft
 
 # import modules.GAN_model as CGAN
 
@@ -96,11 +97,11 @@ class Client:
                                          dropout_rate = neural_network_shape["params"]["dropout_rate"])
             elif neural_network_shape["model_type"] == "resnet":
                 # self.model = Resnet34(num_classes=num_classes)
-                self.model = Resnet50(in_channels=input_shape[1], 
+                self.model = Resnet50_ft(in_channels=input_shape[1], 
                                       num_classes=num_classes)
             elif neural_network_shape["model_type"] == "small_resnet":
                 # self.model = Resnet18(num_classes=num_classes)
-                self.model = SmallResnet50(in_channels=input_shape[1], 
+                self.model = SmallResnet50_ft(in_channels=input_shape[1], 
                                            num_classes=num_classes)
 
         # # If you don't have this function, you would not have true weights in the network,
@@ -126,6 +127,8 @@ class Client:
         # self.scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer, 'min',
         #                                                             factor=0.5, patience=1,
         #                                                             threshold=0.01)
+        
+        self.scheduler = torch.optim.lr_scheduler.StepLR(self.optimizer, step_size=1, gamma=args.scheduler_factor)
         
         self.loss_func = F.cross_entropy
         # can not use cross-entropy loss in the distillation.
@@ -185,7 +188,10 @@ class Client:
                    **kwargs):
 
         server_features = kwargs["server_features"]
-        # server_generated_labels = kwargs["server_generated_labels"]
+        client_features_dataset = kwargs["client_features_dataset"]
+        training_encoded_features_inputs = client_features_dataset[0]
+        training_encoded_features = client_features_dataset[1]
+        
         # server_feature_logits = kwargs["server_feature_logits"]
         assert self.is_worker
         # alpha = args.alpha * (np.exp(current_epoches / max_epoches) - 1)
@@ -200,9 +206,19 @@ class Client:
         """ one training iteration """
         
         self.model.train()
-        encoded_features = self.model.encode(x)
-        predictions = self.model.decode(encoded_features)
+        
+        encoded_feature_inputs = self.model.encode(x)
+        encoded_features = self.model.decode(encoded_feature_inputs)
+        predictions = self.model.fc_layers(encoded_features)
+        
+        # solve the process of dealing with encoded features
+        
         pred_loss = self.loss_func(predictions, y)
+        
+        # pred_loss.backward()
+        # self.optimizer.step()
+        # self.optimizer.zero_grad()
+        
         if distillation:
             if args.softmax_flag or args.KLD_flag:
                 # if args.MSE_flag:
@@ -213,12 +229,18 @@ class Client:
             else:
                 distill_loss = self.distill_loss_func_logits(predictions, 
                                                              logit_vectors)
-            # update the classifier with server features
-            # features_predictions = self.model.decode(server_features)
-            features_loss = self.distill_loss_func_features(encoded_features, server_features)
-            # features_loss = features_loss + feature_distill_loss
+            
+            training_features_predictions = self.model.decode(training_encoded_features_inputs)
+            features_loss = self.distill_loss_func_features(training_encoded_features, training_features_predictions)
+            # features_loss = features_loss
             if args.no_logits_flag:
                 pred_loss = pred_loss + alpha * (features_loss)
+                
+                
+                # pred_loss = features_loss
+                # pred_loss.backward()
+                # self.optimizer.step()
+                # self.optimizer.zero_grad()
                 # pred_loss = pred_loss
             else:
                 print("wrong updating process")
@@ -235,9 +257,12 @@ class Client:
         
         self.optimizer.step()
         
-        gradients = [param.grad.detach() for param in self.model.parameters()]
+        # gradients = [param.grad.detach() for param in self.model.parameters() if param.grad is not None]
+        gradients = []
+        # tmp_param = [param for param in self.model.parameters()]
         self.optimizer.zero_grad()
         # self.scheduler.step(pred_loss.item())
+        
         
         # set up the accuracy in pytorch
         if not no_record:
@@ -250,19 +275,24 @@ class Client:
         
             training_result = [gradients, 
                                predictions.detach(), 
-                               encoded_features.detach(),]
+                               encoded_features.detach(),
+                               encoded_feature_inputs.detach()]
+            
                                 # features_predictions.detach()]
         else:
             training_result = [gradients, 
                                 predictions.detach(), 
-                                encoded_features.detach()]
+                                encoded_features.detach(),
+                                encoded_feature_inputs.detach()]
         return training_result
 
         
     def collect_logits_features(self, client_logit_vectors, 
                                    labels, logit_vectors, 
                                    count_for_labels, client_features,
-                                   features_dict):
+                                   features_dict,
+                                   features_dataset,
+                                   client_feature_inputs=None):
         for idx, logit_y in enumerate(client_logit_vectors):
             label = labels[idx].item()
             if label not in logit_vectors:
@@ -274,7 +304,19 @@ class Client:
                 logit_vectors[label] += logit_y
                 count_for_labels[label] += 1
                 features_dict[label].append(client_features[idx])
-        return logit_vectors, count_for_labels, features_dict
+                
+        assert client_feature_inputs.shape[0] == client_features.shape[0]
+        # 0 is client_feature_inputs, 1 is client_features
+        
+        for idx in range(client_feature_inputs.shape[0]):
+            # reduce the size of the feature dataset
+            # the random number of rand between [0, 1]
+            if np.random.rand() < 0.01:
+                features_dataset.append([client_feature_inputs[idx, :], client_features[idx, :]])
+            # else:
+            #     del client_feature_inputs[idx, :]
+            #     del client_features[idx, :]
+        return logit_vectors, count_for_labels, features_dict, features_dataset
 
     def match_labels_to_vectors(self, 
                                 server_vectors, 
@@ -285,31 +327,18 @@ class Client:
         for idx, label in enumerate(labels):
             server_labeled_vectors.append(server_vectors[label.item()])
         # a = np.array(server_labeled_vectors)
-        return torch.stack(server_labeled_vectors, dim=0)
+        return torch.stack(server_labeled_vectors, dim=0).to(self.device)
 
-
-    # def get_logits_from_generator(self, generator, batch_size, y):
-    #     # xy_noise = CGAN.get_generator_noise(batch_size, self.num_classes, self.num_classes, self.device, y)
-    #     noise = torch.randn(batch_size, self.num_classes, device=self.device)
-    #     generated_logits = generator(noise, y)
-    #     return generated_logits
-
-    # def get_features_from_generator(self, generator, 
-    #                                 batch_size,
-    #                                 latent_size, random_seed):
-    #     # set a random seed manually, to reproduce the same features for all clients
-    #     torch.manual_seed(random_seed)
-    #     generated_label = torch.randint(0, self.num_classes, (batch_size,), device=self.device)
-    #     noise = torch.randn(batch_size, latent_size, device=self.device)
-    #     generated_features = generator.generate_data(noise, generated_label)
-    #     # reset the random seed
-    #     torch.seed()
-    #     return generated_features, generated_label
+    def get_training_encoded_features(self, client_features_dataset, batch_size):
+        idx_list = list(range(len(client_features_dataset)))
+        random_list = random.sample(idx_list, batch_size)
+        x = [val[0] for idx, val in enumerate(client_features_dataset) if idx in random_list]
+        y = [val[1] for idx, val in enumerate(client_features_dataset) if idx in random_list]
+        return torch.stack(x, dim=0).to(self.device), torch.stack(y, dim=0).to(self.device)
 
     def sort_logits(self, 
                     client_y_logits, 
                     count_for_labels):
-
         for label, logit in client_y_logits.items():
             client_y_logits[label] = logit / count_for_labels[label]
         return client_y_logits
@@ -325,88 +354,6 @@ class Client:
     #     for i in range(self.distilled_x.shape[0]):
     #         tf.keras.preprocessing.image.save_img("{}/{}.png".format(save_path, i), self.distilled_x[i])
 
-
-    # def train_first_half(self, **kwargs):
-    #     server_y_logits = kwargs["server_y_logits"]
-    #     distillation = kwargs["distillation"]
-    #     server_features = kwargs["server_features"]
-        
-    #     self.mean_loss = []
-    #     self.accuracy = []
-
-    #     x, y, data_idx = self.dataset.next_batch(self.batch_size)
-    #     x, y = x.to(self.device), y.to(self.device)
-    #     server_logit_vectors = self.match_labels_to_vectors(server_y_logits, y)
-        
-    #     train_result = self.train_step_first(x, y, 
-    #                                          logit_vectors=server_logit_vectors,
-    #                                          distillation=distillation,
-    #                                          server_features=server_features)
-
-    #     self.client_saved_process = {}
-    #     self.client_saved_process["feature_predictions"] = train_result[0]
-    #     self.client_saved_process["pred_loss"] = train_result[2]
-    #     self.client_saved_process["distill_loss"] = train_result[3]
-    #     self.client_saved_process["y"] = y
-    #     self.client_saved_process["predictions"] = train_result[4]
-    #     self.client_saved_process["encoded_features"] = train_result[5]
-
-    #     return train_result[1]
-
-    # def train_second_half(self, **kwargs):
-
-    #     server_feature_logits = kwargs["server_feature_logits"]
-    #     server_generated_labels = kwargs["server_generated_labels"]
-
-    #     y = self.client_saved_process["y"]
-    #     pred_loss = self.client_saved_process["pred_loss"]
-    #     distill_loss = self.client_saved_process["distill_loss"]
-    #     feature_predictions = self.client_saved_process["feature_predictions"]
-    #     predictions = self.client_saved_process["predictions"]
-    #     encoded_features = self.client_saved_process["encoded_features"]
-
-    #     client_y_logits = {}
-    #     count_for_labels = {}
-    #     features_dict = {}
-
-    #     train_result = self.train_step_second(y, feature_predictions,
-    #                                              server_feature_logits, distill_loss, 
-    #                                              pred_loss,
-    #                                              predictions=predictions,
-    #                                              encoded_features=encoded_features,
-    #                                              server_generated_labels=server_generated_labels)
-
-    #     tmp_gradients, client_logit_vectors, client_features = train_result[0], train_result[1], train_result[2]
-    #     client_feature_logits, feature_loss = train_result[3], train_result[4]
-
-    #     client_y_logits, count_for_labels, features_dict = \
-    #              self.collect_logits_features(client_logit_vectors,
-    #                                           y,
-    #                                           client_y_logits,
-    #                                           count_for_labels,
-    #                                           client_features,
-    #                                           features_dict)
-
-    #     client_y_logits = self.sort_logits(client_y_logits, count_for_labels)
-
-    #     # return [mean_loss,
-    #     #         distill_loss,
-    #     #         acc,
-    #     #         0,
-    #     #         client_y_logits,
-    #     #         features_dict,
-    #     #         client_feature_logits]
-
-    #     return {"CE_loss": self.mean_loss,
-    #             "distill_loss": distill_loss.item(),
-    #             "feature_loss": feature_loss,
-    #             "Acc": self.accuracy,
-    #             "gradients": 0,
-    #             "y_logits": client_y_logits,
-    #             "features_dict": features_dict,
-    #             "feature_logits": client_feature_logits}
-
-
     def training(self, 
                  distillation=False,
                  **kwargs):
@@ -418,6 +365,7 @@ class Client:
         # server_generated_labels = kwargs["server_generated_labels"]
         # server_feature_logits = kwargs["server_feature_logits"]
         server_y_logits = kwargs["server_y_logits"]
+        client_features_dataset = kwargs["client_features_dataset"]
 
         def list_add(a, b):
             if len(a) == 0:
@@ -450,6 +398,7 @@ class Client:
         self.accuracy = []
         self.distill_loss, self.feature_loss = [], []
         features_dict = {}
+        features_dataset = []
         self.model.train()
         # server_generated_labels = 0
         # server_features = 0
@@ -458,6 +407,8 @@ class Client:
         # dataset distillation, fixed parameters
         select_record_client_class_prob = []
         select_record_client_logits = []
+        client_features_inputs = None
+        encoded_features_inputs, encoded_features = None, None
 
         for i in range(self.clients_training_epoch):
             training_epoches = math.ceil(self.dataset.size // self.batch_size)
@@ -471,14 +422,8 @@ class Client:
                     server_features_vectors = \
                         self.match_labels_to_vectors(server_features, 
                                                     y)
-                    # server_logit_vectors = self.get_logits_from_generator(server_generator, 
-                    #                                                       self.batch_size, 
-                    #                                                       y)
-
-                    # server_features, server_generated_labels = self.get_features_from_generator(server_generator,
-                    #                                                                             self.batch_size,
-                    #                                                                             latent_size=latent_size,
-                    #                                                                             random_seed=random_seed)
+                    encoded_features_inputs, encoded_features = \
+                        self.get_training_encoded_features(client_features_dataset, self.batch_size)
 
 
                 # if i == 0:
@@ -486,11 +431,12 @@ class Client:
                                                 y,
                                                 logit_vectors=server_logit_vectors,
                                                 distillation=distillation,
-                                                # server_generated_labels=server_generated_labels,
+                                                client_features_dataset=[encoded_features_inputs, encoded_features],
                                                 server_features=server_features_vectors,)
                                                 # server_feature_logits=server_feature_logits)
 
                 tmp_gradients, client_logit_vectors, client_features = train_result[0], train_result[1], train_result[2]
+                client_features_inputs = train_result[3]
                 # if distillation:
                 #     client_feature_logits = train_result[3]
                                 
@@ -536,13 +482,15 @@ class Client:
 
 
                 # client_features_list.append([vae_mean, vae_var])
-                client_y_logits, count_for_labels, features_dict = \
+                client_y_logits, count_for_labels, features_dict, features_dataset = \
                     self.collect_logits_features(client_logit_vectors,
                                                 y,
                                                 client_y_logits,
                                                 count_for_labels,
                                                 client_features,
-                                                features_dict)
+                                                client_feature_inputs=client_features_inputs, 
+                                                features_dict=features_dict,
+                                                features_dataset=features_dataset)
 
 
         mean_loss = np.mean(np.array(self.mean_loss))
@@ -563,16 +511,20 @@ class Client:
                     "distill_loss": distill_loss,
                     "feature_loss": feature_loss,
                     "Acc": acc,
-                    "gradients": list_divided_int(accumulate_gradients, self.clients_training_epoch),
+                    # "gradients": list_divided_int(accumulate_gradients, self.clients_training_epoch),
+                    "gradients": accumulate_gradients,
                     "y_logits": client_y_logits,
-                    "features_dict": features_dict,}
+                    "features_dict": features_dict,
+                    "client_features_dataset": features_dataset}
                     # "feature_logits": client_feature_logits}
         else:
             return {"CE_loss": mean_loss,
                     "Acc": acc,
-                    "gradients": list_divided_int(accumulate_gradients, self.clients_training_epoch),
+                    # "gradients": list_divided_int(accumulate_gradients, self.clients_training_epoch),
+                    "gradients": accumulate_gradients,
                     "y_logits": client_y_logits,
-                    "features_dict": features_dict}
+                    "features_dict": features_dict,
+                    "client_features_dataset": features_dataset}
 
     def server_apply_gradient(self, gradients):
         self.optimizer.apply_gradients(zip(gradients,
