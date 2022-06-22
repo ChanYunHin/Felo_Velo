@@ -19,7 +19,6 @@ else:
     from modules.old_Model import ClientModel_2CNN
 from modules.ResnetModel import Resnet34, Resnet18, Resnet50, SmallResnet50
 import pdb
-import objgraph
 
 # The definition of fed model
 FedModel = namedtuple('FedModel', 'X Y DROP_RATE train_op loss_op acc_op')
