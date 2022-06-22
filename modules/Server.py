@@ -543,6 +543,10 @@ class Server:
                 # self.server_model.server_apply_gradient(self.list_divided_int(ready_gradient,
                 #                                                               len(completed_clients)))
 
+            for idx in range(self.clients_number):
+                tmp_model = self.clients_dict[idx]
+                tmp_model.scheduler.step()
+
             eval_interval = 0
             if max_training_epoches <= 500:
                 eval_interval = int(max_training_epoches / 100)

@@ -109,6 +109,7 @@ parser.add_argument('--enable_scheduler', action='store_true', help='Use schedul
 parser.add_argument('--scheduler_patience',  type=int, default=1, help='Scheduler patience')
 parser.add_argument('--scheduler_threshold',  type=float, default=0.1, help='Scheduler threshold')
 parser.add_argument('--scheduler_factor',  type=float, default=0.95, help='Scheduler factor')
+parser.add_argument('--scheduler_step',  type=int, default=1, help='Scheduler step size')
 
 
 
