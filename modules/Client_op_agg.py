@@ -128,7 +128,7 @@ class Client:
         #                                                             factor=0.5, patience=1,
         #                                                             threshold=0.01)
         
-        self.scheduler = torch.optim.lr_scheduler.StepLR(self.optimizer, step_size=1, gamma=args.scheduler_factor)
+        self.scheduler = torch.optim.lr_scheduler.StepLR(self.optimizer, step_size=args.scheduler_step, gamma=args.scheduler_factor)
         
         self.loss_func = F.cross_entropy
         # can not use cross-entropy loss in the distillation.

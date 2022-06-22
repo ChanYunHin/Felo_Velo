@@ -14,7 +14,7 @@ def get_model_mask(args):
         model_mask = "homo_" + model_mask
         
     if args.enable_scheduler:
-        model_mask += "_sf{}".format(args.scheduler_factor)
+        model_mask += "_sf{}_step{}".format(args.scheduler_factor, args.scheduler_step)
 
     if args.softmax_flag:
         model_mask += "_softmaxLg"
