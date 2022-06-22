@@ -622,6 +622,12 @@ class Server:
             
             # debug fedavg
             self.set_avg_weights(completed_clients)
+            
+            if args.enable_scheduler:
+                for idx in range(self.clients_number):
+                    tmp_model = self.clients_dict[idx]
+                    tmp_model.scheduler.step()
+                    # tmp_model.scheduler.step(mean_loss)
 
             eval_interval = 0
             if max_training_epoches <= 500:
@@ -671,11 +677,7 @@ class Server:
                 mean_loss = np.mean(np.array(evaluate_mean_loss))
                 acc = np.mean(np.array(evaluate_mean_acc))
                 
-                if args.enable_scheduler:
-                    for idx in range(self.clients_number):
-                        tmp_model = self.clients_dict[idx]
-                        tmp_model.scheduler.step()
-                        # tmp_model.scheduler.step(mean_loss)
+                
 
                 # test_summary_writer.add_scalar("loss", mean_loss, int(ep/eval_interval))
                 # test_summary_writer.add_scalar("acc", acc, int(ep/eval_interval))
