@@ -67,8 +67,8 @@ parser.add_argument("--GKT", action='store_true', help='Use GKT or not')
 # parser.add_argument("--GKT", action='store_true', default=True, help='Use GKT or not')
 parser.add_argument("--new_VAE_ft", action='store_true', help='Use new features or not')
 # parser.add_argument("--new_VAE_ft", action='store_true', default=True, help='Use new features or not')
-# parser.add_argument("--no_logits_flag", action='store_true', help='Do not use logits or not')
-parser.add_argument("--no_logits_flag", action='store_true', default=True, help='Do not use logits or not')
+parser.add_argument("--no_logits_flag", action='store_true', help='Do not use logits or not')
+# parser.add_argument("--no_logits_flag", action='store_true', default=True, help='Do not use logits or not')
 parser.add_argument("--new_VAE", action='store_true', help='Using a new VAE mode or not')
 # parser.add_argument("--new_VAE", action='store_true', default=True, help='Using a new VAE mode or not')
 parser.add_argument("--VAE_op", action='store_true', help='Using output and VAE or not')
@@ -81,14 +81,14 @@ parser.add_argument("--VAE", action='store_true', help='Using VAE to generate fe
 # parser.add_argument("--VAE", action='store_true', default=True, help='Using VAE to generate features or not')
 parser.add_argument('--op', action='store_true', help='Use the second last outputs or not')
 # parser.add_argument('--op', action='store_true', default=True, help='Use the second last outputs or not')
-# parser.add_argument("--resnet_flag", action='store_true', 
-#                     help='Using Resnet or not')
 parser.add_argument("--resnet_flag", action='store_true', 
-                    default=True, help='Using Resnet or not')
-# parser.add_argument('--y_distillation_flag', action='store_true',
-                    # help='distilled y logits or not')
-parser.add_argument('--y_distillation_flag', action='store_true', default=True,
+                    help='Using Resnet or not')
+# parser.add_argument("--resnet_flag", action='store_true', 
+                    # default=True, help='Using Resnet or not')
+parser.add_argument('--y_distillation_flag', action='store_true',
                     help='distilled y logits or not')
+# parser.add_argument('--y_distillation_flag', action='store_true', default=True,
+                    # help='distilled y logits or not')
 parser.add_argument('--asyn_FL_flag', action='store_true',
                     help='Federated Learning or not')
 # parser.add_argument('--asyn_FL_flag', action='store_true', default=True,
