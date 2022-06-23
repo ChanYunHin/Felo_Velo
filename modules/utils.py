@@ -14,7 +14,12 @@ def get_model_mask(args):
         model_mask = "homo_" + model_mask
         
     if args.enable_scheduler:
-        model_mask += "_sf{}_step{}".format(args.scheduler_factor, args.scheduler_step)
+        if args.op_agg_reduceLR:
+            model_mask += "_sf{}_pt{}_thrsh{}".format(args.scheduler_factor, 
+                                              args.scheduler_patience, 
+                                              args.scheduler_threshold)
+        elif args.op_agg:
+            model_mask += "_sf{}_step{}".format(args.scheduler_factor, args.scheduler_step)
 
     if args.softmax_flag:
         model_mask += "_softmaxLg"
@@ -55,8 +60,8 @@ def get_model_mask(args):
     if args.op_agg:
         model_mask += "_op_agg"
     
-    if args.op_agg_step:
-        model_mask += "_op_agg_step"
+    if args.op_agg_reduceLR:
+        model_mask += "_op_agg_RdLR"
         
     if args.MD:
         model_mask += "_MD"

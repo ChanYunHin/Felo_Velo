@@ -52,10 +52,10 @@ elif args.op_agg:
     assert not args.MD
     assert args.no_logits_flag
     assert not args.VAE_fa
-    assert not args.op_agg_step
+    assert not args.op_agg_reduceLR
     from modules.Server_op_agg import Server as server
     
-elif args.op_agg_step:
+elif args.op_agg_reduceLR:
     assert not args.op
     assert not args.new_VAE
     assert not args.GKT
@@ -63,7 +63,7 @@ elif args.op_agg_step:
     assert args.no_logits_flag
     assert not args.VAE_fa
     assert not args.op_agg
-    from modules.Server_op_agg_step import Server as server
+    from modules.Server_op_agg_reduceLR import Server as server
     
 elif args.GKT:
     assert not args.op

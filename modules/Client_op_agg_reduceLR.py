@@ -124,9 +124,11 @@ class Client:
         #                                                                   int(total_epoches * 0.95)],
         #                                                       gamma=0.5)
         
-        # self.scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer, 'min',
-        #                                                             factor=0.5, patience=1,
-        #                                                             threshold=0.01)
+        self.scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer, 'min',
+                                                                    factor=args.scheduler_factor, patience=args.scheduler_patience,
+                                                                    threshold=args.scheduler_threshold)
+        
+        # self.scheduler = torch.optim.lr_scheduler.StepLR(self.optimizer, step_size=args.scheduler_step, gamma=args.scheduler_factor)
         
         self.loss_func = F.cross_entropy
         # can not use cross-entropy loss in the distillation.
@@ -187,6 +189,8 @@ class Client:
 
         server_features = kwargs["server_features"]
         client_features_dataset = kwargs["client_features_dataset"]
+        training_encoded_features_inputs = client_features_dataset[0]
+        training_encoded_features = client_features_dataset[1]
         
         # server_feature_logits = kwargs["server_feature_logits"]
         assert self.is_worker
@@ -194,6 +198,11 @@ class Client:
         alpha = args.alpha
         predictions = 0
         # features_predictions = 0
+        if distillation:
+            # assert logit_vectors
+            if args.softmax_flag or args.KLD_flag:
+                softmax_logit_vectors = F.softmax(logit_vectors)
+                log_softmax_predictions = 0
         """ one training iteration """
         
         self.model.train()
@@ -205,6 +214,39 @@ class Client:
         # solve the process of dealing with encoded features
         
         pred_loss = self.loss_func(predictions, y)
+        
+        # pred_loss.backward()
+        # self.optimizer.step()
+        # self.optimizer.zero_grad()
+        
+        if distillation:
+            if args.softmax_flag or args.KLD_flag:
+                # if args.MSE_flag:
+                #     distill_loss = self.distill_loss_func(softmax_logit_vectors, softmax_predictions)
+                # else:
+                log_softmax_predictions = F.log_softmax(predictions)
+                distill_loss = self.distill_loss_func_logits(log_softmax_predictions, softmax_logit_vectors)
+            else:
+                distill_loss = self.distill_loss_func_logits(predictions, 
+                                                             logit_vectors)
+            
+            training_features_predictions = self.model.decode(training_encoded_features_inputs)
+            features_loss = self.distill_loss_func_features(training_encoded_features, training_features_predictions)
+            # features_loss = features_loss
+            if args.no_logits_flag:
+                pred_loss = pred_loss + alpha * (features_loss)
+                
+                
+                # pred_loss = features_loss
+                # pred_loss.backward()
+                # self.optimizer.step()
+                # self.optimizer.zero_grad()
+                # pred_loss = pred_loss
+            else:
+                print("wrong updating process")
+                assert 1==0
+                # pred_loss = pred_loss + alpha * (features_loss + distill_loss)
+        #     pred_loss = pred_loss + alpha * distill_loss
 
         # a = [torch.mean(mod.bn_feature_mean) for mod in self.bn_feature_layers]
         # debug_item = torch.tensor(a, device=self.device)
@@ -227,32 +269,22 @@ class Client:
             self.accuracy.append((y.eq(predictions.max(dim=1).indices).sum() / y.shape[0]).item())
             # self.accuracy.update_state(y, F.softmax(predictions))
             self.mean_loss.append(pred_loss.item())
-
-        training_result = [gradients, 
-                            predictions.cpu().detach(), 
-                            encoded_features.cpu().detach(),
-                            encoded_feature_inputs.cpu().detach()]
+        if distillation:
+            self.distill_loss.append(distill_loss.item())
+            self.feature_loss.append(features_loss.item())
+        
+            training_result = [gradients, 
+                               predictions.detach(), 
+                               encoded_features.detach(),
+                               encoded_feature_inputs.detach()]
+            
+                                # features_predictions.detach()]
+        else:
+            training_result = [gradients, 
+                                predictions.detach(), 
+                                encoded_features.detach(),
+                                encoded_feature_inputs.detach()]
         return training_result
-    
-    def train_step_for_encoded(self, **kwargs):
-
-        client_features_dataset = kwargs["client_features_dataset"]
-        training_encoded_features_inputs = client_features_dataset[0]
-        training_encoded_features = client_features_dataset[1]
-        
-        # server_feature_logits = kwargs["server_feature_logits"]
-        assert self.is_worker
-        """ one training iteration """
-        
-        self.model.train()
-        
-        training_features_predictions = self.model.decode(training_encoded_features_inputs)
-        features_loss = self.distill_loss_func_features(training_encoded_features, training_features_predictions)
-
-        features_loss.backward()
-        self.optimizer.step()
-        self.optimizer.zero_grad()
-        
 
         
     def collect_logits_features(self, client_logit_vectors, 
@@ -398,7 +430,7 @@ class Client:
                 train_result = self.train_step(x,
                                                 y,
                                                 logit_vectors=server_logit_vectors,
-                                                distillation=False,
+                                                distillation=distillation,
                                                 client_features_dataset=[encoded_features_inputs, encoded_features],
                                                 server_features=server_features_vectors,)
                                                 # server_feature_logits=server_feature_logits)
@@ -410,6 +442,44 @@ class Client:
                                 
                 accumulate_gradients = list_add(accumulate_gradients,
                                                 tmp_gradients)
+                # x, y = x.to("cpu"), y.to("cpu")
+                # # draw logits and class probabilities
+                # if abs(current_epoches / max_epoches % 0.1 - 0) <= 0.00001:
+                #     select_label = 1
+                #     # draw class probabilities
+                #     for idx, class_label_y in enumerate(y):
+                #         if class_label_y == select_label:
+                #             tmp_logits = F.softmax(client_logit_vectors[idx])
+                #             select_record_client_class_prob.append(tmp_logits)
+                #             select_record_client_logits.append(client_logit_vectors[idx])
+                #             plt.plot(tmp_logits)
+                #     np.savetxt("txt_result/tmpres/class_pb_{}.txt".format(current_epoches / max_epoches), np.array(select_record_client_class_prob))
+                #     plt.title("class_pb")
+                #     plt.ylabel("probability")
+                #     plt.xlabel("class")
+                #     # plt.legend()
+                #     # plt.savefig("pic/asyn/loss_no_decay.eps")
+                #     plt.savefig("pic/tmpres/class_pb_{}.png".format(current_epoches / max_epoches))
+                #     plt.close()
+                    
+                #     # draw logits
+                #     for idx, class_label_y in enumerate(y):
+                #         if class_label_y == select_label:
+                #             plt.plot(client_logit_vectors[idx])
+
+                #     np.savetxt("txt_result/tmpres/logits_{}.txt".format(current_epoches / max_epoches), np.array(select_record_client_logits))
+                #     plt.title("logits")
+                #     plt.ylabel("logits")
+                #     plt.xlabel("class")
+                #     # plt.legend()
+                #     # plt.savefig("pic/asyn/loss_no_decay.eps")
+                #     plt.savefig("pic/tmpres/logits_{}.png".format(current_epoches / max_epoches))
+                #     plt.close()
+
+                        # select_label_list.append(idx)
+                # select_record_client_class_prob.append(client_logit_vectors[select_label_list])
+
+
 
                 # client_features_list.append([vae_mean, vae_var])
                 client_y_logits, count_for_labels, features_dict, features_dataset = \
@@ -422,18 +492,6 @@ class Client:
                                                 features_dict=features_dict,
                                                 features_dataset=features_dataset)
 
-        if distillation:
-            for i in range(self.clients_training_epoch):
-                training_epoches = math.ceil(self.dataset.size // self.batch_size)
-                for _ in range(training_epoches):
-                    encoded_features_inputs, encoded_features = \
-                        self.get_training_encoded_features(client_features_dataset, self.batch_size)
-
-
-                    # if i == 0:
-                    train_result = self.train_step_for_encoded(client_features_dataset=[encoded_features_inputs, encoded_features])
-                                                    # server_feature_logits=server_feature_logits)
-            
 
         mean_loss = np.mean(np.array(self.mean_loss))
         # self.scheduler.step(mean_loss)

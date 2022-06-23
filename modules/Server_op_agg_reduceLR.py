@@ -27,7 +27,7 @@ from modules.Dataset import Dataset
 from parameters import args
 from modules.utils import get_model_mask, get_tb_logs_name
 
-from modules.Client_op_agg_step import Client
+from modules.Client_op_agg_reduceLR import Client
 
 # import modules.VAE_model as CVAE
 
@@ -296,7 +296,7 @@ class Server:
         # for item_val in client_features_dataset:
         res["client_features_dataset"].extend(client_features_dataset)
         # a = len(res["client_features_dataset"])
-        while len(res["client_features_dataset"]) >= 10000:
+        while len(res["client_features_dataset"]) >= 5000:
             a = res["client_features_dataset"].pop(0)
             del a
         return res
@@ -628,9 +628,10 @@ class Server:
                 mean_loss = np.mean(np.array(evaluate_mean_loss))
                 acc = np.mean(np.array(evaluate_mean_acc))
                 
-                # for idx in range(self.clients_number):
-                #     tmp_model = self.clients_dict[idx]
-                #     tmp_model.scheduler.step(mean_loss)
+                if args.enable_scheduler:
+                    for idx in range(self.clients_number):
+                        tmp_model = self.clients_dict[idx]
+                        tmp_model.scheduler.step(mean_loss)
 
                 # test_summary_writer.add_scalar("loss", mean_loss, int(ep/eval_interval))
                 # test_summary_writer.add_scalar("acc", acc, int(ep/eval_interval))
