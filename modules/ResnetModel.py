@@ -230,7 +230,8 @@ class Resnet50(nn.Module):
         
         self.stg1 = nn.Sequential(nn.Conv2d(in_channels=in_channels,out_channels=64,kernel_size=(3),stride=(1),padding=1),
                                   nn.BatchNorm2d(64),
-                                  nn.ReLU(inplace=True))
+                                  nn.ReLU(inplace=True),
+                                  nn.MaxPool2d(kernel_size=3,stride=2,padding=1))
         
         ##stage 2
         self.convShortcut2 = conv_shortcut(64,256,1)
@@ -414,7 +415,8 @@ class SmallResnet50(nn.Module):
         
         self.stg1 = nn.Sequential(nn.Conv2d(in_channels=in_channels,out_channels=64,kernel_size=(3),stride=(1),padding=1),
                                   nn.BatchNorm2d(64),
-                                  nn.ReLU(inplace=True))
+                                  nn.ReLU(inplace=True),
+                                  nn.MaxPool2d(kernel_size=3,stride=2,padding=1))
         
         ##stage 2
         self.convShortcut2 = conv_shortcut(64,256,1)
