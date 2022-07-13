@@ -25,55 +25,73 @@ def method_result(fpath):
     # print(df.columns[max_idx])
     return list(df[df.columns[max_idx]])
 
+def read_heteroFL(fpath):
+    df =pd.read_csv(fpath)
+    acc_list = []
+    for idx, val in enumerate(df['Value']):
+        if idx % 2 == 0:
+            acc_list.append(val/100)
+    print(len(acc_list))
+    return acc_list
 
-# dataset_name = 'Fmnist'
-dataset_name = 'cifar10'
-batch_size_num = '32'
-exp_type = 'heter'
+
+# acc_HeteroFL_list = read_heteroFL("result/HeteroFL-test_Global-Accuracy.csv")
+acc_HeteroFL_list = read_heteroFL("result/FMNISTHeteroFL-test_Global-Accuracy.csv")
+
+# print(acc_HeteroFL_list)
+
+
+dataset_name = 'Fmnist'
+# dataset_name = 'cifar10'
+batch_size_num = '50'
+exp_type = 'homo'
 
 if exp_type == 'heter':
     exp_path = 'cmp'
     method_path = ''
+    model_num = '5'
 elif exp_type == 'homo':
     exp_path = 'cmp_homo'
     method_path = 'homo_'
-
-acc_MD_list = method_result("result/{}/rn0.2_{}_{}/{}Adamsr0.2_rn_MD_alpha0.5_lr0.001.csv".format(exp_path, dataset_name, batch_size_num, method_path))
-acc_GKT_list = method_result("result/{}/rn0.2_{}_{}/{}Adamsr0.2_rn_GKT_KLD_y_logits_alpha1.0_lr0.001.csv".format(exp_path, dataset_name, batch_size_num, method_path))
-acc_Private_list = method_result("result/{}/rn0.2_{}_{}/{}Adamsr0.2_rn_y_logits_alpha0.0_lr0.001.csv".format(exp_path, dataset_name, batch_size_num, method_path))
-acc_FedHe_list = method_result("result/{}/rn0.2_{}_{}/{}Adamsr0.2_rn_y_logits_alpha1.0_lr0.001.csv".format(exp_path, dataset_name, batch_size_num, method_path))
-acc_Felo_list = method_result("result/{}/rn0.2_{}_{}/{}Adamsr0.2_rn_op_KLD_y_logits_alpha1.0_lr0.001.csv".format(exp_path, dataset_name, batch_size_num, method_path))
-acc_Velo_list = method_result("result/{}/rn0.2_{}_{}/{}Adamsr0.2_rn_new_VAE_KLD_y_logits_alpha1.0_lr0.001.csv".format(exp_path, dataset_name, batch_size_num, method_path))
+    model_num = ''
 
 
-print("FedMD top-1 acc: {}".format(max(acc_MD_list)))
-print("GKT top-1 acc: {}".format(max(acc_GKT_list)))
-print("Private top-1 acc: {}".format(max(acc_Private_list)))
-print("FedHe top-1 acc: {}".format(max(acc_FedHe_list)))
-print("Felo top-1 acc: {}".format(max(acc_Felo_list)))
-print("Velo top-1 acc: {}".format(max(acc_Velo_list)))
+acc_MD_list = method_result("result/{}/rn0.2_{}_{}/{}Adam{}sr0.2_rn_MD_alpha1.0_lr0.001.csv".format(exp_path, dataset_name, batch_size_num, method_path, model_num))
+acc_GKT_list = method_result("result/{}/rn0.2_{}_{}/{}Adam{}sr0.2_rn_GKT_KLD_y_logits_alpha1.0_lr0.001.csv".format(exp_path, dataset_name, batch_size_num, method_path, model_num))
+# acc_Private_list = method_result("result/{}/rn0.2_{}_{}/{}Adam{}sr0.2_rn_y_logits_alpha0.0_lr0.001.csv".format(exp_path, dataset_name, batch_size_num, method_path, model_num))
+acc_FedHe_list = method_result("result/{}/rn0.2_{}_{}/{}Adam{}sr0.2_rn_y_logits_alpha1.0_lr0.001.csv".format(exp_path, dataset_name, batch_size_num, method_path, model_num))
+acc_Felo_list = method_result("result/{}/rn0.2_{}_{}/{}Adam{}sr0.2_rn_op_KLD_y_logits_alpha1.0_lr0.001.csv".format(exp_path, dataset_name, batch_size_num, method_path, model_num))
+acc_Velo_list = method_result("result/{}/rn0.2_{}_{}/{}Adam{}sr0.2_rn_new_VAE_KLD_y_logits_alpha1.0_lr0.001.csv".format(exp_path, dataset_name, batch_size_num, method_path, model_num))
 
 
-# plt.plot(acc_MD_list, label="FedMD")
-# plt.plot(acc_GKT_list, label="GKT")
-# plt.plot(acc_Private_list, label="Private")
-# plt.plot(acc_FedHe_list, label="FedHe")
-# plt.plot(acc_Felo_list, label="Felo")
-# plt.plot(acc_Velo_list, label="Velo")
-# # plt.plot(evaluate_acc_FedAvg_list, label="FedAvg")
-# # plt.plot(evaluate_acc_FedHe01_list, label="FedHe 0.001")
-# # plt.plot(evaluate_acc_FedHe001_list, label="FedHe")
-# # plt.plot(evaluate_acc_FedHe07_list, label="FedHe 0.7")
-# # plt.plot(evaluate_acc_FedMD, label="FedMD")
-# plt.title("Accuracy")
-# plt.ylabel("Accuracy")
-# plt.xlabel("Number of iterations")
-# if dataset_name == 'cifar10':
-#     plt.ylim(0.5, 0.7)
-# elif dataset_name == 'Fmnist':
-#     plt.ylim(0.8, 0.92)
-# plt.legend()
-# plt.grid(linestyle="dotted")
-# plt.savefig("compared_pic/acc_{}_{}_{}.eps".format(exp_type, dataset_name, batch_size_num))
-# plt.savefig("compared_pic/acc_{}_{}_{}.png".format(exp_type, dataset_name, batch_size_num))
-# plt.close()
+# print("FedMD top-1 acc: {}".format(max(acc_MD_list)))
+# print("GKT top-1 acc: {}".format(max(acc_GKT_list)))
+# print("Private top-1 acc: {}".format(max(acc_Private_list)))
+# print("FedHe top-1 acc: {}".format(max(acc_FedHe_list)))
+# print("Felo top-1 acc: {}".format(max(acc_Felo_list)))
+# print("Velo top-1 acc: {}".format(max(acc_Velo_list)))
+
+
+plt.plot(acc_MD_list, label="FedMD")
+plt.plot(acc_GKT_list, label="GKT")
+plt.plot(acc_HeteroFL_list, label="HeteroFL")
+plt.plot(acc_FedHe_list, label="FedHe")
+plt.plot(acc_Felo_list, label="Felo")
+plt.plot(acc_Velo_list, label="Velo")
+# plt.plot(evaluate_acc_FedAvg_list, label="FedAvg")
+# plt.plot(evaluate_acc_FedHe01_list, label="FedHe 0.001")
+# plt.plot(evaluate_acc_FedHe001_list, label="FedHe")
+# plt.plot(evaluate_acc_FedHe07_list, label="FedHe 0.7")
+# plt.plot(evaluate_acc_FedMD, label="FedMD")
+plt.title("Accuracy")
+plt.ylabel("Accuracy")
+plt.xlabel("Number of iterations")
+if dataset_name == 'cifar10':
+    plt.ylim(0.5, 0.7)
+elif dataset_name == 'Fmnist':
+    plt.ylim(0.8, 0.95)
+plt.legend()
+plt.grid(linestyle="dotted")
+plt.savefig("compared_pic/acc_{}_{}_{}.eps".format(exp_type, dataset_name, batch_size_num))
+plt.savefig("compared_pic/acc_{}_{}_{}.png".format(exp_type, dataset_name, batch_size_num))
+plt.close()

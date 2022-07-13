@@ -148,8 +148,8 @@ class ServerModel(nn.Module):
         super(ServerModel, self).__init__()
 
         label_embedding_size = 512
-        classifier_features = args.VAE_size
-        self.VAE_latent_size = args.VAE_size
+        classifier_features = args.latent_size
+        self.VAE_latent_size = args.latent_size
         # z_dim = args.VAE_size
 
         self.label_embedding = nn.Embedding(num_classes, label_embedding_size)

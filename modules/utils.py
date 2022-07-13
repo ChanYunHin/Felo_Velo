@@ -5,7 +5,7 @@ def get_model_mask(args):
     if args.GAN_moment_flag:
         model_mask = "moment"
     else:
-        model_mask = "Adam"
+        model_mask = "Adam5"
 
     # sample rate
     model_mask += "sr{}".format(args.clients_sample_ratio)
@@ -30,6 +30,9 @@ def get_model_mask(args):
     if args.half_flag:
         model_mask += "_half"
         
+    if args.HeteroFL:
+        model_mask += "_HeteroFL"
+        
     if args.resnet_flag:
         model_mask += "_rn"
     
@@ -43,7 +46,7 @@ def get_model_mask(args):
         model_mask += "_NoiseVAE"
         
     if args.new_VAE:
-        model_mask += "_new_VAE"
+        model_mask += "_new_VAE{}".format(args.latent_size)
         
     if args.VAE_op:
         model_mask += "_VAE_op"
@@ -67,7 +70,7 @@ def get_model_mask(args):
         model_mask += "_MD"
         
     if args.op:
-        model_mask += "_op"
+        model_mask += "_op{}".format(args.latent_size)
 
     if args.second_highest:
         model_mask += "_SC"

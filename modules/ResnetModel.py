@@ -10,9 +10,10 @@ import torchvision.models as models
 from torchvision.models.resnet import ResNet, BasicBlock, Bottleneck
 
 
-# class Resnet50_ft(ResNet):
+# class Resnet34(ResNet):
+    
 #     def __init__(self, num_classes=10):
-#         super(Resnet50_ft, self).__init__(Bottleneck, [3, 4, 6, 3])
+#         super(Resnet34, self).__init__(BasicBlock, [3, 4, 6, 3])
 #         # self.z_dim = z_dim
 #         # self.ResNet18 = models.resnet18(pretrained=False)
 #         self.num_feature = self.fc.in_features
@@ -29,22 +30,7 @@ from torchvision.models.resnet import ResNet, BasicBlock, Bottleneck
 #         x = self.conv1(x)
 #         x = self.bn1(x)
 #         x = self.relu(x)
-#         # x = self.maxpool(x)
-
-#         # x = self.layer1(x)
-#         # x = self.layer2(x)
-#         # x = self.layer3(x)
-#         # x = self.layer4(x)
-
-#         # x = self.avgpool(x)
-#         # x = torch.flatten(x, 1)
-        
-#         return x
-
-#     def decode(self, x):
-#         # z = torch.cat([z, labels], dim=1)
-        
-#         # x = self.maxpool(x)
+#         x = self.maxpool(x)
 
 #         x = self.layer1(x)
 #         x = self.layer2(x)
@@ -54,152 +40,227 @@ from torchvision.models.resnet import ResNet, BasicBlock, Bottleneck
 #         x = self.avgpool(x)
 #         x = torch.flatten(x, 1)
         
+#         return x
+
+#     def decode(self, z):
+#         # z = torch.cat([z, labels], dim=1)
+#         return self.fc(z)
+
+
+# class Resnet18(ResNet):
+    
+#     def __init__(self, num_classes=10):
+#         super(Resnet18, self).__init__(BasicBlock, [2, 2, 2, 2])
+#         # self.z_dim = z_dim
+#         # self.ResNet18 = models.resnet18(pretrained=False)
+#         self.num_feature = self.fc.in_features
+#         self.fc = nn.Linear(self.num_feature, num_classes)
+
+#     def forward(self, x):
+        
+#         x = self.encode(x)
+#         x = self.decode(x)
+        
+#         return x
+
+#     def encode(self, x):
+#         x = self.conv1(x)
+#         x = self.bn1(x)
+#         x = self.relu(x)
+#         x = self.maxpool(x)
+
+#         x = self.layer1(x)
+#         x = self.layer2(x)
+#         x = self.layer3(x)
+#         x = self.layer4(x)
+
+#         x = self.avgpool(x)
+#         x = torch.flatten(x, 1)
+        
+#         return x
+
+#     def decode(self, z):
+#         # z = torch.cat([z, labels], dim=1)
+#         return self.fc(z)
+
+# class Resnet22(ResNet):
+    
+#     def __init__(self, num_classes=10):
+#         super(Resnet22, self).__init__(BasicBlock, [2, 3, 3, 2])
+#         # self.z_dim = z_dim
+#         # self.ResNet18 = models.resnet18(pretrained=False)
+#         self.num_feature = self.fc.in_features
+#         self.fc = nn.Linear(self.num_feature, num_classes)
+
+#     def forward(self, x):
+        
+#         x = self.encode(x)
+#         x = self.decode(x)
+        
+#         return x
+
+#     def encode(self, x):
+#         x = self.conv1(x)
+#         x = self.bn1(x)
+#         x = self.relu(x)
+#         x = self.maxpool(x)
+
+#         x = self.layer1(x)
+#         x = self.layer2(x)
+#         x = self.layer3(x)
+#         x = self.layer4(x)
+
+#         x = self.avgpool(x)
+#         x = torch.flatten(x, 1)
+        
+#         return x
+
+#     def decode(self, z):
+#         # z = torch.cat([z, labels], dim=1)
+#         return self.fc(z)
+
+# class Resnet26(ResNet):
+    
+#     def __init__(self, num_classes=10):
+#         super(Resnet26, self).__init__(BasicBlock, [3, 3, 3, 3])
+#         # self.z_dim = z_dim
+#         # self.ResNet18 = models.resnet18(pretrained=False)
+#         self.num_feature = self.fc.in_features
+#         self.fc = nn.Linear(self.num_feature, num_classes)
+
+#     def forward(self, x):
+        
+#         x = self.encode(x)
+#         x = self.decode(x)
+        
+#         return x
+
+#     def encode(self, x):
+#         x = self.conv1(x)
+#         x = self.bn1(x)
+#         x = self.relu(x)
+#         x = self.maxpool(x)
+
+#         x = self.layer1(x)
+#         x = self.layer2(x)
+#         x = self.layer3(x)
+#         x = self.layer4(x)
+
+#         x = self.avgpool(x)
+#         x = torch.flatten(x, 1)
+        
+#         return x
+
+#     def decode(self, z):
+#         # z = torch.cat([z, labels], dim=1)
+#         return self.fc(z)
+    
+# class Resnet30(ResNet):
+    
+#     def __init__(self, num_classes=10):
+#         super(Resnet30, self).__init__(BasicBlock, [3, 4, 4, 3])
+#         # self.z_dim = z_dim
+#         # self.ResNet18 = models.resnet18(pretrained=False)
+#         self.num_feature = self.fc.in_features
+#         self.fc = nn.Linear(self.num_feature, num_classes)
+
+#     def forward(self, x):
+        
+#         x = self.encode(x)
+#         x = self.decode(x)
+        
+#         return x
+
+#     def encode(self, x):
+#         x = self.conv1(x)
+#         x = self.bn1(x)
+#         x = self.relu(x)
+#         x = self.maxpool(x)
+
+#         x = self.layer1(x)
+#         x = self.layer2(x)
+#         x = self.layer3(x)
+#         x = self.layer4(x)
+
+#         x = self.avgpool(x)
+#         x = torch.flatten(x, 1)
+        
+#         return x
+
+#     def decode(self, z):
+#         # z = torch.cat([z, labels], dim=1)
+#         return self.fc(z)
+
+
+
+# class Resnet34_ft(Resnet34):
+#     def __init__(self, num_classes=10):
+#         super(Resnet34_ft, self).__init__(num_classes)
+#         # self.z_dim = z_dim
+#         # self.ResNet18 = models.resnet18(pretrained=False)
+#         # self.num_feature = self.fc.in_features
+#         # self.fc = nn.Linear(self.num_feature, num_classes)
+
+#     def encode(self, x):
+#         x = self.conv1(x)
+#         x = self.bn1(x)
+#         x = self.relu(x)
+#         # x = self.maxpool(x)
+
+#         # x = self.layer1(x)
+#         # x = self.layer2(x)
+#         # x = self.layer3(x)
+#         # x = self.layer4(x)
+
+#         return x
+
+#     def decode(self, x):
+#         # x = self.maxpool(x)
+
+#         x = self.layer1(x)
+#         x = self.layer2(x)
+#         x = self.layer3(x)
+#         x = self.layer4(x)
+        
+#         x = self.avgpool(x)
+#         x = torch.flatten(x, 1)
 #         return self.fc(x)
 
 
+# class Resnet18_ft(Resnet18):
+#     def __init__(self, num_classes=10):
+#         super(Resnet18_ft, self).__init__(num_classes)
+#         # self.z_dim = z_dim
+#         # self.ResNet18 = models.resnet18(pretrained=False)
+#         # self.num_feature = self.fc.in_features
+#         # self.fc = nn.Linear(self.num_feature, num_classes)
 
-class Resnet34(ResNet):
-    
-    def __init__(self, num_classes=10):
-        super(Resnet34, self).__init__(BasicBlock, [3, 4, 6, 3])
-        # self.z_dim = z_dim
-        # self.ResNet18 = models.resnet18(pretrained=False)
-        self.num_feature = self.fc.in_features
-        self.fc = nn.Linear(self.num_feature, num_classes)
+#     def encode(self, x):
+#         x = self.conv1(x)
+#         x = self.bn1(x)
+#         x = self.relu(x)
+#         # x = self.maxpool(x)
 
-    def forward(self, x):
-        
-        x = self.encode(x)
-        x = self.decode(x)
-        
-        return x
+#         # x = self.layer1(x)
+#         # x = self.layer2(x)
+#         # x = self.layer3(x)
+#         # x = self.layer4(x)
 
-    def encode(self, x):
-        x = self.conv1(x)
-        x = self.bn1(x)
-        x = self.relu(x)
-        x = self.maxpool(x)
+#         return x
 
-        x = self.layer1(x)
-        x = self.layer2(x)
-        x = self.layer3(x)
-        x = self.layer4(x)
+#     def decode(self, x):
+#         # x = self.conv1(x)
+#         # x = self.bn1(x)
+#         # x = self.relu(x)
+#         # x = self.maxpool(x)
 
-        x = self.avgpool(x)
-        x = torch.flatten(x, 1)
-        
-        return x
-
-    def decode(self, z):
-        # z = torch.cat([z, labels], dim=1)
-        return self.fc(z)
-
-
-class Resnet18(ResNet):
-    
-    def __init__(self, num_classes=10):
-        super(Resnet18, self).__init__(BasicBlock, [2, 2, 2, 2])
-        # self.z_dim = z_dim
-        # self.ResNet18 = models.resnet18(pretrained=False)
-        self.num_feature = self.fc.in_features
-        self.fc = nn.Linear(self.num_feature, num_classes)
-
-    def forward(self, x):
-        
-        x = self.encode(x)
-        x = self.decode(x)
-        
-        return x
-
-    def encode(self, x):
-        x = self.conv1(x)
-        x = self.bn1(x)
-        x = self.relu(x)
-        x = self.maxpool(x)
-
-        x = self.layer1(x)
-        x = self.layer2(x)
-        x = self.layer3(x)
-        x = self.layer4(x)
-
-        x = self.avgpool(x)
-        x = torch.flatten(x, 1)
-        
-        return x
-
-    def decode(self, z):
-        # z = torch.cat([z, labels], dim=1)
-        return self.fc(z)
-
-
-class Resnet34_ft(Resnet34):
-    def __init__(self, num_classes=10):
-        super(Resnet34_ft, self).__init__(num_classes)
-        # self.z_dim = z_dim
-        # self.ResNet18 = models.resnet18(pretrained=False)
-        # self.num_feature = self.fc.in_features
-        # self.fc = nn.Linear(self.num_feature, num_classes)
-
-    def encode(self, x):
-        x = self.conv1(x)
-        x = self.bn1(x)
-        x = self.relu(x)
-        # x = self.maxpool(x)
-
-        # x = self.layer1(x)
-        # x = self.layer2(x)
-        # x = self.layer3(x)
-        # x = self.layer4(x)
-
-        return x
-
-    def decode(self, x):
-        # x = self.maxpool(x)
-
-        x = self.layer1(x)
-        x = self.layer2(x)
-        x = self.layer3(x)
-        x = self.layer4(x)
-        
-        x = self.avgpool(x)
-        x = torch.flatten(x, 1)
-        return self.fc(x)
-
-
-class Resnet18_ft(Resnet18):
-    def __init__(self, num_classes=10):
-        super(Resnet18_ft, self).__init__(num_classes)
-        # self.z_dim = z_dim
-        # self.ResNet18 = models.resnet18(pretrained=False)
-        # self.num_feature = self.fc.in_features
-        # self.fc = nn.Linear(self.num_feature, num_classes)
-
-    def encode(self, x):
-        x = self.conv1(x)
-        x = self.bn1(x)
-        x = self.relu(x)
-        # x = self.maxpool(x)
-
-        # x = self.layer1(x)
-        # x = self.layer2(x)
-        # x = self.layer3(x)
-        # x = self.layer4(x)
-
-        return x
-
-    def decode(self, x):
-        # x = self.conv1(x)
-        # x = self.bn1(x)
-        # x = self.relu(x)
-        # x = self.maxpool(x)
-
-        x = self.layer1(x)
-        x = self.layer2(x)
-        x = self.layer3(x)
-        x = self.layer4(x)
-        x = self.avgpool(x)
-        x = torch.flatten(x, 1)
-        return self.fc(x)
+#         x = self.layer1(x)
+#         x = self.layer2(x)
+#         x = self.layer3(x)
+#         x = self.layer4(x)
+#         x = self.avgpool(x)
+#         x = torch.flatten(x, 1)
+#         return self.fc(x)
 
 def conv_shortcut(in_channel,out_channel,stride):
     layers = [nn.Conv2d(in_channel,out_channel,kernel_size=(1,1),stride=(stride,stride)),
@@ -255,7 +316,7 @@ class Resnet50(nn.Module):
         
         self.tmp_layer = nn.Sequential(
             # nn.Sigmoid(),
-            nn.AvgPool2d(kernel_size=(4)),
+            nn.AvgPool2d(kernel_size=(args.avgpool)),
             nn.Flatten(),
             # nn.Linear(1024, args.latent_size)
         )
@@ -440,7 +501,7 @@ class SmallResnet50(nn.Module):
         
         self.tmp_layer = nn.Sequential(
             # nn.Sigmoid(),
-            nn.AvgPool2d(kernel_size=(4)),
+            nn.AvgPool2d(kernel_size=(args.avgpool)),
             nn.Flatten(),
             # nn.Linear(1024, args.latent_size)
         )
@@ -505,6 +566,260 @@ class SmallResnet50(nn.Module):
     def decode(self, z):
         # z = torch.cat([z, labels], dim=1)
         return self.classifier(z)
+
+
+class SmallResnet1(SmallResnet50):
+    def __init__(self, in_channels, num_classes):
+        super().__init__(in_channels, num_classes)
+    
+    def forward(self,inputs):
+        
+        out = self.encode(inputs)
+        
+        out = self.decode(out)
+        
+        return out
+
+    def encode(self, inputs):
+        out = self.stg1(inputs)
+        
+        #stage 2
+        out = F.relu(self.conv2(out) + self.convShortcut2(out))
+        out = F.relu(self.ident2(out) + out)
+        out = F.relu(self.ident2(out) + out)
+        
+        #stage3
+        out = F.relu(self.conv3(out) + (self.convShortcut3(out)))
+        out = F.relu(self.ident3(out) + out)
+        out = F.relu(self.ident3(out) + out)
+        # out = F.relu(self.ident3(out) + out)
+        
+        # small stage 4
+        out = F.relu(self.conv4(out) + (self.convShortcut4(out)))
+        out = F.relu(self.ident4(out) + out)
+        out = F.relu(self.ident4(out) + out)
+
+        return self.tmp_layer(out)
+
+
+    def decode(self, z):
+        # z = torch.cat([z, labels], dim=1)
+        return self.classifier(z)
+    
+class SmallResnet1_ft(SmallResnet1):
+    def __init__(self, in_channels, num_classes):
+        super().__init__(in_channels, num_classes)
+        
+    def forward(self,inputs):
+        
+        encoded_feature_inputs = self.encode(inputs)
+        
+        encoded_features = self.decode(encoded_feature_inputs)
+        
+        # return self.classifier(encoded_features), encoded_feature_inputs, encoded_features
+        return self.classifier(encoded_features)
+
+    def encode(self, inputs):
+        out = self.stg1(inputs)
+        
+        return out
+
+
+    def decode(self, out):
+        
+        #stage 2
+        out = F.relu(self.conv2(out) + self.convShortcut2(out))
+        out = F.relu(self.ident2(out) + out)
+        out = F.relu(self.ident2(out) + out)
+        
+        #stage3
+        out = F.relu(self.conv3(out) + (self.convShortcut3(out)))
+        out = F.relu(self.ident3(out) + out)
+        out = F.relu(self.ident3(out) + out)
+        # out = F.relu(self.ident3(out) + out)
+        
+        # small stage 4
+        out = F.relu(self.conv4(out) + (self.convShortcut4(out)))
+        out = F.relu(self.ident4(out) + out)
+        out = F.relu(self.ident4(out) + out)
+
+        return self.tmp_layer(out)
+        
+        # return out
+    
+    def fc_layers(self, out):
+        return self.classifier(out)
+
+    
+class SmallResnet2(SmallResnet50):
+    def __init__(self, in_channels, num_classes):
+        super().__init__(in_channels, num_classes)
+    
+    def forward(self,inputs):
+        
+        out = self.encode(inputs)
+        
+        out = self.decode(out)
+        
+        return out
+
+    def encode(self, inputs):
+        out = self.stg1(inputs)
+        
+        #stage 2
+        out = F.relu(self.conv2(out) + self.convShortcut2(out))
+        out = F.relu(self.ident2(out) + out)
+        # out = F.relu(self.ident2(out) + out)
+        
+        #stage3
+        out = F.relu(self.conv3(out) + (self.convShortcut3(out)))
+        out = F.relu(self.ident3(out) + out)
+        out = F.relu(self.ident3(out) + out)
+        out = F.relu(self.ident3(out) + out)
+        
+        # small stage 4
+        out = F.relu(self.conv4(out) + (self.convShortcut4(out)))
+        out = F.relu(self.ident4(out) + out)
+        out = F.relu(self.ident4(out) + out)
+        out = F.relu(self.ident4(out) + out)
+
+        return self.tmp_layer(out)
+
+
+    def decode(self, z):
+        # z = torch.cat([z, labels], dim=1)
+        return self.classifier(z)
+    
+class SmallResnet2_ft(SmallResnet2):
+    def __init__(self, in_channels, num_classes):
+        super().__init__(in_channels, num_classes)
+        
+    def forward(self,inputs):
+        
+        encoded_feature_inputs = self.encode(inputs)
+        
+        encoded_features = self.decode(encoded_feature_inputs)
+        
+        # return self.classifier(encoded_features), encoded_feature_inputs, encoded_features
+        return self.classifier(encoded_features)
+
+    def encode(self, inputs):
+        out = self.stg1(inputs)
+        
+        return out
+
+
+    def decode(self, out):
+        
+        #stage 2
+        out = F.relu(self.conv2(out) + self.convShortcut2(out))
+        out = F.relu(self.ident2(out) + out)
+        # out = F.relu(self.ident2(out) + out)
+        
+        #stage3
+        out = F.relu(self.conv3(out) + (self.convShortcut3(out)))
+        out = F.relu(self.ident3(out) + out)
+        out = F.relu(self.ident3(out) + out)
+        out = F.relu(self.ident3(out) + out)
+        
+        # small stage 4
+        out = F.relu(self.conv4(out) + (self.convShortcut4(out)))
+        out = F.relu(self.ident4(out) + out)
+        out = F.relu(self.ident4(out) + out)
+        out = F.relu(self.ident4(out) + out)
+
+        return self.tmp_layer(out)
+        
+        # return out
+    
+    def fc_layers(self, out):
+        return self.classifier(out)
+
+class SmallResnet3(SmallResnet50):
+    def __init__(self, in_channels, num_classes):
+        super().__init__(in_channels, num_classes)
+    
+    def forward(self,inputs):
+        
+        out = self.encode(inputs)
+        
+        out = self.decode(out)
+        
+        return out
+
+    def encode(self, inputs):
+        out = self.stg1(inputs)
+        
+        #stage 2
+        out = F.relu(self.conv2(out) + self.convShortcut2(out))
+        out = F.relu(self.ident2(out) + out)
+        # out = F.relu(self.ident2(out) + out)
+        
+        #stage3
+        out = F.relu(self.conv3(out) + (self.convShortcut3(out)))
+        out = F.relu(self.ident3(out) + out)
+        # out = F.relu(self.ident3(out) + out)
+        # out = F.relu(self.ident3(out) + out)
+        
+        # small stage 4
+        out = F.relu(self.conv4(out) + (self.convShortcut4(out)))
+        out = F.relu(self.ident4(out) + out)
+        out = F.relu(self.ident4(out) + out)
+        # out = F.relu(self.ident4(out) + out)
+
+        return self.tmp_layer(out)
+
+
+    def decode(self, z):
+        # z = torch.cat([z, labels], dim=1)
+        return self.classifier(z)
+    
+
+class SmallResnet3_ft(SmallResnet3):
+    def __init__(self, in_channels, num_classes):
+        super().__init__(in_channels, num_classes)
+        
+    def forward(self,inputs):
+        
+        encoded_feature_inputs = self.encode(inputs)
+        
+        encoded_features = self.decode(encoded_feature_inputs)
+        
+        # return self.classifier(encoded_features), encoded_feature_inputs, encoded_features
+        return self.classifier(encoded_features)
+
+    def encode(self, inputs):
+        out = self.stg1(inputs)
+        
+        return out
+
+
+    def decode(self, out):
+        
+        #stage 2
+        out = F.relu(self.conv2(out) + self.convShortcut2(out))
+        out = F.relu(self.ident2(out) + out)
+        # out = F.relu(self.ident2(out) + out)
+        
+        #stage3
+        out = F.relu(self.conv3(out) + (self.convShortcut3(out)))
+        out = F.relu(self.ident3(out) + out)
+        # out = F.relu(self.ident3(out) + out)
+        # out = F.relu(self.ident3(out) + out)
+        
+        # small stage 4
+        out = F.relu(self.conv4(out) + (self.convShortcut4(out)))
+        out = F.relu(self.ident4(out) + out)
+        out = F.relu(self.ident4(out) + out)
+        # out = F.relu(self.ident4(out) + out)
+
+        return self.tmp_layer(out)
+        
+        # return out
+    
+    def fc_layers(self, out):
+        return self.classifier(out)
+
 
 
 class SmallResnet50_ft(SmallResnet50):

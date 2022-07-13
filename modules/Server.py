@@ -131,12 +131,12 @@ class Server:
             elif args.resnet_flag:
                 client_models[0] = {"model_type": "small_resnet"}
                 client_models[1] = {"model_type": "small_resnet"}
-                client_models[2] = {"model_type": "small_resnet"}
-                client_models[3] = {"model_type": "small_resnet"}
-                client_models[4] = {"model_type": "small_resnet"}
-                client_models[5] = {"model_type": "resnet"}
-                client_models[6] = {"model_type": "resnet"}
-                client_models[7] = {"model_type": "resnet"}
+                client_models[2] = {"model_type": "small_resnet_1"}
+                client_models[3] = {"model_type": "small_resnet_1"}
+                client_models[4] = {"model_type": "small_resnet_2"}
+                client_models[5] = {"model_type": "small_resnet_2"}
+                client_models[6] = {"model_type": "small_resnet_3"}
+                client_models[7] = {"model_type": "small_resnet_3"}
                 client_models[8] = {"model_type": "resnet"}
                 client_models[9] = {"model_type": "resnet"}
             else:
@@ -542,9 +542,9 @@ class Server:
                 # self.server_model.server_apply_gradient(self.list_divided_int(ready_gradient,
                 #                                                               len(completed_clients)))
 
-            for idx in range(self.clients_number):
-                tmp_model = self.clients_dict[idx]
-                tmp_model.scheduler.step()
+            # for idx in range(self.clients_number):
+            #     tmp_model = self.clients_dict[idx]
+            #     tmp_model.scheduler.step()
 
             eval_interval = 0
             if max_training_epoches <= 500:

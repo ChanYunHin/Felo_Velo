@@ -1,5 +1,6 @@
 
 import math
+import pdb
 import numpy as np
 import copy
 from collections import namedtuple
@@ -17,7 +18,7 @@ if not args.old_CNN:
 else:
     from modules.old_Model import ClientModel
     from modules.old_Model import ClientModel_2CNN
-from modules.ResnetModel import Resnet50_ft, SmallResnet50_ft
+from modules.ResnetModel import Resnet50_ft, SmallResnet50_ft, SmallResnet1_ft, SmallResnet2_ft, SmallResnet3_ft
 
 import modules.GAN_model as CGAN
 
@@ -95,11 +96,25 @@ class Client:
                                          layer3 = neural_network_shape["params"]["n3"],
                                          dropout_rate = neural_network_shape["params"]["dropout_rate"])
             elif neural_network_shape["model_type"] == "resnet":
+                # self.model = Resnet34(num_classes=num_classes)
                 self.model = Resnet50_ft(in_channels=input_shape[1], 
-                                         num_classes=num_classes)
+                                      num_classes=num_classes)
             elif neural_network_shape["model_type"] == "small_resnet":
+                # self.model = Resnet18(num_classes=num_classes)
                 self.model = SmallResnet50_ft(in_channels=input_shape[1], 
-                                              num_classes=num_classes)
+                                           num_classes=num_classes)
+            elif neural_network_shape["model_type"] == "small_resnet_1":
+                # self.model = Resnet18(num_classes=num_classes)
+                self.model = SmallResnet1_ft(in_channels=input_shape[1], 
+                                           num_classes=num_classes)
+            elif neural_network_shape["model_type"] == "small_resnet_2":
+                # self.model = Resnet18(num_classes=num_classes)
+                self.model = SmallResnet2_ft(in_channels=input_shape[1], 
+                                           num_classes=num_classes)
+            elif neural_network_shape["model_type"] == "small_resnet_3":
+                # self.model = Resnet18(num_classes=num_classes)
+                self.model = SmallResnet3_ft(in_channels=input_shape[1], 
+                                           num_classes=num_classes)
             elif neural_network_shape["model_type"] == "Server_net":
                 self.model = Resnet50_ft(in_channels=input_shape[1], 
                                          num_classes=num_classes)
@@ -129,6 +144,8 @@ class Client:
         # self.scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer, 'min',
         #                                                             factor=0.5, patience=1,
         #                                                             threshold=0.01)
+        
+        # self.scheduler = torch.optim.lr_scheduler.StepLR(self.optimizer, step_size=1, gamma=0.99)
         
         self.loss_func = F.cross_entropy
         # can not use cross-entropy loss in the distillation.
@@ -202,7 +219,7 @@ class Client:
         
         self.model.train()
         encoded_features = self.model.encode(x)
-        predictions = self.model.decode(encoded_features)
+        predictions = self.model.classifier(self.model.decode(encoded_features))
         pred_loss = self.loss_func(predictions, y)
         if distillation:
             
@@ -235,6 +252,8 @@ class Client:
         # torch.nn.utils.clip_grad.clip_grad_value_(self.model.parameters(), 0.1)
         self.optimizer.step()
         gradients = [param.grad.detach() for param in self.model.parameters()]
+        # gradients = []
+        # pdb.set_trace()
         self.optimizer.zero_grad()
         # self.scheduler.step(pred_loss.item())
         
@@ -328,7 +347,7 @@ class Client:
         
         for _ in range(num_epochs):
             
-            server_ft_predictions = self.model.decode(x_data)
+            server_ft_predictions = self.model.classifier(self.model.decode(x_data))
             CE_loss = self.loss_func(server_ft_predictions, y_labels)
             if args.softmax_flag or args.KLD_flag:
                 # if args.MSE_flag:
@@ -354,7 +373,7 @@ class Client:
             # train_loss /= len(dataloader)
             # print("Server_training_loss: {}".format(train_loss))
         
-        server_logits = self.model.decode(x_data)
+        server_logits = self.model.classifier(self.model.decode(x_data))
         return server_logits.detach()
         
 
@@ -411,84 +430,86 @@ class Client:
         select_record_client_logits = []
 
         for i in range(self.clients_training_epoch):
-            training_epoches = math.ceil(self.dataset.size // self.batch_size)
-            for _ in range(training_epoches):
-                x, y, data_idx = self.dataset.next_batch(self.batch_size)
-                x, y = x.to(self.device), y.to(self.device)
-                # if distillation:
-                    # server_logit_vectors = self.match_labels_to_vectors(server_y_logits, y)
-                    # server_feature_vectors = self.match_labels_to_vectors(server_features, y)
+            # training_epoches = math.ceil(self.dataset.size // self.batch_size)
+            # for _ in range(training_epoches):
+            x, y, data_idx = self.dataset.next_batch(self.batch_size)
+            x, y = x.to(self.device), y.to(self.device)
+            # if distillation:
+                # server_logit_vectors = self.match_labels_to_vectors(server_y_logits, y)
+                # server_feature_vectors = self.match_labels_to_vectors(server_features, y)
 
-                    # server_features, server_generated_labels = self.get_features_from_generator(server_generator,
-                    #                                                                             self.batch_size,
-                    #                                                                             latent_size=latent_size,
-                    #                                                                             random_seed=random_seed)
+                # server_features, server_generated_labels = self.get_features_from_generator(server_generator,
+                #                                                                             self.batch_size,
+                #                                                                             latent_size=latent_size,
+                #                                                                             random_seed=random_seed)
 
 
-                # if i == 0:
-                train_result = self.train_step(x,
+            # if i == 0:
+            train_result = self.train_step(x,
+                                        y,
+                                        logit_vectors=server_logit_vectors,
+                                        distillation=distillation,
+                                        server_features=server_feature_vectors,
+                                        server_extractor=server_extractor)
+
+            tmp_gradients, client_logit_vectors, client_features = train_result[0], train_result[1], train_result[2]
+            # if distillation:
+            #     client_feature_logits = train_result[3]
+                            
+            accumulate_gradients = list_add(accumulate_gradients,
+                                            tmp_gradients)
+            # x, y = x.to("cpu"), y.to("cpu")
+            # # draw logits and class probabilities
+            # if abs(current_epoches / max_epoches % 0.1 - 0) <= 0.00001:
+            #     select_label = 1
+            #     # draw class probabilities
+            #     for idx, class_label_y in enumerate(y):
+            #         if class_label_y == select_label:
+            #             tmp_logits = F.softmax(client_logit_vectors[idx])
+            #             select_record_client_class_prob.append(tmp_logits)
+            #             select_record_client_logits.append(client_logit_vectors[idx])
+            #             plt.plot(tmp_logits)
+            #     np.savetxt("txt_result/tmpres/class_pb_{}.txt".format(current_epoches / max_epoches), np.array(select_record_client_class_prob))
+            #     plt.title("class_pb")
+            #     plt.ylabel("probability")
+            #     plt.xlabel("class")
+            #     # plt.legend()
+            #     # plt.savefig("pic/asyn/loss_no_decay.eps")
+            #     plt.savefig("pic/tmpres/class_pb_{}.png".format(current_epoches / max_epoches))
+            #     plt.close()
+                
+            #     # draw logits
+            #     for idx, class_label_y in enumerate(y):
+            #         if class_label_y == select_label:
+            #             plt.plot(client_logit_vectors[idx])
+
+            #     np.savetxt("txt_result/tmpres/logits_{}.txt".format(current_epoches / max_epoches), np.array(select_record_client_logits))
+            #     plt.title("logits")
+            #     plt.ylabel("logits")
+            #     plt.xlabel("class")
+            #     # plt.legend()
+            #     # plt.savefig("pic/asyn/loss_no_decay.eps")
+            #     plt.savefig("pic/tmpres/logits_{}.png".format(current_epoches / max_epoches))
+            #     plt.close()
+
+                    # select_label_list.append(idx)
+            # select_record_client_class_prob.append(client_logit_vectors[select_label_list])
+
+
+
+            # client_features_list.append([vae_mean, vae_var])
+            client_y_logits, count_for_labels, features_dict = \
+                self.collect_logits_features(client_logit_vectors,
                                             y,
-                                            logit_vectors=server_logit_vectors,
-                                            distillation=distillation,
-                                            server_features=server_feature_vectors,
-                                            server_extractor=server_extractor)
-
-                tmp_gradients, client_logit_vectors, client_features = train_result[0], train_result[1], train_result[2]
-                # if distillation:
-                #     client_feature_logits = train_result[3]
-                                
-                accumulate_gradients = list_add(accumulate_gradients,
-                                                tmp_gradients)
-                # x, y = x.to("cpu"), y.to("cpu")
-                # # draw logits and class probabilities
-                # if abs(current_epoches / max_epoches % 0.1 - 0) <= 0.00001:
-                #     select_label = 1
-                #     # draw class probabilities
-                #     for idx, class_label_y in enumerate(y):
-                #         if class_label_y == select_label:
-                #             tmp_logits = F.softmax(client_logit_vectors[idx])
-                #             select_record_client_class_prob.append(tmp_logits)
-                #             select_record_client_logits.append(client_logit_vectors[idx])
-                #             plt.plot(tmp_logits)
-                #     np.savetxt("txt_result/tmpres/class_pb_{}.txt".format(current_epoches / max_epoches), np.array(select_record_client_class_prob))
-                #     plt.title("class_pb")
-                #     plt.ylabel("probability")
-                #     plt.xlabel("class")
-                #     # plt.legend()
-                #     # plt.savefig("pic/asyn/loss_no_decay.eps")
-                #     plt.savefig("pic/tmpres/class_pb_{}.png".format(current_epoches / max_epoches))
-                #     plt.close()
-                    
-                #     # draw logits
-                #     for idx, class_label_y in enumerate(y):
-                #         if class_label_y == select_label:
-                #             plt.plot(client_logit_vectors[idx])
-
-                #     np.savetxt("txt_result/tmpres/logits_{}.txt".format(current_epoches / max_epoches), np.array(select_record_client_logits))
-                #     plt.title("logits")
-                #     plt.ylabel("logits")
-                #     plt.xlabel("class")
-                #     # plt.legend()
-                #     # plt.savefig("pic/asyn/loss_no_decay.eps")
-                #     plt.savefig("pic/tmpres/logits_{}.png".format(current_epoches / max_epoches))
-                #     plt.close()
-
-                        # select_label_list.append(idx)
-                # select_record_client_class_prob.append(client_logit_vectors[select_label_list])
-
-
-
-                # client_features_list.append([vae_mean, vae_var])
-                client_y_logits, count_for_labels, features_dict = \
-                    self.collect_logits_features(client_logit_vectors,
-                                                y,
-                                                client_y_logits,
-                                                count_for_labels,
-                                                client_features,
-                                                features_dict)
+                                            client_y_logits,
+                                            count_for_labels,
+                                            client_features,
+                                            features_dict)
+            # self.scheduler.step()
 
 
         mean_loss = np.mean(np.array(self.mean_loss))
+
         acc = np.mean(np.array(self.accuracy))
 
         # updated_gradients = list_divided_int(accumulate_gradients, self.clients_training_epoch)

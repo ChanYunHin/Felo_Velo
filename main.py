@@ -38,13 +38,12 @@ elif args.new_VAE:
     assert not args.MD
     assert not args.VAE_fa
     from modules.Server_new_VAE import Server as server
-elif args.VAE_fa:
+elif args.HeteroFL:
     assert not args.op
     assert not args.new_VAE
     assert not args.GKT
     assert not args.MD
-    assert args.no_logits_flag
-    from modules.Server_VAE_fa import Server as server
+    from modules.Server_HetFL import Server as server
 elif args.op_agg:
     assert not args.op
     assert not args.new_VAE

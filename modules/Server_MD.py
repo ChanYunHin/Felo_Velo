@@ -131,12 +131,12 @@ class Server:
             elif args.resnet_flag:
                 client_models[0] = {"model_type": "small_resnet"}
                 client_models[1] = {"model_type": "small_resnet"}
-                client_models[2] = {"model_type": "small_resnet"}
-                client_models[3] = {"model_type": "small_resnet"}
-                client_models[4] = {"model_type": "small_resnet"}
-                client_models[5] = {"model_type": "resnet"}
-                client_models[6] = {"model_type": "resnet"}
-                client_models[7] = {"model_type": "resnet"}
+                client_models[2] = {"model_type": "small_resnet_1"}
+                client_models[3] = {"model_type": "small_resnet_1"}
+                client_models[4] = {"model_type": "small_resnet_2"}
+                client_models[5] = {"model_type": "small_resnet_2"}
+                client_models[6] = {"model_type": "small_resnet_3"}
+                client_models[7] = {"model_type": "small_resnet_3"}
                 client_models[8] = {"model_type": "resnet"}
                 client_models[9] = {"model_type": "resnet"}
             else:
@@ -343,7 +343,7 @@ class Server:
         training_epochs = public_dataset.size / self.batch_size
         
         # train the model to convergence on the public dataset
-        for i in range(10):
+        for i in range(5):
             loss = []
             for _ in range(int(training_epochs)):
                 x, y, _ = public_dataset.next_batch(self.batch_size)
@@ -360,7 +360,7 @@ class Server:
         
         training_epochs = client_model.dataset.size / self.batch_size
         
-        for i in range(10):
+        for i in range(5):
             loss = []
             for _ in range(int(training_epochs)):
                 x, y, _ = client_model.dataset.next_batch(self.batch_size)

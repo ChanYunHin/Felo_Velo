@@ -140,12 +140,12 @@ class Server:
             elif args.resnet_flag:
                 client_models[0] = {"model_type": "small_resnet"}
                 client_models[1] = {"model_type": "small_resnet"}
-                client_models[2] = {"model_type": "small_resnet"}
-                client_models[3] = {"model_type": "small_resnet"}
-                client_models[4] = {"model_type": "small_resnet"}
-                client_models[5] = {"model_type": "resnet"}
-                client_models[6] = {"model_type": "resnet"}
-                client_models[7] = {"model_type": "resnet"}
+                client_models[2] = {"model_type": "small_resnet_1"}
+                client_models[3] = {"model_type": "small_resnet_1"}
+                client_models[4] = {"model_type": "small_resnet_2"}
+                client_models[5] = {"model_type": "small_resnet_2"}
+                client_models[6] = {"model_type": "small_resnet_3"}
+                client_models[7] = {"model_type": "small_resnet_3"}
                 client_models[8] = {"model_type": "resnet"}
                 client_models[9] = {"model_type": "resnet"}
             else:
