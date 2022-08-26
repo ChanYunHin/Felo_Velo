@@ -123,17 +123,20 @@ class Client:
         self.optimizer = torch.optim.Adam(self.model.parameters(),
                                           lr=learning_rate)
         
-        total_epoches = args.epoch * args.clients_sample_ratio * args.clients_number * args.clients_training_epoch
+        # self.optimizer = torch.optim.SGD(self.model.parameters(), lr=0.1, momentum=0.9,
+                            #   weight_decay=5e-4)
         
-        # self.scheduler = torch.optim.lr_scheduler.MultiStepLR(self.optimizer,
-        #                                                       milestones=[int(total_epoches * 0.15),
-        #                                                                   int(total_epoches * 0.25),
-        #                                                                   int(total_epoches * 0.40),
-        #                                                                   int(total_epoches * 0.55),
-        #                                                                   int(total_epoches * 0.70),
-        #                                                                   int(total_epoches * 0.85),
-        #                                                                   int(total_epoches * 0.95)],
-        #                                                       gamma=0.5)
+        total_epoches = args.epoch * args.clients_sample_ratio * args.clients_number
+        
+        if dataset_name == 'cifar10':
+            self.scheduler = torch.optim.lr_scheduler.MultiStepLR(self.optimizer,
+                                                                  milestones=[int(total_epoches * 0.4),
+                                                                              int(total_epoches * 0.7)],
+                                                                  gamma=0.1)
+        elif dataset_name == 'Fmnist':
+            self.scheduler = torch.optim.lr_scheduler.MultiStepLR(self.optimizer,
+                                                                  milestones=[int(total_epoches * 0.5)],
+                                                                  gamma=0.1)
         
         # self.scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer, 'min',
         #                                                             factor=0.5, patience=1,

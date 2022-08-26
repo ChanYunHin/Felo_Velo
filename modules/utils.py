@@ -5,7 +5,7 @@ def get_model_mask(args):
     if args.GAN_moment_flag:
         model_mask = "moment"
     else:
-        model_mask = "Adam5"
+        model_mask = "SGD5"
 
     # sample rate
     model_mask += "sr{}".format(args.clients_sample_ratio)
@@ -154,8 +154,8 @@ def get_tb_logs_name(args):
         else:
             based_model = "CNN{}_{}_{}".format(args.clients_sample_ratio, args.dataset, args.batch_size)
             
-        if args.enable_scheduler:
-            based_model += "_schd"
+        # if args.enable_scheduler:
+        based_model += "_schd"
             
         if args.homo_flag:
             cmp_log_dir = "./tb_logs/cmp_homo/" + based_model + "/" + model_mask + params_string

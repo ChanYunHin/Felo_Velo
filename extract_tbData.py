@@ -87,11 +87,12 @@ def get_file_path(dpath, tag):
 if __name__ == '__main__':
     # path = "tb_logs/cmp_homo/rn0.2_Fmnist_50/homo_Adamsr0.2_rn_GKT_KLD_y_logits_alpha1.0_lr0.001/test/accuracy_beta10_acc"
     # path = "fed_distill_pytorch/tb_logs/cmp_homo/rn0.2_Fmnist_50/homo_Adamsr0.2_rn_GKT_KLD_y_logits_alpha1.0_lr0.001/test/accuracy_beta10_acc"
-    path = "tb_logs/cmp/rn0.2_cifar10_50"
-    # path = "fed_distill_pytorch/tb_logs/cmp/rn0.2_Fmnist_16"
+    path = "tb_logs/cmp/rn0.2_Fmnist_50"
+    # path = "fed_distill_pytorch/tb_logs/cmp/rn0.2_cifar10_50"
+    # path = "fed_distill_pytorch/tb_logs/cmp/rn0.2_Fmnist_50"
     methods = os.listdir(path)
     for method_name in methods:
-        if 'Adam5' in method_name:
+        if 'Adam5' in method_name and 'Hetero' not in method_name:
             method_path = "{}/{}/test/".format(path, method_name)
             folder_name = os.listdir(method_path)
             for fname in folder_name:

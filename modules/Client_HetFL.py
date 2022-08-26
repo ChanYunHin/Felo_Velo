@@ -139,6 +139,7 @@ class Client:
         self.local_parameters = tmp_local_parameters[0]
         
         model_rate_m = federation.model_rate[client_id]
+        
         data_loader_m = make_data_loader({'train': SplitDataset(dataset, data_split[client_id])})['train']
         self.local = Local(model_rate_m, data_loader_m, label_split[client_id],
                            self.device)
@@ -146,9 +147,10 @@ class Client:
         
 
     def training(self, 
+                 lr,
                  distillation=False,
                  **kwargs):
-        
+        self.lr = lr
         self.local_parameters, evaluation_metric = self.local.train(self.local_parameters, self.lr)
         return self.local_parameters, self.param_idx, evaluation_metric
 

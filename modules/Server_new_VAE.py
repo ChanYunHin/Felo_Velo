@@ -631,6 +631,9 @@ class Server:
                     train_feature_loss += tmp_feature_loss
                     
 
+            for idx in range(self.clients_number):
+                self.clients_dict[idx].scheduler.step()
+                
             eval_interval = 0
             if max_training_epoches <= 500:
                 eval_interval = int(max_training_epoches / 100)
@@ -643,6 +646,7 @@ class Server:
 
                 evaluate_mean_loss = []
                 evaluate_mean_acc = []
+                group_model_acc = [[] for _ in range(5)]
                 evaluate_num = 0
                 
                 if args.asyn_FL_flag:
@@ -675,20 +679,30 @@ class Server:
                         # evaluate_client_acc[selected_idx].append(acc)
                         evaluate_mean_loss.append(mean_loss)
                         evaluate_mean_acc.append(acc)
+                        
+                        # if selected_idx / 2:
+                        group_model_acc[int(selected_idx/2)].append(acc)
+                        
 
                 mean_loss = np.mean(np.array(evaluate_mean_loss))
                 acc = np.mean(np.array(evaluate_mean_acc))
+                for idx in range(len(group_model_acc)):
+                    group_model_acc[idx] = np.mean(np.array(group_model_acc[idx]))
                 
-                # for idx in range(self.clients_number):
-                #     tmp_model = self.clients_dict[idx]
-                #     tmp_model.scheduler.step(mean_loss)
+                
 
+                for idx in range(self.clients_number):
+                    tmp_model = self.clients_dict[idx]
+                    torch.save(tmp_model.model.state_dict(), 'state_dict/Velo_{}_{}'.format(idx, self.dataset))
+                
                 # test_summary_writer.add_scalar("loss", mean_loss, int(ep/eval_interval))
                 # test_summary_writer.add_scalar("acc", acc, int(ep/eval_interval))
                 loss_name = 'beta{}_loss'.format(args.beta)
                 acc_name = 'beta{}_acc'.format(args.beta)
                 compared_summary_writer.add_scalars("loss", {loss_name: mean_loss}, int(ep/eval_interval))
                 compared_summary_writer.add_scalars("accuracy", {acc_name: acc}, int(ep/eval_interval))
+                for idx in range(len(group_model_acc)):
+                    compared_summary_writer.add_scalars("group_accuracy", {'Velo_group{}'.format(idx): group_model_acc[idx]}, int(ep/eval_interval))
 
                 mean_loss_list.append(mean_loss)
                 acc_list.append(acc)
@@ -725,6 +739,7 @@ class Server:
                                                             train_acc))
                 print("evaluating: loss={} | accuracy={}".format(mean_loss, acc))
                 print("model_mask: {}_beta{}".format(model_mask, args.beta))
+                print("lr: {}".format(self.clients_dict[idx].optimizer.param_groups[0]['lr']))
                 train_loss = 0
                 train_acc = 0
                 cnt = 0

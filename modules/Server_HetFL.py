@@ -91,6 +91,10 @@ class Server:
         # self.server_model = 0
 
         # global_parameters = self.global_model.state_dict()
+        self.tmp_model = eval('models.{}(model_rate=cfg["global_model_rate"]).to(self.device)'.format(cfg['model_name']))
+        self.optimizer = make_optimizer(self.tmp_model, cfg['lr'])
+        self.scheduler = make_scheduler(self.optimizer)
+        self.learning_rate = cfg['lr']
         
         
         
@@ -110,7 +114,6 @@ class Server:
 
     def build_clients_and_server(self, num, data_split,
                                  label_split, model_split_rate):
-        learning_rate = self.learning_rate
         num_input = self.num_input
         num_input_channel = self.num_input_channel
         num_classes = self.num_classes
@@ -132,7 +135,7 @@ class Server:
         for cid in range(num):
             clients_dict[cid] = Client(input_shape=input_data_shape,
                                         num_classes=num_classes,
-                                        learning_rate=learning_rate,
+                                        learning_rate=cfg['lr'],
                                         client_id=cid,
                                         batch_size=batch_size,
                                         clients_training_epoch=clients_training_epoch,
@@ -330,19 +333,11 @@ class Server:
         if args.delayed_gradients_flag:
             assert not args.delayed_gradients_divided_flag
 
+        
         for ep in tqdm(range(max_training_epoches)):
             # randomly choose some clients each epoch
             selected_clients = self.choose_clients()
 
-
-            if not args.asyn_FL_flag:
-                if args.pre_train:
-                    if ep >= int(max_training_epoches * 0.4):
-                        distillation_flag = args.y_distillation_flag
-                        
-                else:
-                    if ep >= int(max_training_epoches * 0.05):
-                        distillation_flag = args.y_distillation_flag
 
             # update clients' states
             for idx, cid in enumerate(selected_clients):
@@ -367,12 +362,15 @@ class Server:
                 train_model = self.clients_dict[cid]
                 client_id_list[idx] = cid
                 
-                local_parameters[idx], tmp_param_idx, train_metric = train_model.training()
+                local_parameters[idx], tmp_param_idx, train_metric = train_model.training(self.learning_rate)
                 param_idx.extend(tmp_param_idx)
                 train_records.append(train_metric)
             self.federation.combine(local_parameters, param_idx, client_id_list)
             self.global_model.load_state_dict(self.federation.global_parameters)
 
+            self.scheduler.step()
+            self.learning_rate = self.optimizer.param_groups[0]['lr']
+            
             eval_interval = 0
             if max_training_epoches <= 500:
                 eval_interval = int(max_training_epoches / 100)
@@ -388,6 +386,7 @@ class Server:
 
                     
                 print("test_loss={} | test_acc={}".format(test_loss, test_acc))
+                print("lr: {}".format(self.learning_rate))
                 
                 loss_name = 'loss'
                 acc_name = 'acc'

@@ -590,9 +590,9 @@ class Server:
                 mean_loss = np.mean(np.array(evaluate_mean_loss))
                 acc = np.mean(np.array(evaluate_mean_acc))
                 
-                # for idx in range(self.clients_number):
-                #     tmp_model = self.clients_dict[idx]
-                #     tmp_model.scheduler.step(mean_loss)
+                for idx in range(self.clients_number):
+                    tmp_model = self.clients_dict[idx]
+                    tmp_model.scheduler.step()
 
                 # test_summary_writer.add_scalar("loss", mean_loss, int(ep/eval_interval))
                 # test_summary_writer.add_scalar("acc", acc, int(ep/eval_interval))
