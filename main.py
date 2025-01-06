@@ -2,10 +2,11 @@
 import os
 from collections import namedtuple
 import torch
+import wandb
 
 from parameters import args
 
-
+method_name = ''
 # if args.Var or args.second_highest or args.Similarity:
     # from modules.Server_Var import Server as server
 if args.VAE:
@@ -28,6 +29,7 @@ elif args.op:
     assert not args.MD
     assert not args.VAE_fa
     from modules.Server_op import Server as server
+    method_name = 'Felo_op'
 elif args.new_VAE:
     assert not args.op
     assert not args.NVAE
@@ -38,12 +40,7 @@ elif args.new_VAE:
     assert not args.MD
     assert not args.VAE_fa
     from modules.Server_new_VAE import Server as server
-elif args.HeteroFL:
-    assert not args.op
-    assert not args.new_VAE
-    assert not args.GKT
-    assert not args.MD
-    from modules.Server_HetFL import Server as server
+    method_name = 'Velo_new_VAE'
 elif args.op_agg:
     assert not args.op
     assert not args.new_VAE
@@ -74,6 +71,7 @@ elif args.GKT:
     assert not args.MD
     assert not args.VAE_fa
     from modules.Server_GKT import Server as server
+    method_name = 'GKT'
 elif args.MD:
     assert not args.op
     assert not args.NVAE
@@ -86,8 +84,13 @@ elif args.MD:
     assert not args.KLD_flag
     assert not args.VAE_fa
     from modules.Server_MD import Server as server
+    method_name = 'MD'
 else:
     from modules.Server import Server as server
+    if args.asyn_FL_flag:
+        method_name = 'FedAVG'
+    else:
+        method_name = 'FedHe'
 
 def main(device):
     parameters = namedtuple('parameters', ['clients_number',
@@ -130,6 +133,7 @@ def main(device):
     if dataset == "emnist_bl":
         num_classes = 47
         num_input_channel = 1
+        
         
     parameters = parameters(clients_number,
                             clients_sample_ratio,

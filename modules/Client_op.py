@@ -129,18 +129,17 @@ class Client:
         total_epoches = args.epoch * args.clients_sample_ratio * args.clients_number
         
         
-        if dataset_name == 'cifar10':
-            self.scheduler = torch.optim.lr_scheduler.MultiStepLR(self.optimizer,
-                                                                  milestones=[int(total_epoches * 0.4),
-                                                                              int(total_epoches * 0.7)],
-                                                                  gamma=0.1)
-        elif dataset_name == 'Fmnist':
-            self.scheduler = torch.optim.lr_scheduler.MultiStepLR(self.optimizer,
-                                                                  milestones=[int(total_epoches * 0.5)],
-                                                                  gamma=0.1)
-        # self.scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer, 'min',
-        #                                                             factor=0.5, patience=1,
-        #                                                             threshold=0.01)
+        # if dataset_name == 'cifar10':
+        #     self.scheduler = torch.optim.lr_scheduler.MultiStepLR(self.optimizer,
+        #                                                           milestones=[int(total_epoches * 0.4),
+        #                                                                       int(total_epoches * 0.7)],
+        #                                                           gamma=0.1)
+        # elif dataset_name == 'Fmnist':
+        #     self.scheduler = torch.optim.lr_scheduler.MultiStepLR(self.optimizer,
+        #                                                           milestones=[int(total_epoches * 0.5)],
+        #                                                           gamma=0.1)
+        
+        self.scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer, 'min')
         
         # self.scheduler = torch.optim.lr_scheduler.StepLR(self.optimizer, step_size=1, gamma=0.99)
         
@@ -202,8 +201,6 @@ class Client:
                    **kwargs):
 
         server_features = kwargs["server_features"]
-        # server_generated_labels = kwargs["server_generated_labels"]
-        # server_feature_logits = kwargs["server_feature_logits"]
         assert self.is_worker
         # alpha = args.alpha * (np.exp(current_epoches / max_epoches) - 1)
         alpha = args.alpha

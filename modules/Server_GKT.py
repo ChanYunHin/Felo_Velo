@@ -413,24 +413,10 @@ class Server:
                 if args.pre_train:
                     if ep == int(max_training_epoches * 0.4):
                         distillation_flag = args.y_distillation_flag
-                        #training
-                        # features_dataloader = self.get_server_client_features(res)
-                        # self.server_extractor = CVAE.server_extractor_training(self.server_extractor,
-                        #                                                        num_epochs=5,
-                        #                                                        dataloader=features_dataloader,
-                        #                                                        device=self.device)
                         
                 else:
                     if ep >= int(max_training_epoches * 0.05) and ep % int(max_training_epoches * 0.01) == 0:
                         distillation_flag = args.y_distillation_flag
-                        #training
-                        # features_dataloader = self.get_server_client_features(res)
-                        # self.server_extractor.training_for_server_model(features_dataloader, 
-                        #                                                 num_epochs=5)
-                        # self.server_extractor = CVAE.server_extractor_training(self.server_extractor,
-                        #                                                        num_epochs=5,
-                        #                                                        dataloader=features_dataloader,
-                        #                                                        device=self.device)
                         
 
                 # if ep >= int(max_training_epoches * 0.4) and ep % int(max_training_epoches * 0.1) == 0:

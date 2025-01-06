@@ -225,7 +225,7 @@ class Client:
             
             server_logit_vectors = server_extractor.training_for_server_model(encoded_features.detach(),
                                                                               predictions.detach(),
-                                                                              y, num_epochs = 10)
+                                                                              y, num_epochs = 20)
             
             
             if args.softmax_flag or args.KLD_flag:

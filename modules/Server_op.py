@@ -222,6 +222,7 @@ class Server:
 
         mean_loss = np.mean(np.array(mean_loss))
         acc = np.mean(np.array(accuracy))
+        eval_model.scheduler.step(mean_loss)
 
         # print("\nevaluating: loss={} | accuracy={}".format(mean_loss, acc))
 
@@ -554,7 +555,7 @@ class Server:
                     client_features = training_result["features_dict"]
                 clients_y_logits[cid] = tmp_y_logits
 
-                # Can we make any criteria to check the efficiency of gradients?
+
                 if args.asyn_FL_flag:
                     if args.delayed_gradients_divided_flag:
                         ready_gradient = self.list_divided_int(client_gradients,
