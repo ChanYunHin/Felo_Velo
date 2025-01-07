@@ -5,10 +5,10 @@ def get_model_mask(args):
     if args.GAN_moment_flag:
         model_mask = "moment"
     else:
-        model_mask = "SGD5"
+        model_mask = "Adam5"
 
     # sample rate
-    model_mask += "sr{}".format(args.clients_sample_ratio)
+    model_mask += "client{}sr{}_clientEpoch{}".format(args.clients_number, args.clients_sample_ratio, args.clients_training_epoch)
 
     if args.homo_flag:
         model_mask = "homo_" + model_mask

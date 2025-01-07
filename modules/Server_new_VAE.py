@@ -645,8 +645,8 @@ class Server:
                     train_feature_loss += tmp_feature_loss
                     
 
-            for idx in range(self.clients_number):
-                self.clients_dict[idx].scheduler.step(tmp_label_loss)
+            # for idx in range(self.clients_number):
+            #     self.clients_dict[idx].scheduler.step(tmp_label_loss)
                 
             eval_interval = 0
             if max_training_epoches <= 500:

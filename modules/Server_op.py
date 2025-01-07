@@ -114,16 +114,24 @@ class Server:
             client_models = {}
             if args.homo_flag or args.middle_flag:
                 if args.resnet_flag:
-                    client_models[0] = {"model_type": "small_resnet"}
-                    client_models[1] = {"model_type": "small_resnet"}
-                    client_models[2] = {"model_type": "small_resnet"}
-                    client_models[3] = {"model_type": "small_resnet"}
-                    client_models[4] = {"model_type": "small_resnet"}
-                    client_models[5] = {"model_type": "small_resnet"}
-                    client_models[6] = {"model_type": "small_resnet"}
-                    client_models[7] = {"model_type": "small_resnet"}
-                    client_models[8] = {"model_type": "small_resnet"}
-                    client_models[9] = {"model_type": "small_resnet"}
+                    
+                    group_size = num // 5
+                    group_model_name = {0: "small_resnet", 1: "small_resnet", 2: "small_resnet", 3: "small_resnet", 4: "small_resnet"}
+                    for group_idx in range(5):
+                        for idx in range(group_size):
+                            client_models[idx + group_idx * group_size] = {"model_type": group_model_name[group_idx]}
+                            print("Client {} model type: {}".format(idx + group_idx * group_size, group_model_name[group_idx]))
+                    
+                    # client_models[0] = {"model_type": "small_resnet"}
+                    # client_models[1] = {"model_type": "small_resnet"}
+                    # client_models[2] = {"model_type": "small_resnet"}
+                    # client_models[3] = {"model_type": "small_resnet"}
+                    # client_models[4] = {"model_type": "small_resnet"}
+                    # client_models[5] = {"model_type": "small_resnet"}
+                    # client_models[6] = {"model_type": "small_resnet"}
+                    # client_models[7] = {"model_type": "small_resnet"}
+                    # client_models[8] = {"model_type": "small_resnet"}
+                    # client_models[9] = {"model_type": "small_resnet"}
                 else:
                     client_models[0] = {"model_type": "3_layer_CNN", "params": {"n1": 64, "n2": 128, "n3": 192, "dropout_rate": 0.3}}
                     client_models[1] = {"model_type": "3_layer_CNN", "params": {"n1": 64, "n2": 128, "n3": 192, "dropout_rate": 0.3}}
@@ -136,16 +144,24 @@ class Server:
                     client_models[8] = {"model_type": "3_layer_CNN", "params": {"n1": 64, "n2": 128, "n3": 192, "dropout_rate": 0.3}}
                     client_models[9] = {"model_type": "3_layer_CNN", "params": {"n1": 64, "n2": 128, "n3": 192, "dropout_rate": 0.3}}
             elif args.resnet_flag:
-                client_models[0] = {"model_type": "small_resnet"}
-                client_models[1] = {"model_type": "small_resnet"}
-                client_models[2] = {"model_type": "small_resnet_1"}
-                client_models[3] = {"model_type": "small_resnet_1"}
-                client_models[4] = {"model_type": "small_resnet_2"}
-                client_models[5] = {"model_type": "small_resnet_2"}
-                client_models[6] = {"model_type": "small_resnet_3"}
-                client_models[7] = {"model_type": "small_resnet_3"}
-                client_models[8] = {"model_type": "resnet"}
-                client_models[9] = {"model_type": "resnet"}
+                
+                group_size = num // 5
+                group_model_name = {0: "small_resnet", 1: "small_resnet_1", 2: "small_resnet_2", 3: "small_resnet_3", 4: "resnet"}
+                for group_idx in range(5):
+                    for idx in range(group_size):
+                        client_models[idx + group_idx * group_size] = {"model_type": group_model_name[group_idx]}
+                        print("Client {} model type: {}".format(idx + group_idx * group_size, group_model_name[group_idx]))
+                
+                # client_models[0] = {"model_type": "small_resnet"}
+                # client_models[1] = {"model_type": "small_resnet"}
+                # client_models[2] = {"model_type": "small_resnet_1"}
+                # client_models[3] = {"model_type": "small_resnet_1"}
+                # client_models[4] = {"model_type": "small_resnet_2"}
+                # client_models[5] = {"model_type": "small_resnet_2"}
+                # client_models[6] = {"model_type": "small_resnet_3"}
+                # client_models[7] = {"model_type": "small_resnet_3"}
+                # client_models[8] = {"model_type": "resnet"}
+                # client_models[9] = {"model_type": "resnet"}
             else:
                 client_models[0] = {"model_type": "2_layer_CNN", "params": {"n1": 64, "n2": 256, "dropout_rate": 0.2}}
                 client_models[1] = {"model_type": "2_layer_CNN", "params": {"n1": 64, "n2": 256, "dropout_rate": 0.2}}
@@ -588,8 +604,8 @@ class Server:
                     train_feature_loss += tmp_feature_loss
                     
 
-            for idx in range(self.clients_number):
-                self.clients_dict[idx].scheduler.step()
+            # for idx in range(self.clients_number):
+            #     self.clients_dict[idx].scheduler.step()
                     
             eval_interval = 0
             if max_training_epoches <= 500:
