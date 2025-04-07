@@ -9,88 +9,16 @@ from parameters import args
 method_name = ''
 # if args.Var or args.second_highest or args.Similarity:
     # from modules.Server_Var import Server as server
-if args.VAE:
-    assert not args.op
-    assert not args.NVAE
-    assert not args.VAE_op
-    assert not args.new_VAE
-    assert not args.new_VAE_ft
-    assert not args.GKT
-    assert not args.MD
-    assert not args.VAE_fa
-    from modules.Server_VAE import Server as server
-elif args.op:
-    assert not args.VAE
-    assert not args.NVAE
-    assert not args.VAE_op
-    assert not args.new_VAE
-    assert not args.new_VAE_ft
-    assert not args.GKT
-    assert not args.MD
-    assert not args.VAE_fa
-    from modules.Server_op import Server as server
-    method_name = 'Felo_op'
-elif args.new_VAE:
-    assert not args.op
-    assert not args.NVAE
-    assert not args.VAE_op
-    assert not args.VAE
-    assert not args.new_VAE_ft
-    assert not args.GKT
-    assert not args.MD
-    assert not args.VAE_fa
-    from modules.Server_new_VAE import Server as server
-    method_name = 'Velo_new_VAE'
-elif args.op_agg:
-    assert not args.op
-    assert not args.new_VAE
-    assert not args.GKT
-    assert not args.MD
-    assert args.no_logits_flag
-    assert not args.VAE_fa
-    assert not args.op_agg_reduceLR
-    from modules.Server_op_agg import Server as server
+
+if args.Felo:
+    from modules.Server_Felo import Server as server
+    method_name = 'Felo'
+elif args.Velo:
+    from modules.Server_Velo import Server as server
+    method_name = 'Velo'
+
     
-elif args.op_agg_reduceLR:
-    assert not args.op
-    assert not args.new_VAE
-    assert not args.GKT
-    assert not args.MD
-    assert args.no_logits_flag
-    assert not args.VAE_fa
-    assert not args.op_agg
-    from modules.Server_op_agg_reduceLR import Server as server
-    
-elif args.GKT:
-    assert not args.op
-    assert not args.NVAE
-    assert not args.VAE_op
-    assert not args.VAE
-    assert not args.new_VAE
-    assert not args.new_VAE_ft
-    assert not args.MD
-    assert not args.VAE_fa
-    from modules.Server_GKT import Server as server
-    method_name = 'GKT'
-elif args.MD:
-    assert not args.op
-    assert not args.NVAE
-    assert not args.VAE_op
-    assert not args.VAE
-    assert not args.new_VAE
-    assert not args.new_VAE_ft
-    assert not args.GKT
-    assert not args.y_distillation_flag
-    assert not args.KLD_flag
-    assert not args.VAE_fa
-    from modules.Server_MD import Server as server
-    method_name = 'MD'
-else:
-    from modules.Server import Server as server
-    if args.asyn_FL_flag:
-        method_name = 'FedAVG'
-    else:
-        method_name = 'FedHe'
+
 
 def main(device):
     parameters = namedtuple('parameters', ['clients_number',

@@ -6,6 +6,8 @@ parser = argparse.ArgumentParser(description='parameters')
 # -- Model parameters --
 parser.add_argument('--clients_number', type=int, default=10,
                     help='default: 10 clients')
+parser.add_argument('--VAE_training_interval', type=int, default=10,
+                    help='Server VAE training interval epoches')
 parser.add_argument('--clients_sample_ratio', type=float, default=0.2,
                     help='default: 0.1')
 parser.add_argument('--epoch', type=int, default=100,
@@ -46,7 +48,6 @@ parser.add_argument("--aggregate_flag", action='store_true', help='aggregate the
 parser.add_argument("--delayed_gradients_flag", action='store_true', help='deal with delayed gradients with Hessian or not')
 parser.add_argument("--softmax_flag", action='store_true', help='compute the distillation loss in softmax or not')
 parser.add_argument("--KLD_flag", action='store_true', help='distillation loss computed in KL divergence or not')
-parser.add_argument("--delayed_gradients_divided_flag", action='store_true', help='deal with delayed gradients with devided gradients or not')
 parser.add_argument("--noniid_flag", action='store_true', help='Non-iid for the training datasets or not')
 # parser.add_argument("--noniid_flag", action='store_true', default=True, help='Non-iid for the training datasets or not')
 parser.add_argument("--public_flag", action='store_true', help='Public datasets or not')
@@ -56,52 +57,20 @@ parser.add_argument("--public_flag", action='store_true', help='Public datasets 
 
 # debug parameters
 parser.add_argument('--control_name', default='1_10_0.1_iid_fix_a1-b1-c1_gn_0_0', type=str, help='Work for the HeteroFL baseline')
-parser.add_argument("--HeteroFL", action='store_true', help='Use HeteroFL or not')
-# parser.add_argument("--HeteroFL", action='store_true', default=True, help='Use HeteroFL or not')
-parser.add_argument("--op_agg_reduceLR", action='store_true', help='Use op_agg_reduceLR or not')
-# parser.add_argument("--op_agg_reduceLR", action='store_true', default=True, help='Use op_agg_reduceLR or not')
-parser.add_argument("--op_agg", action='store_true', help='Use new features or not')
-# parser.add_argument("--op_agg", action='store_true', default=True, help='Use op_agg or not')
-parser.add_argument("--VAE_fa", action='store_true', help='Use new features or not')
-# parser.add_argument("--VAE_fa", action='store_true', default=True, help='Use VAE_fa or not')
-parser.add_argument("--MD", action='store_true', help='Use MD or not')
-# parser.add_argument("--MD", action='store_true', default=True, help='Use MD or not')
-parser.add_argument("--GKT", action='store_true', help='Use GKT or not')
-# parser.add_argument("--GKT", action='store_true', default=True, help='Use GKT or not')
-parser.add_argument("--new_VAE_ft", action='store_true', help='Use new features or not')
-# parser.add_argument("--new_VAE_ft", action='store_true', default=True, help='Use new features or not')
-parser.add_argument("--no_logits_flag", action='store_true', help='Do not use logits or not')
-# parser.add_argument("--no_logits_flag", action='store_true', default=True, help='Do not use logits or not')
-parser.add_argument("--new_VAE", action='store_true', help='Using a new VAE mode or not')
-# parser.add_argument("--new_VAE", action='store_true', default=True, help='Using a new VAE mode or not')
+parser.add_argument("--Velo", action='store_true', help='Using Velo or not')
 parser.add_argument('--avgpool', type=int, default=4, help='default: 4')
 
 
 
-parser.add_argument("--VAE_op", action='store_true', help='Using output and VAE or not')
-# parser.add_argument("--VAE_op", action='store_true', default=True, help='Using output and VAE or not')
-parser.add_argument("--NVAE", action='store_true', help='Using noise input with VAE to generate features or not')
-# parser.add_argument("--NVAE", action='store_true', default=True, help='Using noise input with VAE to generate features or not')
-parser.add_argument("--homo_flag", action='store_true', help='all the client models are homogeneous or not')
-# parser.add_argument("--homo_flag", action='store_true', default=True, help='all the client models are homogeneous or not')
-parser.add_argument("--VAE", action='store_true', help='Using VAE to generate features or not')
-# parser.add_argument("--VAE", action='store_true', default=True, help='Using VAE to generate features or not')
-parser.add_argument('--op', action='store_true', help='Use the second last outputs or not')
-# parser.add_argument('--op', action='store_true', default=True, help='Use the second last outputs or not')
+
+parser.add_argument('--Felo', action='store_true', help='Use Felo or not')
+
 parser.add_argument("--resnet_flag", action='store_true', 
                     help='Using Resnet or not')
-# parser.add_argument("--resnet_flag", action='store_true', 
-#                     default=True, help='Using Resnet or not')
 parser.add_argument('--y_distillation_flag', action='store_true',
                     help='distilled y logits or not')
-# parser.add_argument('--y_distillation_flag', action='store_true', default=True,
-#                     help='distilled y logits or not')
 parser.add_argument('--asyn_FL_flag', action='store_true',
                     help='Federated Learning or not')
-# parser.add_argument('--asyn_FL_flag', action='store_true', default=True,
-                    # help='Federated Learning or not')
-parser.add_argument('--old_CNN', action='store_true',
-                    help='Use old CNN or not')
 parser.add_argument('--VAE_size', type=int, default=1024,
                     help='The classifier feature size of a VAE model')
 
