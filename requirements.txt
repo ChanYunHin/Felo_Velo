@@ -1,0 +1,8 @@
+wandb
+torch
+numpy==1.26.4
+matplotlib
+tqdm
+pandas
+torchvision
+tensorboard
